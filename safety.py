@@ -2,7 +2,7 @@ from ledger import Ledger
 from vote_info import VoteInfo
 from block_tree import LedgerCommitInfo, BlockTree,VoteMsg
 from timeout import TimeoutInfo
-import crypto_utils
+from crypto_utils import *
 class Safety:
 
     def __init__(self) -> None:
@@ -36,7 +36,7 @@ class Safety:
             return Ledger.pending_state(qc.id)
         else:
             return None
-            
+
     def __valid_signatures(sig_list):
         return True
     
