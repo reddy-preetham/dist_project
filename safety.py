@@ -1,5 +1,5 @@
 from ledger import Ledger
-from vote_info import VoteInfo
+from block_tree import VoteInfo
 from block_tree import LedgerCommitInfo, BlockTree,VoteMsg
 from timeout import TimeoutInfo
 from crypto_utils import *
@@ -32,8 +32,8 @@ class Safety:
             return False
         return self.__consecutive(round,qc_round) or self.__consecutive(round,tc.round)
     def __commit_state_id_candidate(self,block_round,qc):
-        if self.__consecutive(block_round,qc.vote_info_round):
-            return Ledger.pending_state(qc.id)
+        if self.__consecutive(block_round,qc.vote_info.round):
+            return Ledger.pending_state(qc.vote_info.id)
         else:
             return None
 
