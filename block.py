@@ -11,8 +11,8 @@ class Node:
         return self.children
 
 class Tree:
-    def __init__(self):
-        self.root = Node(Block.genesis_block)
+    def __init__(self,block=Block.genesis_block):
+        self.root = Node(block)
         self.map = map()
         self.map[Block.genesis_block.id] = self.root
 
