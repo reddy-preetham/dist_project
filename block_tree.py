@@ -42,33 +42,38 @@ class Block:
 
 
 class BlockTree:
-    high_qc
-    high_commit_qc 
-    def __int__(self, pending_votes, pending_block_tree): #not sure of instantiation
-        self.pending_votes = pending_votes
-        self.pending_block_tree = pending_block_tree
-    def process_qc(self, qc):
+    high_qc=0
+    high_commit_qc=0 
+    pending_votes=map()  #wrong implementation
+    pending_block_tree=list()  #wrong implementation
+    genesis_block=Block()
+
+    # def __int__(self, pending_votes, pending_block_tree): #not sure of instantiation
+    #     self.pending_votes = pending_votes
+    #     self.pending_block_tree = pending_block_tree
+
+    def process_qc(cls, qc):
         if qc.ledger_commit_info.commit_state_id != None:
             Ledger.commit(qc.vote_info.parent_id)
-            pending_block_tree.prune(qc.vote_info.parent_id) #need to implement it
-            high_commit_qc = max(qc, high_commit_qc)
-        high_qc = max(qc, high_qc)
+            cls.pending_block_tree.prune(qc.vote_info.parent_id) #need to implement it
+            cls.high_commit_qc = max(qc, cls.high_commit_qc)
+        cls.high_qc = max(qc, cls.high_qc)
 
-    def execute_and_insert(self, b):
+    def execute_and_insert(cls, b):
         Ledger.speculate(b.qc.block_id,b.id, b.payload)
-        self.pending_block_tree.add(b) #need to implement it
+        cls.pending_block_tree.add(b) #need to implement it
 
-    def process_vote(self, v):
-        self.process_qc(v.high_commit_qc)
+    def process_vote(cls, v):
+        cls.process_qc(v.high_commit_qc)
         vote_idx = hash(v.ledger_commit_info)
-        self.pending_votes[vote_idx].add(v.signature)
-        if len(self.pending_votes[vote_idx])==2*f+1:
-            qc = QC(v.vote_info, v.state_id, self.pending_votes[vote_idx])
+        cls.pending_votes[vote_idx].add(v.signature)
+        if len(cls.pending_votes[vote_idx])==2*f+1:
+            qc = QC(v.vote_info, v.state_id, cls.pending_votes[vote_idx])
             return qc
         return None
 
-    def generate_blocks(self,txns, current_round):
-        return Block(u, current_round, txns, high_qc, hash(author, current_round, txns, qc.vote_info.id, qc.signatures)) # need to implement it
+    def generate_blocks(cls,txns, current_round):
+        return Block(u, current_round, txns, cls.high_qc, hash(author, current_round, txns, cls.high_qc.vote_info.id, cls.high_qc.signatures)) # need to implement it
 
 
 
