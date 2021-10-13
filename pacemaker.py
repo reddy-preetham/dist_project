@@ -2,6 +2,7 @@ from timeout import TC
 from timeout import TimeoutMsg
 import safety as Safety
 import block_tree as BlockTree
+from replica import *
 # import Broadcast
 
 class Pacemaker:
@@ -26,7 +27,7 @@ class Pacemaker:
         # broadcast TimeoutMsg⟨timeout info, last round tc, Block-Tree.high commit qc⟩#idont know how to implement it
     
     @classmethod
-    def process_remote_timeout(cls, tmo, f=0): #need to remove f
+    def process_remote_timeout(cls, tmo): #need to remove f
         tmo_info = tmo.tmo_info
         if tmo_info.round<cls.current_round:
             return None
