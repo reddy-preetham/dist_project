@@ -5,7 +5,7 @@ class TimeoutInfo:
         self.round=round
         self.high_qc=high_qc
         self.sender=name
-        self.signature=sign((self.round,self.high_qc),name)
+        self.signature=sign(""+self.round+self.high_qc.round)
 class TC:
     def __init__(self,round,tmo_high_qc_rounds,tmo_signatures) -> None:
         self.round=round
@@ -21,4 +21,4 @@ class ProposalMsg:
         self.block=block
         self.last_round_tc=last_round_tc
         self.high_commit_qc=high_commit_qc
-        self.signature=sign((self.round,self.high_qc),name)
+        self.signature=sign(self.block.id)
