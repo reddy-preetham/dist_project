@@ -18,14 +18,14 @@ class Client(process):
             req=str(client_id)+"-"+str(cid)+"-"+str(random.randint(0, NOPS-1))
             send(('request', self,client_id,sign(req,private_key)), to= replicas)
             results.setdefault(req,set())
+            --l1
+            await(len(results[req])>n_faulty_replicas)
             cid += 1
         
-        --l1
-        await(each(m in results.keys(), has= len(results[m]) == n_faulty_replicas+1))
         
-        for m in results.keys():
-            print(("l2",len(results[m])))
-        # await(each(received(("response",_,_))))
+        # await(each(m in results.keys(), has= len(results[m]) == n_faulty_replicas+1))
+        
+        
         output('terminating')
         send(('done',), to=parent())
 
