@@ -19,23 +19,23 @@ def main():
     
     replicas = new(Replica, num= n_replicas)
     clients = new(Client, num= n_clients)
-    client_id={}
+    client_ids={}
     client_pub_keys={}
     client_private_keys={}
 
     for i,client in enumerate(clients):
-        client_id[i]=client
+        client_ids[i]=client
         privae_key = SigningKey.generate()
         public_key = privae_key.verify_key.encode(encoder=HexEncoder)
         client_pub_keys[i]=public_key
         client_private_keys[i]=privae_key
     
-    replica_id={}
+    replica_ids={}
     replica_pub_keys={}
     replica_private_keys={}
 
     for i,replica in enumerate(replicas):
-        replica_id[i]=replica
+        replica_ids[i]=replica
         privae_key = SigningKey.generate()
         public_key = privae_key.verify_key.encode(encoder=HexEncoder)
         replica_pub_keys[i]=public_key
@@ -44,7 +44,7 @@ def main():
     for i,client in enumerate(clients):
         setup(client,(i,replicas,client_private_keys[i],client_pub_keys[i],replica_pub_keys,n_req,n_faluty_replicas))
     for i,replica in enumerate(replicas):
-        setup(replica,(i,replicas,clients,replica_private_keys[i],replica_pub_keys[i],replica_pub_keys,client_pub_keys,n_faluty_replicas))
+        setup(replica,(i,replicas,client_ids,replica_private_keys[i],replica_pub_keys[i],replica_pub_keys,client_pub_keys,n_faluty_replicas))
  
     start(replicas)
     start(clients)
