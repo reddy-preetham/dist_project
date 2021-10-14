@@ -1,0 +1,40 @@
+# from main import *
+from crypto_utils import *
+NOPS=100
+import sys
+import time
+import random
+
+config(channel = 'reliable')
+class Client(process):
+    def setup(client_id:int,replicas:set,private_key:str,public_key:str,replica_public_keys:dict,n_req:int,n_faulty_replicas:int):
+        self.cid = 0           # command id
+        self.results = dict()  # map of command id to result of command
+        self.count = dict()    # map of command id to number of responses
+
+    def run():
+
+        for i in range(2):
+            req=str(client_id)+"-"+str(cid)+"-"+str(random.randint(0, NOPS-1))
+            send(('request', self,client_id,sign(req,private_key)), to= replicas)
+            results.setdefault(req,set())
+            cid += 1
+        
+        --l1
+        await(each(m in results.keys(), has= len(results[m]) == n_faulty_replicas+1))
+        
+        for m in results.keys():
+            print(("l2",len(results[m])))
+        # await(each(received(("response",_,_))))
+        output('terminating')
+        send(('done',), to=parent())
+
+    
+    def receive(msg= ('response', replica,replica_id,m),at=(l1,)):
+        
+        m=verify_decode(m,replica_public_keys[replica_id])
+        results[m].add(replica)
+        print(("received response from",replica,m,len(results[m])))
+        debug('### response')
+        
+
