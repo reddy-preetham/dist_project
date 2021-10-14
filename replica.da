@@ -1,0 +1,32 @@
+# from main import *
+NOPS=100
+import sys
+import time
+import random
+from crypto_utils import *
+
+window_size=5
+
+name=""
+public_keys=[]
+private_key=""
+f=3
+config(channel = 'reliable')
+
+class Replica(process):
+
+    def setup(replica_id:int,replicas:set,clients:set,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
+        self.num_validators=len(replicas)
+        
+
+    def run():
+        debug('### start')
+        await(received(('done',)))
+        output('terminating')
+
+    def receive(msg= ('request', p,client_id,m)):
+        m=verify_decode(m,client_public_keys[client_id])
+        print(("received request from",p,m))
+        send(("response",self,replica_id,sign(m,private_key)),to=p)
+        debug('### request', p)
+        
