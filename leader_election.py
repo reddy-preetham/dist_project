@@ -26,6 +26,7 @@ class LeaderElection:
             current_qc = current_block.qc
             curr_window_size+=1
         active_validators = active_validators-last_authors
+        random.seed(10)
         return random.choice(active_validators)
         
     def update_leaders(self, qc):
