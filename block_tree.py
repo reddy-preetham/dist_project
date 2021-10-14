@@ -21,20 +21,21 @@ class LedgerCommitInfo:
         return "" + self.commit_state_id + self.vote_info_hash
 
 class VoteMsg:
-    def __init__(self, vote_info, ledger_commit_info, high_commit_qc, sender=a, signature=b): #need to update object variables
+    def __init__(self, vote_info, ledger_commit_info, high_commit_qc): #need to update object variables
         self.vote_info = vote_info
         self.ledger_commit_info= ledger_commit_info
         self.high_commit_qc = high_commit_qc
-        self.sender = sender
-        self.signature = signature
+        self.sender = name
+        self.signature = sign(self.ledger_commit_info.to_string())
 
 class QC:
-    def __init__(self, vote_info, ledger_commit_info, signatures, author=a, author_signature=b): #need to update object variables
+    def __init__(self, vote_info, ledger_commit_info, signatures): #need to update object variables
         self.vote_info = vote_info
         self.ledger_commit_info = ledger_commit_info
         self.signatures = signatures
-        self.author = author
-        self.author_signature = author_signature
+        self.author = name
+        self.author_signature = sign("".join(self.signatures))
+
 
     def to_string(self):
         return hash("".join(self.vote_info).join(self.ledger_commit_info.to_string()).join(self.signatures).join(self.author).join(self.author_signature))
