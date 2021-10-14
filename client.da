@@ -14,7 +14,7 @@ class Client(process):
 
     def run():
 
-        for i in range(2):
+        for i in range(n_req):
             req=str(client_id)+"-"+str(cid)+"-"+str(random.randint(0, NOPS-1))
             send(('request', self,client_id,sign(req,private_key)), to= replicas)
             results.setdefault(req,set())

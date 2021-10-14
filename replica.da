@@ -17,16 +17,27 @@ class Replica(process):
 
     def setup(replica_id:int,replicas:set,clients:set,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
         self.num_validators=len(replicas)
+        self.run_done = False
         
 
     def run():
         debug('### start')
-        await(received(('done',)))
+        run_done = False
+        while not run_done:
+            # round_done = False
+            # timer_duration = Pacemaker.get_round_timer(Pacemaker.current_round)
+            # if await(round_done): pass
+            # elif timeout(timer_duration): 
+            #     Pacemaker.local_timeout_round()
+            
+            await(run_done)
         output('terminating')
-
+    def receive(msg=("done",)):
+        run_done=True
     def receive(msg= ('request', p,client_id,m)):
         m=verify_decode(m,client_public_keys[client_id])
         print(("received request from",p,m))
+
         send(("response",self,replica_id,sign(m,private_key)),to=p)
         debug('### request', p)
         
