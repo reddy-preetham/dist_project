@@ -1,13 +1,13 @@
-# from main import *
+
 NOPS=100
 import sys
 import time
 import random
 from crypto_utils import *
-from block_tree import BlockTree
+# from block_tree import BlockTree
 from leader_election import LeaderElection
-from pacemaker import Pacemaker
-from safety import Safety
+# from pacemaker import Pacemaker
+# from safety import Safety
 
 
 # name=""
@@ -127,8 +127,8 @@ class Replica(process):
 from cacheout import Cache
 from collections import deque
 class MemPool:
-    transaction_queue:deque
-    pending_transaction:set
+    transaction_queue=deque()
+    pending_transaction=set()
     queue_cntr:int
     req_cache=Cache() 
     def __init__(self):
@@ -148,7 +148,7 @@ class MemPool:
             cls.transaction_queue.append(txn)
             cls.req_cache.add(txn_id,"In queue, not processed")
         else:
-            Replica.send_response(txn_id,cls.req_cache.get(txn_id))
+            Replica.send_response(txn_id,cls.req_cache.get(txn_id,default=None))
 
     @classmethod
     def processed_txns(cls,txns):
@@ -156,7 +156,7 @@ class MemPool:
             txn_id=txn[:txn.index(':')]
             cls.req_cache.set(txn_id,"processed")
             cls.pending_transaction.discard(txn_id)
-            Replica.send_response(txn_id,cls.req_cache.get(txn_id))
+            Replica.send_response(txn_id,cls.req_cache.get(txn_id,default=None))
 
 
         

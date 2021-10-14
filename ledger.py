@@ -1,4 +1,3 @@
-from block_tree import Block
 from replica import *
 from cacheout import Cache
 import os

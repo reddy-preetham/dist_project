@@ -1,7 +1,7 @@
 from crypto_utils import *
-from replica import Replica
+# from replica import Replica
 class TimeoutInfo:
-    def __init__(self,round,high_qc,name=Replica.getName()) -> None:
+    def __init__(self,round,high_qc,name="") -> None:
         self.round=round
         self.high_qc=high_qc
         self.sender=name
