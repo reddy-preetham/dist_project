@@ -5,6 +5,9 @@ import time
 import random
 from crypto_utils import *
 
+from temp import Temp
+from temp2 import Temp2
+
 # name=""
 # public_keys=[]
 # private_key=""
@@ -13,7 +16,7 @@ config(channel = 'reliable')
 
 class Replica(process):
 
-    def setup(replica_id:int,replicas:set,clients:set,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
+    def setup(replica_id:int,replicas:set,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
         self.num_validators=len(replicas)
         self.run_done = False
         self.window_size=5
@@ -37,7 +40,14 @@ class Replica(process):
     def receive(msg= ('request', p,client_id,m)):
         m=verify_decode(m,client_public_keys[client_id])
         print(("received request from",p,m))
+        Temp.a=2
 
+        # print(("dsd",Temp2.get()))
         send(("response",self,replica_id,sign(m,private_key)),to=p)
         debug('### request', p)
+
+    def send_response(txn_id,m):
+        client_id=txn_id[:txn_id.index('-')]
+        send(("response",self,Replica.replica_id,sign(m,private_key)),to=client_ids[client_id])
+
         

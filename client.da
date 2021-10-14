@@ -5,6 +5,8 @@ import sys
 import time
 import random
 
+
+
 config(channel = 'reliable')
 class Client(process):
     def setup(client_id:int,replicas:set,private_key:str,public_key:str,replica_public_keys:dict,n_req:int,n_faulty_replicas:int):
@@ -15,7 +17,7 @@ class Client(process):
     def run():
 
         for i in range(n_req):
-            req=str(client_id)+"-"+str(cid)+"-"+str(random.randint(0, NOPS-1))
+            req=str(client_id)+"-"+str(cid)+":"+str(random.randint(0, NOPS-1))
             send(('request', self,client_id,sign(req,private_key)), to= replicas)
             results.setdefault(req,set())
             --l1
@@ -31,7 +33,6 @@ class Client(process):
 
     
     def receive(msg= ('response', replica,replica_id,m),at=(l1,)):
-        
         m=verify_decode(m,replica_public_keys[replica_id])
         results[m].add(replica)
         print(("received response from",replica,m,len(results[m])))
