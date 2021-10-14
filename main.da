@@ -44,7 +44,7 @@ def main():
     for i,client in enumerate(clients):
         setup(client,(i,replicas,client_private_keys[i],client_pub_keys[i],replica_pub_keys,n_req,n_faluty_replicas))
     for i,replica in enumerate(replicas):
-        setup(replica,(i,replicas,client_ids,replica_private_keys[i],replica_pub_keys[i],replica_pub_keys,client_pub_keys,n_faluty_replicas))
+        setup(replica,(i,replica_ids,client_ids,replica_private_keys[i],replica_pub_keys[i],replica_pub_keys,client_pub_keys,n_faluty_replicas))
  
     start(replicas)
     start(clients)
