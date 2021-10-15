@@ -3,7 +3,7 @@ NOPS=100
 import sys
 import time
 import random
-from utils import *
+
 from timeout import TC,TimeoutInfo,TimeoutMsg,ProposalMsg
 # from block_tree import BlockTree
 # from leader_election import LeaderElection
@@ -13,6 +13,7 @@ from timeout import TC,TimeoutInfo,TimeoutMsg,ProposalMsg
 # from safety import Safety
 from ledger import Ledger
 from utils import *
+import utils
 from block import *
 from cacheout import Cache
 from collections import deque
@@ -61,6 +62,7 @@ class Replica(process):
         #=================Safety=================
         self.__highest_vote_round=0
         self.__highest_qc_round=-1
+        
 
         
     def set_variables():
@@ -72,7 +74,7 @@ class Replica(process):
         Config.public_key=public_key
         Config.private_key=private_key
         Config.replica_pub_keys=public_key
-        Config.replica=self
+        Ledger.initialize_ledger()
     def run():
         debug('### start')
         run_done = False
@@ -107,7 +109,7 @@ class Replica(process):
         # MemPool.push_transaction(m)
 
     def send_response(txn_id,m):
-        client_id=txn_id[:txn_id.index('-')]
+        client_id=txn_id[:txn_id.find('-')]
         send(("response",self,replica_id,sign_record(m,private_key)),to=client_ids[client_id])
     
     def send_msg_replica(id,msg_type,m):
@@ -241,13 +243,13 @@ class Replica(process):
         if len(transaction_queue)==0:
             return [""]
         txn = transaction_queue.popleft()
-        txn_id=txn[:txn.index(':')]
+        txn_id=txn[:txn.find(':')]
         req_cache.add(txn_id,"processing")
         return [txn]
 
    
     def Mempool_push_transaction(txn):
-        txn_id = txn[:txn.index(':')]
+        txn_id = txn[:txn.find(':')]
         
         if(not req_cache.has(txn_id)):
             pending_transaction.add(txn_id)
@@ -260,7 +262,7 @@ class Replica(process):
   
     def Mempool_processed_txns(txns):
         for txn in txns:
-            txn_id=txn[:txn.index(':')]
+            txn_id=txn[:txn.find(':')]
             req_cache.set(txn_id,"processed")
             pending_transaction.discard(txn_id)
             send_response(txn_id,req_cache.get(txn_id,default=None))
