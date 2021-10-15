@@ -1,6 +1,6 @@
 from pacemaker import Pacemaker
-from block_tree import QC
-from ledger import Ledger
+# from block_tree import QC
+# from ledger import Ledger
 import math
 import random
 

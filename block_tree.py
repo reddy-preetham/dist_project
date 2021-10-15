@@ -1,9 +1,10 @@
-from timeout import TimeoutInfo
+# from timeout import TimeoutInfo
 from ledger import Ledger
 from crypto_utils import *
 from replica import *
 import crypto_utils
 from block import *
+
 class VoteInfo:
     def __init__(self, id, round, parent_id, parent_round, state):
         self.id = id
@@ -54,19 +55,10 @@ class Block:
 class BlockTree:
     high_qc=0
     high_commit_qc=0 
-<<<<<<< Updated upstream
-    pending_votes=map()  #wrong implementation
-    pending_block_tree= Tree() #wrong implementation
-    genesis_block=Block()
-
-    # def __int__(self, pending_votes, pending_block_tree): #not sure of instantiation
-    #     self.pending_votes = pending_votes
-    #     self.pending_block_tree = pending_block_tree
-=======
     pending_votes={}
     pending_block_tree= Tree() 
     genesis_block=Block(name, -1, [], -1, hash("".join(name).join(-1).join([]).join(-1).join([])))
->>>>>>> Stashed changes
+
 
     def __init__(self):
         pass
@@ -85,6 +77,7 @@ class BlockTree:
     def process_vote(cls, v):
         cls.process_qc(v.high_commit_qc)
         vote_idx = hash(v.ledger_commit_info.to_string())
+        cls.pending_votes.setdefault(vote_idx,set())
         cls.pending_votes[vote_idx].add(v.signature)
         if len(cls.pending_votes[vote_idx])==2*f+1:
             qc = QC(v.vote_info, v.state_id, cls.pending_votes[vote_idx])

@@ -1,14 +1,13 @@
 from timeout import TC
-from timeout import TimeoutMsg
+# from timeout import TimeoutMsg
 import safety as Safety
 import block_tree as BlockTree
-from replica import *
 # import Broadcast
 
 class Pacemaker:
     current_round=0
     last_round_tc=None
-    pending_timeouts=map()
+    pending_timeouts={}
     def __init__(self):
         pass
         

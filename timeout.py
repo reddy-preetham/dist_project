@@ -1,7 +1,7 @@
 from crypto_utils import *
-from replica import Replica
+# from replica import Replica
 class TimeoutInfo:
-    def __init__(self,round,high_qc,name=Replica.getName()) -> None:
+    def __init__(self,round,high_qc,name="") -> None:
         self.round=round
         self.high_qc=high_qc
         self.sender=name
@@ -17,7 +17,7 @@ class TimeoutMsg:
         self.last_round_tc=last_round_tc
         self.high_commit_qc=high_commit_tc
 class ProposalMsg:
-    def __init__(self,block,last_round_tc,high_commit_qc,name=Replica.getName()) -> None:
+    def __init__(self,block,last_round_tc,high_commit_qc):
         self.block=block
         self.last_round_tc=last_round_tc
         self.high_commit_qc=high_commit_qc
