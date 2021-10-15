@@ -1,5 +1,5 @@
 # from main import *
-from crypto_utils import *
+from utils import *
 NOPS=100
 import sys
 import time
