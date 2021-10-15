@@ -24,27 +24,27 @@ def main():
     client_private_keys={}
 
     for i,client in enumerate(clients):
-        client_ids[i]=client
+        client_ids[str(i)]=client
         private_key = SigningKey.generate()
         public_key = private_key.verify_key.encode(encoder=HexEncoder)
-        client_pub_keys[i]=public_key
-        client_private_keys[i]=private_key
+        client_pub_keys[str(i)]=public_key
+        client_private_keys[str(i)]=private_key
     
     replica_ids={}
     replica_pub_keys={}
     replica_private_keys={}
 
     for i,replica in enumerate(replicas):
-        replica_ids[i]=replica
+        replica_ids[str(i)]=replica
         private_key = SigningKey.generate()
         public_key = private_key.verify_key.encode(encoder=HexEncoder)
-        replica_pub_keys[i]=public_key
-        replica_private_keys[i]=private_key
+        replica_pub_keys[str(i)]=public_key
+        replica_private_keys[str(i)]=private_key
 
     for i,client in enumerate(clients):
-        setup(client,(i,replicas,client_private_keys[i],client_pub_keys[i],replica_pub_keys,n_req,n_faluty_replicas))
+        setup(client,(str(i),replicas,client_private_keys[str(i)],client_pub_keys[str(i)],replica_pub_keys,n_req,n_faluty_replicas))
     for i,replica in enumerate(replicas):
-        setup(replica,(i,replica_ids,client_ids,replica_private_keys[i],replica_pub_keys[i],replica_pub_keys,client_pub_keys,n_faluty_replicas))
+        setup(replica,(str(i),replica_ids,client_ids,replica_private_keys[str(i)],replica_pub_keys[str(i)],replica_pub_keys,client_pub_keys,n_faluty_replicas))
  
     start(replicas)
     start(clients)

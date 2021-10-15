@@ -21,9 +21,10 @@ class Client(process):
             # print(("====",sys.getsizeof((self,client_id,sign_record(req,private_key)))))
         
             send(('request', self,client_id,sign_record(req,private_key)), to= replicas)
-            results.setdefault(req,set())
+            txn_id = str(client_id)+"-"+str(cid)
+            results.setdefault(txn_id,set())
             --l1
-            await(len(results[req])>n_faulty_replicas)
+            await(len(results[txn_id])>n_faulty_replicas)
             cid += 1
         
         
@@ -34,10 +35,12 @@ class Client(process):
         send(('done',), to=parent())
 
     
-    def receive(msg= ('response', replica,replica_id,m),at=(l1,)):
-        m=verify_decode(m,replica_public_keys[replica_id])
-        results[m].add(replica)
-        print(("received response from",replica,m,len(results[m])))
+    def receive(msg= ('response', replica,replica_id,(txn_id,m)),at=(l1,)):
+        # print("====================")
+        # print((txn_id,m))
+        txn_id,m=verify_decode(m,replica_public_keys[replica_id])
+        results[txn_id].add(replica)
+        print(("received response from",replica,txn_id,m,len(results[txn_id])))
         debug('### response')
         
 
