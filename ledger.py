@@ -46,7 +46,7 @@ class Ledger:
     def persist(cls,state_id):
         
         with open(cls.ledger_name+".txt", "a") as myfile:
-            myfile.write("\n".join(cls.pending_ledger_tree.get_block(state_id).payload))
+            myfile.write("\n".join(cls.pending_ledger_tree.get_block(state_id).payload)+"\n")
             myfile.flush()
             os.fsync(myfile.fileno())
             

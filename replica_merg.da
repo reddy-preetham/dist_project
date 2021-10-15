@@ -109,8 +109,11 @@ class Replica(process):
         # MemPool.push_transaction(m)
 
     def send_response(txn_id,m):
+        [print("===========================================")]
         client_id=txn_id[:txn_id.find('-')]
-        send(("response",self,replica_id,sign_record(m,private_key)),to=client_ids[client_id])
+        send(("response",self,replica_id,sign_record((txn_id,m),private_key)),to=client_ids[client_id])
+        
+ 
     
     def send_msg_replica(id,msg_type,m):
         send((msg_type,self,replica_id,sign_record(m,private_key)),to=replicas_ids[id])
@@ -140,7 +143,6 @@ class Replica(process):
             process_timeout_msg(m)
 
     def process_certificate_qc(qc):
-        
         BlockTree_process_qc(qc)
         
         LeaderElection_update_leaders(qc)
@@ -263,9 +265,13 @@ class Replica(process):
     def Mempool_processed_txns(txns):
         for txn in txns:
             txn_id=txn[:txn.find(':')]
+            
             req_cache.set(txn_id,"processed")
+            
             pending_transaction.discard(txn_id)
+            
             send_response(txn_id,req_cache.get(txn_id,default=None))
+   
 
     #=============Leader election=============
     def LeaderElection_elect_reputation_leader(qc):
@@ -315,11 +321,11 @@ class Replica(process):
     #===========block tree ============
     def BlockTree_process_qc(qc):
         if qc.ledger_commit_info.commit_state_id is not None:
-           
             Ledger.commit(pending_block_tree.get_block(qc.vote_info.parent_id))
             Mempool_processed_txns(pending_block_tree.get_block(qc.vote_info.parent_id).payload)
             pending_block_tree.prune(qc.vote_info.parent_id) #need to implement it
-            high_commit_qc = max(qc.vote_info.round, high_commit_qc.vote_info.round)
+            if qc.vote_info.round>high_commit_qc.vote_info.round:
+                high_commit_qc = qc
         if qc.vote_info.round > high_qc.vote_info.round:
             high_qc = qc
         
