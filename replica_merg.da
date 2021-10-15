@@ -6,7 +6,7 @@ import random
 from utils import *
 from timeout import TC,TimeoutInfo,TimeoutMsg,ProposalMsg
 # from block_tree import BlockTree
-from leader_election import LeaderElection
+# from leader_election import LeaderElection
 # from pacemaker import Pacemaker
 # from safety import Safety
 # from block_tree import BlockTree
