@@ -1,5 +1,4 @@
 from utils import *
-import utils
 import os
 from block import Tree
 from cacheout import Cache
@@ -13,11 +12,14 @@ class LedgerBlock:
 class Ledger:    
 
     genesis_block=LedgerBlock("genesis",["genesis transaction"])
-    commited_blocks=Cache(maxsize=max(Config.window_size,2*Config.n_replicas)) 
+    # commited_blocks=Cache(maxsize=max(Config.window_size,2*Config.n_replicas)) 
     pending_ledger_tree = Tree(genesis_block)
     state_block_map={}
-    ledger_name = Config.replica_id+"_ledger"
-
+    
+    @classmethod
+    def initialize_ledger(cls):
+        cls.commited_blocks=Cache(maxsize=max(Config.window_size,2*Config.n_replicas))
+        cls.ledger_name = str(Config.replica_id)+"_ledger"
     @classmethod
     def speculate(cls,prev_block_id="genesis",block=genesis_block):
         
@@ -42,6 +44,7 @@ class Ledger:
         cls.commited_blocks.get(block_id,None)
     @classmethod
     def persist(cls,state_id):
+        
         with open(cls.ledger_name+".txt", "a") as myfile:
             myfile.write("\n".join(cls.pending_ledger_tree.get_block(state_id).payload))
             myfile.flush()

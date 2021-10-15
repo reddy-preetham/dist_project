@@ -31,7 +31,6 @@ class Config:
     private_key=SigningKey.generate()
     public_key=private_key.verify_key.encode(encoder=HexEncoder)
     replica_pub_keys=[]
-    replica=None
 
 
 
