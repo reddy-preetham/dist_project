@@ -54,7 +54,7 @@ class BlockTree:
     high_qc=0
     high_commit_qc=0 
     pending_votes={}
-    genesis_block=Block(Config.replica_id, -1, [], -1, hash("".join(Config.replica_id).join(-1).join([]).join(-1).join([])))
+    genesis_block=Block(Config.replica_id, -1, [], -1, hash("".join(Config.replica_id).join("-1").join([""]).join("-1").join([""])))
     pending_block_tree= Tree(genesis_block) 
 
 
