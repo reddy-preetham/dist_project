@@ -23,7 +23,7 @@ class Pacemaker:
     @classmethod
     def local_timeout_round(cls):
         timeout_info = Safety.make_timeout(cls.current_round, BlockTree.high_qc, cls.last_round_tc)
-        # broadcast TimeoutMsg⟨timeout info, last round tc, Block-Tree.high commit qc⟩#idont know how to implement it
+        #broadcast TimeoutMsg imeout info, last round tc, Block-Tree.high commit qcidont know how to implement it
     
     @classmethod
     def process_remote_timeout(cls, tmo): #need to remove f
@@ -31,6 +31,7 @@ class Pacemaker:
         if tmo_info.round<cls.current_round:
             return None
 
+        cls.pending_votes.setdefault(tmo_info.round,set())
         if tmo_info.sender not in [x.sender for x in cls.pending_timeouts[tmo_info.round]]:
             cls.pending_timeouts[tmo_info.round].add(tmo_info)
         
@@ -58,12 +59,4 @@ class Pacemaker:
         cls.start_timer(qc.vote_info.round+1)
         return True
     
-    @classmethod
-    def advance_round(cls, qc):
-        if qc.vote_info.round < cls.current_round:
-            return False
-        cls.last_round_tc = None
-        cls.start_timer(qc.vote_info.round+1)
-        return True
-        
         
