@@ -15,7 +15,7 @@ class Tree:
         self.map.setdefault(self.root.blk.id,self.root)
         self.map[self.root.blk.id] = self.root
 
-    def pruning(self, blk_id):
+    def prune(self, blk_id):
         self.root = self.map.get(blk_id)
         #need to remove pruned elements from map
 
