@@ -54,6 +54,7 @@ class Block:
 class BlockTree:
     high_qc=0
     high_commit_qc=0 
+<<<<<<< Updated upstream
     pending_votes=map()  #wrong implementation
     pending_block_tree= Tree() #wrong implementation
     genesis_block=Block()
@@ -61,19 +62,24 @@ class BlockTree:
     # def __int__(self, pending_votes, pending_block_tree): #not sure of instantiation
     #     self.pending_votes = pending_votes
     #     self.pending_block_tree = pending_block_tree
+=======
+    pending_votes={}
+    pending_block_tree= Tree() 
+    genesis_block=Block(name, -1, [], -1, hash("".join(name).join(-1).join([]).join(-1).join([])))
+>>>>>>> Stashed changes
 
     def __init__(self):
         pass
 
     def process_qc(cls, qc):
         if qc.ledger_commit_info.commit_state_id != None:
-            Ledger.commit(qc.vote_info.parent_id)
+            Ledger.commit(cls.pending_block_tree.get_block(qc.vote_info.parent_id))
             cls.pending_block_tree.prune(qc.vote_info.parent_id) #need to implement it
             cls.high_commit_qc = max(qc, cls.high_commit_qc)
         cls.high_qc = max(qc, cls.high_qc)
 
     def execute_and_insert(cls, b):
-        Ledger.speculate(b.qc.block_id,b.id, b.payload)
+        Ledger.speculate(b.qc.block_id,b)
         cls.pending_block_tree.add(b) #need to implement it
 
     def process_vote(cls, v):

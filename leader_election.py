@@ -9,7 +9,7 @@ class LeaderElection:
         self.validators= list()
         self.window_size = 0    #need to initialize 
         self.exclude_size = 0   #need to initialize 
-        self.reputation_leaders = map()
+        self.reputation_leaders = dict()
     
     def elect_reputation_leader(self, qc):
         active_validators = set()
