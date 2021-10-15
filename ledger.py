@@ -1,37 +1,46 @@
-from replica import *
-from cacheout import Cache
+from utils import *
+import utils
 import os
 from block import Tree
+from cacheout import Cache
+# from crypto_utils import *
+
+class LedgerBlock:
+    def __init__(self,state_id,payload):
+        self.id = state_id
+        self.payload=payload
 
 class Ledger:    
 
-    def __init__(self) -> None:
-        self.commited_blocks=Cache(maxsize=max(window_size,2*num_validators)) 
-        self.pending_ledger_tree = Tree(block = ["Genesis transactions!!"])
-        self.state_block_map={}
-        self.ledger_name = Replica.getName()+"_ledger"
-        pass
+    genesis_block=LedgerBlock("genesis",["genesis transaction"])
+    commited_blocks=Cache(maxsize=max(Config.window_size,2*Config.n_replicas)) 
+    pending_ledger_tree = Tree(genesis_block)
+    state_block_map={}
+    ledger_name = Config.replica_id+"_ledger"
 
-    def speculate(self,prev_block_id,block):
-        parent_state_id=self.state_block_map(prev_block_id)
-        state_id = self.pending_ledger_tree.add(parent_state_id,block.payload)
-        self.state_block_map[block.id]=state_id
-
-    def pending_state(self,block_id): 
-        return self.state_block_map[block_id]
-
-    def commit(self,block_id):
-        block=self.pending_ledger_tree.get_block(self.state_block_map[block_id])
-        self.persist(self.state_block_map[block_id])
-        self.pending_ledger_tree.prune(self.state_block_map[block_id])
-        self.commited_blocks.set(block_id,block)
-
-    def commited_block(self,block_id):
-        self.commited_blocks.get(block_id,default=None)
-
-    def persist(self,state_id):
-        with open(self.ledger_name+".txt", "a") as myfile:
-            myfile.write("\n".join(self.pending_ledger_tree.get_block(state_id)))
+    @classmethod
+    def speculate(cls,prev_block_id="genesis",block=genesis_block):
+        parent_state_id=cls.state_block_map.get(prev_block_id,default="genesis")
+        state_id=hash(""+parent_state_id+" ".join(block.payload))
+        blk = LedgerBlock(state_id,block.payload)
+        cls.pending_ledger_tree.add(blk,parent_state_id)
+        cls.state_block_map[block.id]=state_id
+    @classmethod
+    def pending_state(cls,block_id): 
+        return cls.state_block_map.get(block_id,default=None)
+    @classmethod
+    def commit(cls,block):
+        # block=cls.pending_ledger_tree.get_block(cls.state_block_map[block_id])
+        cls.persist(cls.state_block_map[block.id])
+        cls.pending_ledger_tree.prune(cls.state_block_map[block.id])
+        cls.commited_blocks.set(block.id,block)
+    @classmethod
+    def commited_block(cls,block_id):
+        cls.commited_blocks.get(block_id,default=None)
+    @classmethod
+    def persist(cls,state_id):
+        with open(cls.ledger_name+".txt", "a") as myfile:
+            myfile.write("\n".join(cls.pending_ledger_tree.get_block(state_id)))
             myfile.flush()
             os.fsync(myfile.fileno)
             

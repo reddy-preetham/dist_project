@@ -2,10 +2,10 @@ from ledger import Ledger
 from block_tree import VoteInfo
 from block_tree import LedgerCommitInfo, BlockTree,VoteMsg
 from timeout import TimeoutInfo
-from crypto_utils import *
+from utils import *
 class Safety:
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.__private_key
         self.__public_keys
         self.__highest_vote_round=0
@@ -49,6 +49,7 @@ class Safety:
             ledger_commit_info=LedgerCommitInfo(commit_state_id=self.__commit_state_id_candidate(b.round,b.qc),vote_info_hash=hash(vote_info))
             return VoteMsg(vote_info,ledger_commit_info,BlockTree.high_commit_qc)
         return None
+        
     def make_timeout(self,round,high_qc,last_tc):
         qc_round=high_qc.vote_info.round
         if self.__valid_signatures((high_qc,last_tc)) and self.__safe_to_timeout(round,qc_round,last_tc):
