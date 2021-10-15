@@ -9,11 +9,11 @@ class Node:
         return self.children
 
 class Tree:
-    def __init__(self):
-        # self.root = Node(genesis_block)
+    def __init__(self,blk):
+        self.root = Node(blk)
         self.map = {}
-        # self.map.setdefault(self.root.blk.id,self.root)
-        # self.map[self.root.blk.id] = self.root
+        self.map.setdefault(self.root.blk.id,self.root)
+        self.map[self.root.blk.id] = self.root
 
     def pruning(self, blk_id):
         self.root = self.map.get(blk_id)

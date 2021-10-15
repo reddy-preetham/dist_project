@@ -4,6 +4,7 @@ import sys
 import time
 import random
 from crypto_utils import *
+from utils import *
 # from block_tree import BlockTree
 from leader_election import LeaderElection
 # from pacemaker import Pacemaker
@@ -18,13 +19,22 @@ config(channel = 'reliable')
 
 class Replica(process):
 
-    def setup(replica_id:int,replicas_ids:set,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
-        self.num_validators=len(replicas_ids)
+    def setup(replica_id:str,replicas_ids:set,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
+        self.n_replicas=len(replicas_ids)
         self.run_done = False
         self.window_size=5
+        self.network_delta=1
         del replicas_ids[replica_id]
+        self.set_variables()
         
-
+    def set_variables():
+        Config.replica_id = replica_id
+        Config.n_replicas = n_replicas
+        Config.n_faulty_replicas = n_faulty_replicas
+        Config.window_size = self.window_size
+        Config.network_delta = self.network_delta
+        Config.public_key=public_key
+        Config.private_key=private_key
     def run():
         debug('### start')
         run_done = False
@@ -138,7 +148,7 @@ class MemPool:
         txn = cls.transaction_queue.popleft()
         txn_id=txn[:txn.index(':')]
         cls.req_cache.add(txn_id,"processing")
-        return txn
+        return [txn]
 
     @classmethod
     def push_transaction(cls,txn):
