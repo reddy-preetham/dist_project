@@ -24,9 +24,11 @@ class Config:
     n_replicas=0
     n_faulty_replicas=0
     window_size=0
+    exclude_size=0
     network_delta=0.0
-    public_key=""
-    private_key=""
+    private_key=SigningKey.generate()
+    public_key=private_key.verify_key.encode(encoder=HexEncoder)
+    replica_pub_keys=[]
 
 
 

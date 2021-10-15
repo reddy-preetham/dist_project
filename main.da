@@ -25,10 +25,10 @@ def main():
 
     for i,client in enumerate(clients):
         client_ids[i]=client
-        privae_key = SigningKey.generate()
-        public_key = privae_key.verify_key.encode(encoder=HexEncoder)
+        private_key = SigningKey.generate()
+        public_key = private_key.verify_key.encode(encoder=HexEncoder)
         client_pub_keys[i]=public_key
-        client_private_keys[i]=privae_key
+        client_private_keys[i]=private_key
     
     replica_ids={}
     replica_pub_keys={}
@@ -36,10 +36,10 @@ def main():
 
     for i,replica in enumerate(replicas):
         replica_ids[i]=replica
-        privae_key = SigningKey.generate()
-        public_key = privae_key.verify_key.encode(encoder=HexEncoder)
+        private_key = SigningKey.generate()
+        public_key = private_key.verify_key.encode(encoder=HexEncoder)
         replica_pub_keys[i]=public_key
-        replica_private_keys[i]=privae_key
+        replica_private_keys[i]=private_key
 
     for i,client in enumerate(clients):
         setup(client,(i,replicas,client_private_keys[i],client_pub_keys[i],replica_pub_keys,n_req,n_faluty_replicas))

@@ -16,7 +16,7 @@ class Pacemaker:
     
     @classmethod
     def start_timer(cls, new_round):
-        cls.stop_timer(cls.current_round) #need to implement stop_timer
+        # cls.stop_timer(cls.current_round) #need to implement stop_timer
         cls.current_round = new_round
         #start local timer for round current round for duration get round timer(current round)
     

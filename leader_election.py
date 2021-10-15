@@ -1,6 +1,4 @@
 from pacemaker import Pacemaker
-# from block_tree import QC
-# from ledger import Ledger
 import math
 import random
 
@@ -26,7 +24,7 @@ class LeaderElection:
             current_qc = current_block.qc
             curr_window_size+=1
         active_validators = active_validators-last_authors
-        random.seed(10)
+        random.seed(qc.vote_info.round)
         return random.choice(active_validators)
         
     def update_leaders(self, qc):
