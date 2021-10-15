@@ -18,7 +18,9 @@ class Client(process):
 
         for i in range(n_req):
             req=str(client_id)+"-"+str(cid)+":"+str(random.randint(0, NOPS-1))
-            send(('request', self,client_id,sign(req,private_key)), to= replicas)
+            # print(("====",sys.getsizeof((self,client_id,sign_record(req,private_key)))))
+        
+            send(('request', self,client_id,sign_record(req,private_key)), to= replicas)
             results.setdefault(req,set())
             --l1
             await(len(results[req])>n_faulty_replicas)

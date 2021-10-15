@@ -20,14 +20,17 @@ class Ledger:
 
     @classmethod
     def speculate(cls,prev_block_id="genesis",block=genesis_block):
-        parent_state_id=cls.state_block_map.get(prev_block_id,default="genesis")
-        state_id=hash(""+parent_state_id+" ".join(block.payload))
+        
+        parent_state_id=cls.state_block_map.get(prev_block_id,"genesis")
+        state_id=hash((parent_state_id,block.payload))
+        
         blk = LedgerBlock(state_id,block.payload)
         cls.pending_ledger_tree.add(blk,parent_state_id)
         cls.state_block_map[block.id]=state_id
+        
     @classmethod
     def pending_state(cls,block_id): 
-        return cls.state_block_map.get(block_id,default=None)
+        return cls.state_block_map.get(block_id,None)
     @classmethod
     def commit(cls,block):
         # block=cls.pending_ledger_tree.get_block(cls.state_block_map[block_id])
@@ -35,13 +38,13 @@ class Ledger:
         cls.pending_ledger_tree.prune(cls.state_block_map[block.id])
         cls.commited_blocks.set(block.id,block)
     @classmethod
-    def commited_block(cls,block_id):
-        cls.commited_blocks.get(block_id,default=None)
+    def committed_block(cls,block_id):
+        cls.commited_blocks.get(block_id,None)
     @classmethod
     def persist(cls,state_id):
         with open(cls.ledger_name+".txt", "a") as myfile:
-            myfile.write("\n".join(cls.pending_ledger_tree.get_block(state_id)))
+            myfile.write("\n".join(cls.pending_ledger_tree.get_block(state_id).payload))
             myfile.flush()
-            os.fsync(myfile.fileno)
+            os.fsync(myfile.fileno())
             
         

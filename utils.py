@@ -11,8 +11,10 @@ HASHER = nacl.hash.sha256
 def hash(msg):
     return (HASHER(pickle.dumps(msg))).decode("utf-8") 
 
-def sign(record,key):
-    return key.sign(pickle.dumps(record),encoder=HexEncoder)
+def sign_record(record,key):
+    # print(type(key))
+    # print(("----------------------------------------------",pickle.dumps(record)))
+    return key.sign(message=pickle.dumps(record),encoder=HexEncoder)
 
 def verify_decode(record,key):
     verify_key = VerifyKey(key, encoder=HexEncoder)
@@ -25,10 +27,11 @@ class Config:
     n_faulty_replicas=0
     window_size=0
     exclude_size=0
-    network_delta=0.0
-    private_key=SigningKey
-    public_key=SigningKey
+    network_delta=0.25
+    private_key=SigningKey.generate()
+    public_key=private_key.verify_key.encode(encoder=HexEncoder)
     replica_pub_keys=[]
+    replica=None
 
 
 

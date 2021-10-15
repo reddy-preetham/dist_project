@@ -2,7 +2,7 @@ import sys
 import time
 import random
 from client import Client
-from replica import Replica
+from replica_merg import Replica
 from nacl.signing import SigningKey
 from nacl.encoding import HexEncoder
 
@@ -52,3 +52,4 @@ def main():
     await(each(c in clients, has=received(('done',), from_=c)))
     output('All clients done.')
     send(('done',), to= (replicas))
+    
