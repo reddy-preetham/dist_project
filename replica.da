@@ -35,6 +35,7 @@ class Replica(process):
         Config.network_delta = self.network_delta
         Config.public_key=public_key
         Config.private_key=private_key
+        Config.replica_pub_keys=public_key
     def run():
         debug('### start')
         run_done = False
