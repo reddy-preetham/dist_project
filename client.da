@@ -26,7 +26,7 @@ class Client(process):
             txn_id = str(client_id)+"-"+str(cid)
             results.setdefault(txn_id,set())
             --l2
-            await (timeout(2.0))
+            await (timeout(1))
             # if await(len(results[txn_id]) >= n_faulty_replicas+1): pass
                 
             # elif timeout(timer_duration): 
