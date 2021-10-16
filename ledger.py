@@ -23,8 +23,7 @@ class Ledger:
         cls.state_block_map["genesis_id"]="genesis_state_id"
     @classmethod
     def speculate(cls,prev_block_id,block):
-        if(Config.replica_id=="0"):
-            print(("speculate",prev_block_id,block.id))
+        # print((Config.replica_id, "speculate",prev_block_id,block.id,cls.state_block_map))
         parent_state_id=cls.state_block_map.get(prev_block_id,"genesis_state_id")
         state_id=hash((parent_state_id,block.payload))
         
@@ -39,10 +38,11 @@ class Ledger:
     @classmethod
     def commit(cls,block):
         # block=cls.pending_ledger_tree.get_block(cls.state_block_map[block_id])
-        
-        cls.persist(cls.state_block_map[block.id])
-        cls.pending_ledger_tree.prune(cls.state_block_map[block.id])
-        cls.commited_blocks.set(block.id,block)
+        if block.id not in cls.commited_blocks:
+            # print(block.round,block.payload)
+            cls.persist(cls.state_block_map[block.id])
+            cls.pending_ledger_tree.prune(cls.state_block_map[block.id])
+            cls.commited_blocks.set(block.id,block)
     @classmethod
     def committed_block(cls,block_id):
         cls.commited_blocks.get(block_id,None)

@@ -1,5 +1,6 @@
 # from block_tree import Block
 # from crypto_utils import genesis_block
+from utils import *
 class Node:
     def __init__(self, blk):
         self.blk = blk
@@ -21,12 +22,14 @@ class Tree:
 
 
     def add(self, blk, parent_id=None):
+        
         node = Node(blk)
         self.map[blk.id] = node
         if parent_id:
             self.map[parent_id].get_children().append(node)
         else:
             parent_id = blk.qc.vote_info.id
+            # print((Config.replica_id,blk.id,parent_id,blk.payload))
             self.map[parent_id].get_children().append(node)
     
     def get_block(self,block_id):
