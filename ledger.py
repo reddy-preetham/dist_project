@@ -11,7 +11,7 @@ class LedgerBlock:
 
 class Ledger:    
 
-    genesis_block=LedgerBlock("genesis",["genesis transaction"])
+    genesis_block=LedgerBlock("genesis_state_id",["genesis transaction"])
     # commited_blocks=Cache(maxsize=max(Config.window_size,2*Config.n_replicas)) 
     pending_ledger_tree = Tree(genesis_block)
     state_block_map={}
@@ -19,15 +19,18 @@ class Ledger:
     @classmethod
     def initialize_ledger(cls):
         cls.commited_blocks=Cache(maxsize=max(Config.window_size,2*Config.n_replicas))
-        cls.ledger_name = str(Config.replica_id)+"_ledger"
+        cls.ledger_name = "ledgers/"+str(Config.replica_id)+"_ledger"
+        cls.state_block_map["genesis_id"]="genesis_state_id"
     @classmethod
-    def speculate(cls,prev_block_id="genesis",block=genesis_block):
-        
-        parent_state_id=cls.state_block_map.get(prev_block_id,"genesis")
+    def speculate(cls,prev_block_id,block):
+        if(Config.replica_id=="0"):
+            print(("speculate",prev_block_id,block.id))
+        parent_state_id=cls.state_block_map.get(prev_block_id,"genesis_state_id")
         state_id=hash((parent_state_id,block.payload))
         
         blk = LedgerBlock(state_id,block.payload)
         cls.pending_ledger_tree.add(blk,parent_state_id)
+        
         cls.state_block_map[block.id]=state_id
         
     @classmethod
@@ -36,6 +39,7 @@ class Ledger:
     @classmethod
     def commit(cls,block):
         # block=cls.pending_ledger_tree.get_block(cls.state_block_map[block_id])
+        
         cls.persist(cls.state_block_map[block.id])
         cls.pending_ledger_tree.prune(cls.state_block_map[block.id])
         cls.commited_blocks.set(block.id,block)
