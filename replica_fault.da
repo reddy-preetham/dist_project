@@ -1,0 +1,13 @@
+from replica_merge import Replica
+from collections import namedtuple
+class ReplicaFI(process, Replica):
+    # override send method
+
+    def send(m,to):
+
+        super().send(m,to)     # do original send
+        # imagine that attr and val were obtained from a misbehavior spec.
+        attr='current_round'
+        val=3
+        setattr(attr,val)
+    
