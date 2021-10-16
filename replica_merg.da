@@ -30,11 +30,11 @@ config(channel = 'reliable')
 
 class Replica(process):
 
-    def setup(replica_id:str,replicas_ids:dict,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int):
+    def setup(replica_id:str,replicas_ids:dict,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int,rand_seed:int):
         self.n_replicas=len(replicas_ids)
         self.run_done = False
         self.round_done=False
-        
+        random.seed(rand_seed)
         self.network_delta=0.25
         
         #=====Pacemaker Variables=====
@@ -85,8 +85,9 @@ class Replica(process):
             round_done = False
             timer_duration = Pacemaker_get_round_timer(current_round)
             if await(round_done): pass
-            elif timeout(timer_duration): 
-                Pacemaker_local_timeout_round()
+            elif timeout(timer_duration):
+                if len(pending_transaction)>0:
+                    Pacemaker_local_timeout_round()
             
             # await(run_done)
         output('terminating')
@@ -111,43 +112,44 @@ class Replica(process):
         # MemPool.push_transaction(m)
 
     def send_response(txn_id,m):
-        
         client_id=txn_id[:txn_id.find('-')]
         # print("================================replica")
         # print(client_id)
-        send(("response",self,replica_id,sign_record((txn_id,m),private_key)),to=client_ids[client_id])
+        sign_msg=str(random.random())+replica_id
+        send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to=client_ids[client_id])
         
  
     
     def send_msg_replica(id,msg_type,m):
-        send((msg_type,self,replica_id,sign_record(m,private_key)),to=replicas_ids[id])
+        sign_msg=str(random.random())+replica_id+msg_type
+        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=replicas_ids[id])
 
     def broadcast_msg(msg_type,m):       
-        
-        send((msg_type,self,replica_id,sign_record(m,private_key)),to=set(replicas_ids.values()))
+        sign_msg=str(random.random())+replica_id+msg_type
+        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=set(replicas_ids.values()))
         
     
-    def receive(msg=(msg_type,p,id,m)):
+    def receive(msg=(msg_type,p,id,signature,m)):
         
         # print(("====",sys.getsizeof((msg_type,p,id,m))))
         # output(msg_type)
-        if msg_type=="request":
-            m=verify_decode(m,client_public_keys[id])
+        if msg_type=="client_request":
+            verify_decode(signature,client_public_keys[id])
             Mempool_push_transaction(m)
         elif msg_type=="local_timeout":
-            m=verify_decode(m,replica_public_keys[id])
+            verify_decode(signature,replica_public_keys[id])
             Pacemaker_local_timeout_round()
         elif msg_type=="proposal_message":
             
-            m=verify_decode(m,replica_public_keys[id])
+            verify_decode(signature,replica_public_keys[id])
             Mempool_remove_txns(m.block.payload)
             process_proposal_msg(m)
             
         elif msg_type=="vote_message":
-            m=verify_decode(m,replica_public_keys[id])
+            verify_decode(signature,replica_public_keys[id])
             process_vote_msg(m)
         elif msg_type=="timeout_message":
-            m=verify_decode(m,replica_public_keys[id])
+            verify_decode(signature,replica_public_keys[id])
             process_timeout_msg(m)
 
     def process_certificate_qc(qc):
@@ -211,7 +213,8 @@ class Replica(process):
             # output(current_round,LeaderElection_get_leader(current_round),b.payload)
             # if replica_id=="0":
             #     print((high_commit_qc.vote_info.round,"process new round high commit qc"))
-            broadcast_msg("proposal_message",ProposalMsg(b,last_tc,high_commit_qc) )
+            if len(b.payload)>0:
+                broadcast_msg("proposal_message",ProposalMsg(b,last_tc,high_commit_qc) )
     
     #============Peacemaker==============
     def Pacemaker_get_round_timer(r): #need to implement this
@@ -270,6 +273,8 @@ class Replica(process):
         return True
     #==================MemPool==================
     def Mempool_get_transactions():
+        if len(pending_transaction)==0:
+            return []
         if len(transaction_queue)==0:
             return [""]
         txn = transaction_queue.popleft()
@@ -284,14 +289,13 @@ class Replica(process):
     def Mempool_push_transaction(txn):
         txn_id = txn[:txn.find(':')]
 
-        if(not req_cache.has(txn_id)):
+        if(not req_cache.has(txn_id)) or (req_cache.has(txn_id) and req_cache.get(txn_id)=="processing"):
             pending_transaction.add(txn_id)
             transaction_queue.append(txn)
-            req_cache.add(txn_id,"In queue, not processed")
+            req_cache.add(txn_id,"queue")
             
-        elif req_cache.has(txn_id):
+        elif req_cache.get(txn_id)=="queue" :
             send_response(txn_id,req_cache.get(txn_id,default=None))
-
   
     def Mempool_processed_txns(txns):
         for txn in txns:
@@ -310,6 +314,9 @@ class Replica(process):
             
             if txn in transaction_queue:
                 transaction_queue.remove(txn)
+                txn_id=txn[:txn.find(':')]
+                req_cache.set(txn_id,"processing")
+
 
     #=============Leader election=============
     def LeaderElection_elect_reputation_leader(qc):

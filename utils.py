@@ -19,7 +19,7 @@ def sign_record(record,key):
 def verify_decode(record,key):
     verify_key = VerifyKey(key, encoder=HexEncoder)
     verify_key.verify(record,encoder=HexEncoder)
-    return pickle.loads(HexEncoder.decode(record.message))
+    # return pickle.loads(HexEncoder.decode(record.message))
 
 class Config:
     replica_id=""
