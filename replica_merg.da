@@ -1,5 +1,6 @@
 
 NOPS=100
+from os import replace
 import sys
 import time
 import random
@@ -35,7 +36,7 @@ class Replica(process):
         self.round_done=False
         
         self.network_delta=0.25
-        # del replicas_ids[replica_id]
+        
         #=====Pacemaker Variables=====
         self.current_round=0
         self.last_round_tc=None
@@ -53,17 +54,18 @@ class Replica(process):
         self.reputation_leaders = dict()
 
         #=========Block Tree =================
-        self.high_qc=QC(VoteInfo("id",-1,"id",-2,"test"),LedgerCommitInfo(None,""),["genesis"])
-        self.high_commit_qc=QC(VoteInfo("id",-1,"id",-2,"test"),LedgerCommitInfo(None,""),["genesis"])
+        self.high_qc=QC(VoteInfo("genesis_id",-1,"genesis_id",-2,"genesis_state"),LedgerCommitInfo(None,""),["genesis"])
+        self.high_commit_qc=QC(VoteInfo("genesis_id",-2,"genesis_id",-3,"genesis_state"),LedgerCommitInfo(None,""),["genesis"])
         self.pending_votes={}
-        self.genesis_block=Block(Config.replica_id, -1, [], high_qc, "id")
+        self.genesis_block=Block(Config.replica_id, 0, ["genesis_txn"], high_qc, "genesis_id")
         self.pending_block_tree= Tree(genesis_block) 
 
         #=================Safety=================
         self.__highest_vote_round=0
         self.__highest_qc_round=-1
-        
-
+        # del replicas_ids[replica_id]
+        self.brd_replicas = replicas_ids.copy()
+        del self.brd_replicas[replica_id]
         
     def set_variables():
         Config.replica_id = replica_id
@@ -109,8 +111,10 @@ class Replica(process):
         # MemPool.push_transaction(m)
 
     def send_response(txn_id,m):
-        [print("===========================================")]
+        
         client_id=txn_id[:txn_id.find('-')]
+        # print("================================replica")
+        # print(client_id)
         send(("response",self,replica_id,sign_record((txn_id,m),private_key)),to=client_ids[client_id])
         
  
@@ -118,14 +122,15 @@ class Replica(process):
     def send_msg_replica(id,msg_type,m):
         send((msg_type,self,replica_id,sign_record(m,private_key)),to=replicas_ids[id])
 
-    def broadcast_msg(msg_type,m):
-        send((msg_type,self,replica_id,sign_record(m,private_key)),to=set(replicas_ids.values()))
-
+    def broadcast_msg(msg_type,m):       
+        
+        send((msg_type,self,replica_id,sign_record(m,private_key)),to=set(brd_replicas.values()))
+        
     
     def receive(msg=(msg_type,p,id,m)):
         
         # print(("====",sys.getsizeof((msg_type,p,id,m))))
-        output(msg_type)
+        # output(msg_type)
         if msg_type=="request":
             m=verify_decode(m,client_public_keys[id])
             Mempool_push_transaction(m)
@@ -133,8 +138,11 @@ class Replica(process):
             m=verify_decode(m,replica_public_keys[id])
             Pacemaker_local_timeout_round()
         elif msg_type=="proposal_message":
+            
             m=verify_decode(m,replica_public_keys[id])
+            
             process_proposal_msg(m)
+            
         elif msg_type=="vote_message":
             m=verify_decode(m,replica_public_keys[id])
             process_vote_msg(m)
@@ -149,6 +157,8 @@ class Replica(process):
         Pacemaker_advance_round_qc(qc)
 
     def process_proposal_msg(P):
+        # if replica_id=="0":
+        #     print((P.block.round,P.high_commit_qc.vote_info.round,"proposal msg"))
         process_certificate_qc(P.block.qc)
         process_certificate_qc(P.high_commit_qc)
         Pacemaker_advance_round_tc(P.last_round_tc)
@@ -158,16 +168,23 @@ class Replica(process):
             return 
         
         BlockTree_execute_and_insert(P.block)
+        # print("=========================="+replica_id)
         
         vote_msg = Safety_make_vote(P.block, P.last_round_tc)
+        # if replica_id=="0":
+        #     print((P.block.round,high_commit_qc.vote_info.round,"proposal msg after vote"))
         
-        if vote_msg != None:
+        if vote_msg != None:            
             send_msg_replica(LeaderElection_get_leader(round + 1),"vote_message",vote_msg)
+            
+        
         
            
 
     def process_timeout_msg(M):
-        
+        # if replica_id=="0":
+        #     print("============================")
+        #     print((M.tmo_info.round,M.tmo_info.high_qc.vote_info.round,M.high_commit_qc.vote_info.round))
         process_certificate_qc(M.tmo_info.high_qc)
         process_certificate_qc(M.high_commit_qc)
         Pacemaker_advance_round_tc(M.last_round_tc)
@@ -178,15 +195,24 @@ class Replica(process):
 
     
     def process_vote_msg(M):
+        # if replica_id=="0":
+        #     print((M.high_commit_qc.vote_info.round,"vote msg"))
         qc = BlockTree_process_vote(M)
         
         if qc is not None:
             process_certificate_qc(qc)
+            # if replica_id=="0":
+            #     print((high_commit_qc.vote_info.round,"vote after msg"))
             process_new_round_event(None)
 
     def process_new_round_event(last_tc):
         if replica_id==LeaderElection_get_leader(current_round):
+            
             b=BlockTree_generate_block(Mempool_get_transactions(), current_round)
+            # output("===========================================")
+            # output(current_round,LeaderElection_get_leader(current_round),b.payload)
+            # if replica_id=="0":
+            #     print((high_commit_qc.vote_info.round,"process new round high commit qc"))
             broadcast_msg("proposal_message",ProposalMsg(b,last_tc,high_commit_qc) )
     
     #============Peacemaker==============
@@ -215,10 +241,13 @@ class Replica(process):
 
         if len([x.sender for x in pending_timeouts[tmo_info.round]]) == n_faulty_replicas+1:
             # stop_timer(current_round)
-            round_done=True
+            # round_done=True
             Pacemaker_local_timeout_round()
             
         if len([x.sender for x in pending_timeouts[tmo_info.round]]) == 2*n_faulty_replicas+1:
+            # if replica_id=="0":
+            #     print("============================")
+            #     print((tmo_info.round,pending_timeouts[tmo_info.round]))
             return TC(tmo_info.round, [x.high_qc.vote_info.round for x in pending_timeouts[tmo_info.round]], [x.signature for x in pending_timeouts[tmo_info.round]])
         
         return None
@@ -269,8 +298,10 @@ class Replica(process):
             req_cache.set(txn_id,"processed")
             
             pending_transaction.discard(txn_id)
-            
-            send_response(txn_id,req_cache.get(txn_id,default=None))
+            if txn_id and txn_id.find('-')>0:
+                send_response(txn_id,req_cache.get(txn_id,default=None))
+            # if len(pending_transaction)==0:
+            #     run_done=True
    
 
     #=============Leader election=============
@@ -312,6 +343,7 @@ class Replica(process):
         
     
     def LeaderElection_get_leader(round):
+        
         if round in reputation_leaders:
             return reputation_leaders[round]
         
@@ -320,7 +352,11 @@ class Replica(process):
     
     #===========block tree ============
     def BlockTree_process_qc(qc):
+        
         if qc.ledger_commit_info.commit_state_id is not None:
+            # if replica_id=="0":
+            #     print("===========================in b. qc")
+            #     print((qc.vote_info.round,qc.ledger_commit_info.commit_state_id))
             Ledger.commit(pending_block_tree.get_block(qc.vote_info.parent_id))
             Mempool_processed_txns(pending_block_tree.get_block(qc.vote_info.parent_id).payload)
             pending_block_tree.prune(qc.vote_info.parent_id) #need to implement it
@@ -333,9 +369,11 @@ class Replica(process):
         
 
     def BlockTree_execute_and_insert( b):
+        
         Ledger.speculate(b.qc.vote_info.id,b)
         
         pending_block_tree.add(b) 
+        
 
     def BlockTree_process_vote(v):
         BlockTree_process_qc(v.high_commit_qc)

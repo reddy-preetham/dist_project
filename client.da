@@ -23,24 +23,26 @@ class Client(process):
             send(('request', self,client_id,sign_record(req,private_key)), to= replicas)
             txn_id = str(client_id)+"-"+str(cid)
             results.setdefault(txn_id,set())
-            --l1
-            await(len(results[txn_id])>n_faulty_replicas)
+            
+            # await(len(results[txn_id])>n_faulty_replicas)
             cid += 1
-        
-        
-        # await(each(m in results.keys(), has= len(results[m]) == n_faulty_replicas+1))
+        --l1
+        await(each(txn_id in  results.keys(), has=len(results[txn_id]) >= n_faulty_replicas+1))
+        # for txn_id in results.keys():
+        #     --l1
+            
+        #     await(len(results[txn_id]) >= n_faulty_replicas+1)
         
         
         output('terminating')
         send(('done',), to=parent())
 
     
-    def receive(msg= ('response', replica,replica_id,(txn_id,m)),at=(l1,)):
-        # print("====================")
-        # print((txn_id,m))
+    def receive(msg= ('response', replica,replica_id,m),at=(l1,)):
+        
         txn_id,m=verify_decode(m,replica_public_keys[replica_id])
         results[txn_id].add(replica)
-        print(("received response from",replica,txn_id,m,len(results[txn_id])))
+        # print(("received response from",replica,txn_id,m,len(results[txn_id])))
         debug('### response')
         
 
