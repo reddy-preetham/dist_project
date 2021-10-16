@@ -1,6 +1,6 @@
 
 NOPS=100
-from os import replace
+from os import closerange, replace
 import sys
 import time
 import random
@@ -64,8 +64,8 @@ class Replica(process):
         self.__highest_vote_round=0
         self.__highest_qc_round=-1
         # del replicas_ids[replica_id]
-        self.brd_replicas = replicas_ids.copy()
-        del self.brd_replicas[replica_id]
+        # self.brd_replicas = replicas_ids.copy()
+        # del self.brd_replicas[replica_id]
         
     def set_variables():
         Config.replica_id = replica_id
@@ -124,7 +124,7 @@ class Replica(process):
 
     def broadcast_msg(msg_type,m):       
         
-        send((msg_type,self,replica_id,sign_record(m,private_key)),to=set(brd_replicas.values()))
+        send((msg_type,self,replica_id,sign_record(m,private_key)),to=set(replicas_ids.values()))
         
     
     def receive(msg=(msg_type,p,id,m)):
@@ -140,7 +140,7 @@ class Replica(process):
         elif msg_type=="proposal_message":
             
             m=verify_decode(m,replica_public_keys[id])
-            
+            Mempool_remove_txns(m.block.payload)
             process_proposal_msg(m)
             
         elif msg_type=="vote_message":
@@ -160,6 +160,7 @@ class Replica(process):
         # if replica_id=="0":
         #     print((P.block.round,P.high_commit_qc.vote_info.round,"proposal msg"))
         process_certificate_qc(P.block.qc)
+        # if P.block.qc != P.high_commit_qc:
         process_certificate_qc(P.high_commit_qc)
         Pacemaker_advance_round_tc(P.last_round_tc)
         round = current_round
@@ -176,10 +177,7 @@ class Replica(process):
         
         if vote_msg != None:            
             send_msg_replica(LeaderElection_get_leader(round + 1),"vote_message",vote_msg)
-            
-        
-        
-           
+
 
     def process_timeout_msg(M):
         # if replica_id=="0":
@@ -226,6 +224,7 @@ class Replica(process):
     def Pacemaker_local_timeout_round():
         timeout_info = Safety_make_timeout(current_round, high_qc, last_round_tc)
         broadcast_msg("timeout_message",TimeoutMsg(timeout_info,last_round_tc,high_commit_qc))
+        round_done=True
      
     def Pacemaker_process_remote_timeout(tmo): #need to remove f
         
@@ -274,20 +273,23 @@ class Replica(process):
         if len(transaction_queue)==0:
             return [""]
         txn = transaction_queue.popleft()
+        while(txn in req_cache):
+            txn=transaction_queue.popleft()
         txn_id=txn[:txn.find(':')]
         req_cache.add(txn_id,"processing")
+        # print("===================",Config.replica_id,transaction_queue)
         return [txn]
 
    
     def Mempool_push_transaction(txn):
         txn_id = txn[:txn.find(':')]
-        
+
         if(not req_cache.has(txn_id)):
             pending_transaction.add(txn_id)
             transaction_queue.append(txn)
             req_cache.add(txn_id,"In queue, not processed")
             
-        else:
+        elif req_cache.has(txn_id):
             send_response(txn_id,req_cache.get(txn_id,default=None))
 
   
@@ -303,6 +305,11 @@ class Replica(process):
             # if len(pending_transaction)==0:
             #     run_done=True
    
+    def Mempool_remove_txns(txns):
+        for txn in txns:
+            
+            if txn in transaction_queue:
+                transaction_queue.remove(txn)
 
     #=============Leader election=============
     def LeaderElection_elect_reputation_leader(qc):
@@ -371,9 +378,11 @@ class Replica(process):
     def BlockTree_execute_and_insert( b):
         
         Ledger.speculate(b.qc.vote_info.id,b)
+        # print((Config.replica_id,b.author,"round",b.qc.vote_info.round))#,b.id,b.qc.vote_info.id,b.qc.vote_info.parent_id))
         
         pending_block_tree.add(b) 
-        
+        # print(pending_block_tree.map,pending_block_tree.root.blk.id)
+ 
 
     def BlockTree_process_vote(v):
         BlockTree_process_qc(v.high_commit_qc)

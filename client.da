@@ -23,7 +23,8 @@ class Client(process):
             send(('request', self,client_id,sign_record(req,private_key)), to= replicas)
             txn_id = str(client_id)+"-"+str(cid)
             results.setdefault(txn_id,set())
-            
+            # await(timeout(0.5))
+            # --l1
             # await(len(results[txn_id])>n_faulty_replicas)
             cid += 1
         --l1
@@ -41,7 +42,8 @@ class Client(process):
     def receive(msg= ('response', replica,replica_id,m),at=(l1,)):
         
         txn_id,m=verify_decode(m,replica_public_keys[replica_id])
-        results[txn_id].add(replica)
+        if m=="processed":
+            results[txn_id].add(replica)
         # print(("received response from",replica,txn_id,m,len(results[txn_id])))
         debug('### response')
         
