@@ -54,10 +54,10 @@ class Replica(process):
         self.reputation_leaders = dict()
 
         #=========Block Tree =================
-        self.high_qc=QC(VoteInfo("genesis_id",-1,"genesis_id",-2,"genesis_state"),LedgerCommitInfo(None,""),["genesis"])
-        self.high_commit_qc=QC(VoteInfo("genesis_id",-2,"genesis_id",-3,"genesis_state"),LedgerCommitInfo(None,""),["genesis"])
+        self.high_qc=None
+        self.high_commit_qc=None#QC(VoteInfo("genesis_id",-2,"genesis_id",-3,"genesis_state"),LedgerCommitInfo(None,""),["genesis"])
         self.pending_votes={}
-        self.genesis_block=Block(Config.replica_id, 0, ["genesis_txn"], high_qc, "genesis_id")
+        self.genesis_block=Block(replica_id, 0, ["genesis_txn"], high_qc, "genesis_id")
         self.pending_block_tree= Tree(genesis_block) 
 
         #=================Safety=================
@@ -68,6 +68,7 @@ class Replica(process):
         # del self.brd_replicas[replica_id]
         
     def set_variables():
+        Config.set_config(replica_id,n_replicas,n_faulty_replicas,window_size,network_delta,public_key,private_key,replica_public_keys)
         Config.replica_id = replica_id
         Config.n_replicas = n_replicas
         Config.n_faulty_replicas = n_faulty_replicas
@@ -75,8 +76,10 @@ class Replica(process):
         Config.network_delta = self.network_delta
         Config.public_key=public_key
         Config.private_key=private_key
-        Config.replica_pub_keys=public_key
+        Config.replica_pub_keys=replica_public_keys
         Ledger.initialize_ledger()
+        high_qc=QC(VoteInfo("genesis_id",-1,"genesis_id",-2,"genesis_state"),LedgerCommitInfo(None,""),[sign_record("genesis",private_key)])
+        high_commit_qc=QC(VoteInfo("genesis_id",-2,"genesis_id",-3,"genesis_state"),LedgerCommitInfo(None,""),[sign_record("genesis",private_key)])
     def run():
         debug('### start')
         run_done = False
@@ -97,7 +100,7 @@ class Replica(process):
 
     # def receive(msg= ('request', p,client_id,m)):
     #     print(client_public_keys[client_id] )
-    #     m=verify_decode(m,client_public_keys[client_id])
+    #     m=verify_signature(m,client_public_keys[client_id])
     #     print(("received request from",p,m))
        
     #     # print(("dsd",Temp2.get()))
@@ -106,7 +109,7 @@ class Replica(process):
     #     debug('### request', p)
 
     # def receive(msg=("request",p,client_id,m)):
-    #     m=verify_decode(m,client_public_keys[client_id])
+    #     m=verify_signature(m,client_public_keys[client_id])
     #     print((self,"received request from",p,m))
         
         # MemPool.push_transaction(m)
@@ -132,33 +135,50 @@ class Replica(process):
     def receive(msg=(msg_type,p,id,signature,m)):
         
         # print(("====",sys.getsizeof((msg_type,p,id,m))))
-        # output(msg_type)
+        output(msg_type)
         if msg_type=="client_request":
-            verify_decode(signature,client_public_keys[id])
+            if not verify_signature(signature,client_public_keys[id]):
+                output("ERROR: signature not verified")
+                return
+
             Mempool_push_transaction(m)
         elif msg_type=="local_timeout":
-            verify_decode(signature,replica_public_keys[id])
+
+            if not verify_signature(signature,replica_public_keys[id]):
+                output("ERROR: signature not verified")
+                return
             Pacemaker_local_timeout_round()
         elif msg_type=="proposal_message":
             
-            verify_decode(signature,replica_public_keys[id])
+            if not verify_signature(signature,replica_public_keys[id]) or not verify_signature(m.signature,replica_public_keys[m.sender]):
+                output("ERROR: signature not verified")
+                return
             Mempool_remove_txns(m.block.payload)
             process_proposal_msg(m)
             
         elif msg_type=="vote_message":
-            verify_decode(signature,replica_public_keys[id])
+            if not verify_signature(signature,replica_public_keys[id]):
+                output("ERROR: signature not verified")
+                return
             process_vote_msg(m)
         elif msg_type=="timeout_message":
-            verify_decode(signature,replica_public_keys[id])
+            if not verify_signature(signature,replica_public_keys[id]):
+                output("ERROR: signature not verified")
+                return
             process_timeout_msg(m)
 
     def process_certificate_qc(qc):
+        if not validate_signatures(qc.signatures) or not verify_signature(qc.author_signature,replica_public_keys[qc.author]):
+            output("ERROR: signature not verified")
+            return
+        
         BlockTree_process_qc(qc)
         
         LeaderElection_update_leaders(qc)
         Pacemaker_advance_round_qc(qc)
 
     def process_proposal_msg(P):
+        
         # if replica_id=="0":
         #     print((P.block.round,P.high_commit_qc.vote_info.round,"proposal msg"))
         process_certificate_qc(P.block.qc)
@@ -185,10 +205,18 @@ class Replica(process):
         # if replica_id=="0":
         #     print("============================")
         #     print((M.tmo_info.round,M.tmo_info.high_qc.vote_info.round,M.high_commit_qc.vote_info.round))
-        process_certificate_qc(M.tmo_info.high_qc)
+
+        # if not verify_signature(M.tmo_info.signature,replica_public_keys[M.tmo_info.sender]) or (M.last_round_tc and not validate_signatures(M.last_round_tc.tmo_signatures)):
+        #     output("ERROR: signature not verified")
+        #     return
+
+        if M.tmo_info:
+            process_certificate_qc(M.tmo_info.high_qc)
         process_certificate_qc(M.high_commit_qc)
         Pacemaker_advance_round_tc(M.last_round_tc)
-        tc = Pacemaker_process_remote_timeout(M)
+        tc=None
+        if M.tmo_info:
+            tc = Pacemaker_process_remote_timeout(M)
         if tc is not None:
             Pacemaker_advance_round_tc(tc)
             process_new_round_event(tc)
@@ -197,6 +225,9 @@ class Replica(process):
     def process_vote_msg(M):
         # if replica_id=="0":
         #     print((M.high_commit_qc.vote_info.round,"vote msg"))
+        if not verify_signature(M.signature,replica_public_keys[M.sender]):
+            output("ERROR: signature not verified")
+            return
         qc = BlockTree_process_vote(M)
         
         if qc is not None:
@@ -330,8 +361,8 @@ class Replica(process):
             if current_block is None:
                 break
             block_author = current_block.author
-            if curr_window_size<window_size:
-                active_validators = set.union(active_validators, current_qc.signatures.signers())
+            if curr_window_size<window_size: pass
+                # active_validators = set.union(active_validators, current_qc.signatures.signers())
             if(len(last_authors) < exclude_size):
                 last_authors.add(block_author)
             current_qc = current_block.qc
@@ -439,12 +470,13 @@ class Replica(process):
         else:
             return None
     
-    def __Safety_valid_signatures(sig_list):
-        return True
+    def __Safety_valid_signatures(qc,tc):
+        return validate_signatures(qc.signatures) and verify_signature(qc.author_signature,replica_public_keys[qc.author]) and (not tc or validate_signatures(tc.tmo_signatures))
+    
     
     def Safety_make_vote(b,last_tc):
         qc_round=b.qc.vote_info.round
-        if __Safety_valid_signatures((b,last_tc)) and __Safety_safe_to_vote(b.round,qc_round,last_tc):
+        if __Safety_valid_signatures(b.qc,last_tc) and __Safety_safe_to_vote(b.round,qc_round,last_tc):
             __Safety_update_highest_qc_round(qc_round)
             __Safety_increase_highest_vote_round(b.round)
             vote_info=VoteInfo(id=b.id,round=b.round,parent_id=b.qc.vote_info.id,parent_round=qc_round,state=Ledger.pending_state(b.id))
@@ -454,7 +486,7 @@ class Replica(process):
     
     def Safety_make_timeout(round,high_qc,last_tc):
         qc_round=high_qc.vote_info.round
-        if __Safety_valid_signatures((high_qc,last_tc)) and __Safety_safe_to_timeout(round,qc_round,last_tc):
+        if __Safety_valid_signatures(high_qc,last_tc) and __Safety_safe_to_timeout(round,qc_round,last_tc):
             __Safety_increase_highest_vote_round(round)
             return TimeoutInfo(round,high_qc)
         return None
@@ -488,8 +520,7 @@ class QC:
         self.vote_info = vote_info
         self.ledger_commit_info = ledger_commit_info
         self.signatures = signatures
-        self.author = Config.replica_id
-        
+        self.author = Config.replica_id        
         self.author_signature = sign_record(self.signatures,Config.private_key).decode("utf-8") 
         
 

@@ -16,10 +16,25 @@ def sign_record(record,key):
     # print(("----------------------------------------------",pickle.dumps(record)))
     return key.sign(message=pickle.dumps(record),encoder=HexEncoder)
 
-def verify_decode(record,key):
+def verify_signature(record,key):
     verify_key = VerifyKey(key, encoder=HexEncoder)
-    verify_key.verify(record,encoder=HexEncoder)
+    try:
+        verify_key.verify(record,encoder=HexEncoder)
+    except nacl.exceptions.BadSignatureError:
+        print("=========================",record,key)
+        return False
+    return True
     # return pickle.loads(HexEncoder.decode(record.message))
+def validate_signatures(signatures_list):
+    return True
+    for signature in signatures_list:
+        is_valid=False
+        for key in Config.replica_pub_keys.values():
+            is_valid = is_valid or verify_signature(signature,key)
+        if not is_valid:
+            return False
+    return True
+
 
 class Config:
     replica_id=""
@@ -32,6 +47,15 @@ class Config:
     public_key=private_key.verify_key.encode(encoder=HexEncoder)
     replica_pub_keys=[]
 
+    def set_config(replica_id,n_replicas,n_faulty_replicas,window_size,network_delta,public_key,private_key,replica_public_keys):
+        Config.replica_id = replica_id
+        Config.n_replicas = n_replicas
+        Config.n_faulty_replicas = n_faulty_replicas
+        Config.window_size = window_size
+        Config.network_delta = network_delta
+        Config.public_key=public_key
+        Config.private_key=private_key
+        Config.replica_pub_keys=replica_public_keys
 
 
 
