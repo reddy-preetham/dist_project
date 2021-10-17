@@ -7,62 +7,60 @@ import random
 import string
 
 
+config(channel='reliable')
 
-config(channel = 'reliable')
+
 class Client(process):
-    def setup(client_id:str,replicas:set,private_key:str,public_key:str,replica_public_keys:dict,n_req:int,n_faulty_replicas:int,rand_seed:int,timeout_dur:float):
+    def setup(client_id: str, replicas: set, private_key: str, public_key: str,
+              replica_public_keys: dict, n_req: int, n_faulty_replicas: int,
+              rand_seed: int, timeout_dur: float):
         self.cid = 0           # command id
         self.results = dict()  # map of command id to result of command
         self.count = dict()    # map of command id to number of responses
-   
 
     def get_next_transaction():
         letters = string.ascii_lowercase
         return ''.join(random.choice(letters) for i in range(10))
+
     def run():
         output(str(client_id)+" running")
         for i in range(n_req):
 
-            req=str(client_id)+"-"+str(cid)+":"+str(get_next_transaction())
-   
-            send_request(req,replicas)
- 
+            req = str(client_id)+"-"+str(cid)+":"+str(get_next_transaction())
+
+            send_request(req, replicas)
+
             txn_id = str(client_id)+"-"+str(cid)
-            results.setdefault(txn_id,set())
+            results.setdefault(txn_id, set())
             --l2
             # await (timeout(1))
 
             cid += 1
 
         --l1
-        await(each(txn_id in  results.keys(), has=len(results[txn_id]) >= n_faulty_replicas+1))
-        
+        await(each(txn_id in results.keys(), has=len(results[txn_id]) >= n_faulty_replicas+1))
+
         output('terminating')
         send(('done',), to=parent())
         await(timeout(5))
 
-    
-    def receive(msg= ('response', replica,replica_id,signature,resp),at=(l1,l2,)):
-        output("received response - {} from replica - {}".format(resp,replica_id))
-        if verify_signature(signature,replica_public_keys[replica_id]):
-            txn_id,m=resp
-            if m=="processed":
+    def receive(msg=('response', replica, replica_id, signature, resp), at=(l1, l2,)):
+        output("received response - {} from replica - {}".format(resp, replica_id))
+        if verify_signature(signature, replica_public_keys[replica_id]):
+            txn_id, m = resp
+            if m == "processed":
                 results[txn_id].add(replica)
-        
 
-    def send_request(request,replicas):
-        sign_msg=str(random.random())+client_id
-        send(('client_request', self,client_id,sign_record(sign_msg,private_key),request), to= replicas)
-    
+    def send_request(request, replicas):
+        sign_msg = str(random.random())+client_id
+        send(('client_request', self, client_id, sign_record(
+            sign_msg, private_key), request), to=replicas)
+
     def is_commited(request):
-        send_request(request,replicas)
-        txn_id=request[:request.find(':')]
+        send_request(request, replicas)
+        txn_id = request[:request.find(':')]
         --l2
         if await(len(results[txn_id]) >= n_faulty_replicas+1):
             return True
-        elif timeout(timeout_dur): 
+        elif timeout(timeout_dur):
             return False
-        
-
-
-

@@ -4,6 +4,7 @@ from utils import *
 class Node:
     """Node creation for the Tree.
     Contains blk data and all successive blocks nodes in the children list"""
+
     def __init__(self, blk):
         self.blk = blk
         self.children = list()
@@ -11,6 +12,7 @@ class Node:
 
 class Tree:
     """Tree data structure for storing pending blocks"""
+
     def __init__(self, blk):
         self.root = Node(blk)
         self.map = {}
