@@ -1,36 +1,37 @@
 # from main import *
 from utils import *
-NOPS=100
+# NOPS=100
 import sys
 import time
 import random
+import string
 
 
 
 config(channel = 'reliable')
 class Client(process):
-    def setup(client_id:str,replicas:set,private_key:str,public_key:str,replica_public_keys:dict,n_req:int,n_faulty_replicas:int,rand_seed:int):
+    def setup(client_id:str,replicas:set,private_key:str,public_key:str,replica_public_keys:dict,n_req:int,n_faulty_replicas:int,rand_seed:int,timeout_dur:float):
         self.cid = 0           # command id
         self.results = dict()  # map of command id to result of command
         self.count = dict()    # map of command id to number of responses
-        self.timer_duration=1
+   
 
+    def get_next_transaction():
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for i in range(10))
     def run():
-
+        output(str(client_id)+" running")
         for i in range(n_req):
 
-            req=str(client_id)+"-"+str(cid)+":"+str(random.randint(0, NOPS-1))
-            # print(("====",sys.getsizeof((self,client_id,sign_record(req,private_key)))))
+            req=str(client_id)+"-"+str(cid)+":"+str(get_next_transaction())
+   
             send_request(req,replicas)
-            # send(('request', self,client_id,sign_record(req,private_key)), to= replicas)
+ 
             txn_id = str(client_id)+"-"+str(cid)
             results.setdefault(txn_id,set())
             --l2
-            await (timeout(1))
-            # if await(len(results[txn_id]) >= n_faulty_replicas+1): pass
-                
-            # elif timeout(timer_duration): 
-            #     return False
+            # await (timeout(1))
+
             cid += 1
 
         --l1
@@ -38,6 +39,7 @@ class Client(process):
         
         output('terminating')
         send(('done',), to=parent())
+        await(timeout(5))
 
     
     def receive(msg= ('response', replica,replica_id,signature,resp),at=(l1,l2,)):
@@ -46,21 +48,20 @@ class Client(process):
         
         if m=="processed":
             results[txn_id].add(replica)
-        # print(("received response from",replica,txn_id,m,len(results[txn_id])))
-        debug('### response')
+        
 
     def send_request(request,replicas):
         sign_msg=str(random.random())+client_id
         send(('client_request', self,client_id,sign_record(sign_msg,private_key),request), to= replicas)
     
-    # def is_commited(request):
-    #     send_request(request,replicas)
-    #     txn_id=txn[:txn.find(':')]
-    #     --l2
-    #     if await(len(results[txn_id]) >= n_faulty_replicas+1):
-    #         return True
-    #     elif timeout(timer_duration): 
-    #         return False
+    def is_commited(request):
+        send_request(request,replicas)
+        txn_id=request[:request.find(':')]
+        --l2
+        if await(len(results[txn_id]) >= n_faulty_replicas+1):
+            return True
+        elif timeout(timeout_dur): 
+            return False
         
 
 

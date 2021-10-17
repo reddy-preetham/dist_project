@@ -2,6 +2,8 @@ from replica_merg import Replica
 from collections import namedtuple
 import random
 from enum import Enum
+import logging
+
 class MsgType(Enum):
     proposal_message = 1
     timeout_message = 2
@@ -13,39 +15,43 @@ class FailType(Enum):
     MsgLoss =1
     Delay =2
     SetAttr =3
-class ReplicaFI(process, Replica):
-    # override send method
-    
 
-    def setup(replica_id:str,replicas_ids:dict,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int,rand_seed:int):
-        super().setup(replica_id,replicas_ids,client_ids,private_key,public_key,replica_public_keys,client_public_keys,n_faulty_replicas,rand_seed)
+config(channel = 'reliable')
+
+class ReplicaFI(process, Replica):
+
+    def setup(replica_id:str,replicas_ids:dict,client_ids:dict,private_key:str,public_key:str,replica_public_keys:dict,client_public_keys:dict,n_faulty_replicas:int,rand_seed:int, network_delta:float, window_size:int, exclude_size:int):
+        super().setup(replica_id,replicas_ids,client_ids,private_key,public_key,replica_public_keys,client_public_keys,n_faulty_replicas,rand_seed,network_delta, window_size, exclude_size)
         self.FailureConfig = namedtuple('FailureConfig', ['failures', 'seed'], defaults=[None,None])
         self.Failure = namedtuple( 'Failure', ['src', 'dest', 'msg_type', 'round', 'prob', 'fail_type', 'val', 'attr'], defaults=[None]*8)
-        self.failure_config = FailureConfig(failures = [ 
-                                                    Failure(src='_',dest='leader',msg_type=MsgType.vote_message,round=1,prob=1,fail_type=FailType.Delay, val=0.1), 
-                                                Failure(src=2,dest='_',msg_type=MsgType.wildcard,round=3,prob=0.5,fail_type=FailType.MsgLoss), 
-                                                Failure(src='leader',dest='_',msg_type=MsgType.vote_message,round=3,prob=0.5,fail_type=FailType.SetAttr,val=2,attr='last_vote_round')],seed = 1)
+        self.failure_config = FailureConfig(failures = [ Failure(src='_',dest='leader',msg_type=MsgType.vote_message,round=1,prob=1,fail_type=FailType.Delay, val=0.1), 
+                                            Failure(src=2,dest='_',msg_type=MsgType.wildcard,round=3,prob=0.5,fail_type=FailType.MsgLoss), 
+                                            Failure(src='leader',dest='_',msg_type=MsgType.vote_message,round=3,prob=0.5,fail_type=FailType.SetAttr,val=2,attr='last_vote_round')],seed = 1)
         random.seed(self.failure_config.seed)
+        logging.basicConfig(filename="logs/faulty_"+str(replica_id)+".log",
+                        filemode='a',
+                        format='%(asctime)s %(levelname)s - %(message)s',
+                        datefmt='%H:%M:%S',
+                        level=logging.INFO)
 
     def send(m,to):
-        msg_type,replica,replica_id,signature,msg =m
+       
+        msg_type,_,replica_id,_,msg =m
         
         for i, failure in enumerate(failure_config.failures):
-            src="_"
+            src=""
             dest=replicas_ids.get(failure.dest,"_")
             if(failure.src=='leader'):
                 src=LeaderElection_get_leader(failure.round)
-                # print(src)
+
             if(failure.dest=='leader'):
                 dest=replicas_ids[LeaderElection_get_leader(failure.round)]
-            # print(src,dest)
-            
+
             if (src==replica_id or src=="_") and (dest=="_" or dest in to ) and (failure.msg_type==MsgType[msg_type] or failure.msg_type==MsgType.wildcard) and random.uniform(0.0, 1.0) >= failure.prob and current_round==failure.round:
-                # (failure.src==replica_id or failure.src=="_") and (failue.dest==replica_id or failure.dest=="_") and 
-                # print("========")
                 attr=failure.attr
                 value=failure.val
                 fail_type=failure.fail_type
+                logging.info(failure)
                 if fail_type==FailType.Delay:
                     await(timeout(value))
                     # break

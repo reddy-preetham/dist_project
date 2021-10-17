@@ -1,0 +1,9 @@
+n_clients = 3
+n_replicas = 10
+n_faluty_replicas = 3
+n_client_txns = 2
+random_seed = 100
+client_timeout = 5
+network_delta = 0.25
+replica_leader_window_size = 10
+replica_leader_exclude_size = 3
