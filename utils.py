@@ -21,12 +21,12 @@ def verify_signature(record,key):
     try:
         verify_key.verify(record,encoder=HexEncoder)
     except nacl.exceptions.BadSignatureError:
-        print("=========================",record,key)
+        # print("=========================",record,key)
         return False
     return True
     # return pickle.loads(HexEncoder.decode(record.message))
 def validate_signatures(signatures_list):
-    return True
+    # return True
     for signature in signatures_list:
         is_valid=False
         for key in Config.replica_pub_keys.values():
@@ -34,7 +34,15 @@ def validate_signatures(signatures_list):
         if not is_valid:
             return False
     return True
-
+def get_signers(signatures_list):
+    signers=set()
+    for signature in signatures_list:
+        for key,value in Config.replica_pub_keys:
+            if verify_signature(signature,value):
+                signers.add(key)
+                break
+       
+    return signers
 
 class Config:
     replica_id=""

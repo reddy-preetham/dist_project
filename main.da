@@ -5,6 +5,7 @@ from client import Client
 from replica_merg import Replica
 from nacl.signing import SigningKey
 from nacl.encoding import HexEncoder
+from replica_fault import ReplicaFI
 
 
 config(channel = 'reliable')
@@ -17,34 +18,34 @@ def main():
     rand_seed=100
 
     
-    replicas = new(Replica, num= n_replicas)
+    replicas = new(ReplicaFI, num= n_faluty_replicas).union(new (Replica,num=n_replicas-n_faluty_replicas))
     clients = new(Client, num= n_clients)
     client_ids={}
     client_pub_keys={}
     client_private_keys={}
 
     for i,client in enumerate(clients):
-        client_ids[str(i)]=client
+        client_ids["client_"+str(i)]=client
         private_key = SigningKey.generate()
         public_key = private_key.verify_key.encode(encoder=HexEncoder)
-        client_pub_keys[str(i)]=public_key
-        client_private_keys[str(i)]=private_key
+        client_pub_keys["client_"+str(i)]=public_key
+        client_private_keys["client_"+str(i)]=private_key
     
     replica_ids={}
     replica_pub_keys={}
     replica_private_keys={}
 
     for i,replica in enumerate(replicas):
-        replica_ids[str(i)]=replica
+        replica_ids["replica_"+str(i)]=replica
         private_key = SigningKey.generate()
         public_key = private_key.verify_key.encode(encoder=HexEncoder)
-        replica_pub_keys[str(i)]=public_key
-        replica_private_keys[str(i)]=private_key
+        replica_pub_keys["replica_"+str(i)]=public_key
+        replica_private_keys["replica_"+str(i)]=private_key
 
     for i,client in enumerate(clients):
-        setup(client,(str(i),replicas,client_private_keys[str(i)],client_pub_keys[str(i)],replica_pub_keys,n_req,n_faluty_replicas,rand_seed))
+        setup(client,("client_"+str(i),replicas,client_private_keys["client_"+str(i)],client_pub_keys["client_"+str(i)],replica_pub_keys,n_req,n_faluty_replicas,rand_seed))
     for i,replica in enumerate(replicas):
-        setup(replica,(str(i),replica_ids,client_ids,replica_private_keys[str(i)],replica_pub_keys[str(i)],replica_pub_keys,client_pub_keys,n_faluty_replicas,rand_seed))
+        setup(replica,("replica_"+str(i),replica_ids,client_ids,replica_private_keys["replica_"+str(i)],replica_pub_keys["replica_"+str(i)],replica_pub_keys,client_pub_keys,n_faluty_replicas,rand_seed))
  
     start(replicas)
     start(clients)
@@ -52,4 +53,3 @@ def main():
     await(each(c in clients, has=received(('done',), from_=c)))
     output('All clients done.')
     send(('done',), to= (replicas))
-    

@@ -80,6 +80,7 @@ class Replica(process):
         Ledger.initialize_ledger()
         high_qc=QC(VoteInfo("genesis_id",-1,"genesis_id",-2,"genesis_state"),LedgerCommitInfo(None,""),[sign_record("genesis",private_key)])
         high_commit_qc=QC(VoteInfo("genesis_id",-2,"genesis_id",-3,"genesis_state"),LedgerCommitInfo(None,""),[sign_record("genesis",private_key)])
+
     def run():
         debug('### start')
         run_done = False
@@ -114,18 +115,24 @@ class Replica(process):
         
         # MemPool.push_transaction(m)
 
+    # fault injection uses setattr to change the replica's state.
+    def setattr(attr,val):
+        if attr == 'current_round': current_round = val
+        elif attr == 'highest_vote_round': __highest_vote_round = val
+        else: output('error: Replica.setattr: unsupported attribute')
+
     def send_response(txn_id,m):
         client_id=txn_id[:txn_id.find('-')]
         # print("================================replica")
         # print(client_id)
         sign_msg=str(random.random())+replica_id
-        send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to=client_ids[client_id])
+        send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to={client_ids[client_id]})
         
  
     
     def send_msg_replica(id,msg_type,m):
         sign_msg=str(random.random())+replica_id+msg_type
-        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=replicas_ids[id])
+        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to={replicas_ids[id]})
 
     def broadcast_msg(msg_type,m):       
         sign_msg=str(random.random())+replica_id+msg_type
@@ -361,8 +368,8 @@ class Replica(process):
             if current_block is None:
                 break
             block_author = current_block.author
-            if curr_window_size<window_size: pass
-                # active_validators = set.union(active_validators, current_qc.signatures.signers())
+            if curr_window_size<window_size: 
+                active_validators = active_validators.union(get_signers(current_qc.signatures))
             if(len(last_authors) < exclude_size):
                 last_authors.add(block_author)
             current_qc = current_block.qc
