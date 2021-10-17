@@ -35,8 +35,10 @@ class ReplicaFI(process, Replica):
                                   'src', 'dest', 'msg_type', 'round', 'prob', 'fail_type', 'val', 'attr'], defaults=[None]*8)
         # failure config to set different failures
         self.failure_config = FailureConfig(failures=[Failure(src='_', dest='leader', msg_type=MsgType.vote_message, round=1, prob=1, fail_type=FailType.Delay, val=0.1),
-                                            Failure(src=2, dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.MsgLoss),
-                                            Failure(src='leader', dest='_', msg_type=MsgType.vote_message, round=3, prob=0.5, fail_type=FailType.SetAttr, val=2, attr='last_vote_round')], seed=1)
+                                            Failure(src="replica_2", dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.MsgLoss),
+                                            Failure(src='_', dest='_', msg_type=MsgType.vote_message, round=3, prob=0.5, fail_type=FailType.SetAttr, val=5, attr='highest_vote_round'),
+                                            Failure(src="leader", dest='_', msg_type=MsgType.vote_message, round=-1, prob=0.5, fail_type=FailType.MsgLoss),
+                                            Failure(src="_", dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.SetAttr, val=1, attr='current_round')], seed=99)
         random.seed(self.failure_config.seed)
 
     def send(m, to):
@@ -52,7 +54,7 @@ class ReplicaFI(process, Replica):
             if(failure.dest == 'leader'):
                 dest = replicas_ids[LeaderElection_get_leader(failure.round)]
             # check if msg info is matching failure config
-            if (src == replica_id or src == "_") and (dest == "_" or dest in to) and (failure.msg_type == MsgType[msg_type] or failure.msg_type == MsgType.wildcard) and random.uniform(0.0, 1.0) >= failure.prob and current_round == failure.round:
+            if (src == replica_id or src == "_") and (dest == "_" or dest in to) and (failure.msg_type == MsgType[msg_type] or failure.msg_type == MsgType.wildcard) and random.uniform(0.0, 1.0) >= failure.prob and (failure.round==-1 or current_round == failure.round):
                 # failure triggered
                 attr = failure.attr
                 value = failure.val
