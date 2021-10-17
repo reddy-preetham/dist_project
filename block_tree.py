@@ -1,4 +1,6 @@
 from utils import *
+
+# Class files used by block tree analogous to pseudocode
 class VoteInfo:
     def __init__(self, id, round, parent_id, parent_round, state):
         self.id = id
@@ -11,12 +13,9 @@ class LedgerCommitInfo:
     def __init__(self, commit_state_id, vote_info_hash):
         self.commit_state_id = commit_state_id
         self.vote_info_hash = vote_info_hash
-    
-    def to_string(self):
-        return "" + self.commit_state_id + self.vote_info_hash
 
 class VoteMsg:
-    def __init__(self, vote_info, ledger_commit_info, high_commit_qc): #need to update object variables
+    def __init__(self, vote_info, ledger_commit_info, high_commit_qc): 
         self.vote_info = vote_info
         self.ledger_commit_info= ledger_commit_info
         self.high_commit_qc = high_commit_qc
@@ -24,7 +23,7 @@ class VoteMsg:
         self.signature = sign_record(self.ledger_commit_info,Config.private_key).decode("utf-8") 
 
 class QC:
-    def __init__(self, vote_info, ledger_commit_info, signatures): #need to update object variables
+    def __init__(self, vote_info, ledger_commit_info, signatures): 
         self.vote_info = vote_info
         self.ledger_commit_info = ledger_commit_info
         self.signatures = signatures
