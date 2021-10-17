@@ -1,0 +1,19 @@
+from replica_merge import Replica
+from collections import namedtuple
+class ReplicaFI(process, Replica):
+    # override send method
+
+    def send(m,to):
+
+        super().send(m,to)     # do original send
+        # imagine that attr and val were obtained from a misbehavior spec.
+        attr='current_round'
+        val=3
+        setattr(attr,val)
+
+    FailureConfig = namedtuple('FailureConfig', ['failures', 'seed'], defaults=(None))
+    Failure = namedTuple( 'Failure', ['src', 'dest', 'msg_type', 'round', 'prob', 'fail_type', 'val', 'attr'], defaults=(None,None))
+    
+    failure_config = FailureConfig(failures = [ Failure(src='_',dest='leader',msg_type=MsgType.Vote,round=1,prob=1,fail_type=FailType.Delay, val=0.1), 
+                                                Failure(src=2,dest='_',msg_type=MsgType.Wildcard,round=3,prob=0.5,fail_type=FailType.MsgLoss), 
+                                                Failure(src='leader',dest='_',msg_type=MsgType.Vote,round=3,prob=0.5,fail_type=FailType.SetAttr,val=2,attr='last_vote_round')],seed = 1)
