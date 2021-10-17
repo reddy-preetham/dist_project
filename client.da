@@ -41,7 +41,7 @@ class Client(process):
 
     
     def receive(msg= ('response', replica,replica_id,signature,resp),at=(l1,l2,)):
-        verify_decode(signature,replica_public_keys[replica_id])
+        verify_signature(signature,replica_public_keys[replica_id])
         txn_id,m=resp
         
         if m=="processed":

@@ -20,5 +20,5 @@ class ProposalMsg:
         self.block=block
         self.last_round_tc=last_round_tc
         self.high_commit_qc=high_commit_qc
-        self.sender=Config.replica_id #not is pseudocode
+        self.sender=block.author #not is pseudocode
         self.signature=sign_record(self.block.id,Config.private_key)
