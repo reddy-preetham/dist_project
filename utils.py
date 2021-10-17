@@ -9,6 +9,9 @@ HASHER = nacl.hash.sha256
 
 
 class Config:
+    """Config class, variables are set from Replica and used
+    by functions in utils and ledger modules.
+    """
     replica_id = ""
     n_replicas = 0
     window_size = 0
@@ -17,12 +20,12 @@ class Config:
 
 
 def hash(msg):
-    """Returns string representation hash of object msg"""
+    """Returns string representation hash of object msg."""
     return (HASHER(pickle.dumps(msg))).decode("utf-8")
 
 
 def sign_record(record, key):
-    """Signs and returns signature of a record with a private key"""
+    """Signs and returns signature of a record with a private key."""
     return key.sign(message=pickle.dumps(record), encoder=HexEncoder)
 
 
@@ -52,7 +55,7 @@ def validate_signatures(signatures_list):
 
 def get_signers(signatures_list):
     """Returns set of signers (replica ids) of signatures
-    in the signature list
+    in the signature list.
     """
     signers = set()
     for signature in signatures_list:
