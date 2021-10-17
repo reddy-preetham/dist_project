@@ -11,9 +11,98 @@ class ReplicaFI(process, Replica):
         val=3
         setattr(attr,val)
 
+
+    def send_response(txn_id,m):
+        client_id=txn_id[:txn_id.find('-')]
+        # print("================================replica")
+        # print(client_id)
+        sign_msg=str(random.random())+replica_id
+        send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to=client_ids[client_id])
+        
+    def send_msg_replica(id,msg_type,m):
+        sign_msg=str(random.random())+replica_id+msg_type
+        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=replicas_ids[id])
+
+    def broadcast_msg(msg_type,m):       
+        sign_msg=str(random.random())+replica_id+msg_type
+        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=set(replicas_ids.values()))
+
+
+
     FailureConfig = namedtuple('FailureConfig', ['failures', 'seed'], defaults=(None))
     Failure = namedTuple( 'Failure', ['src', 'dest', 'msg_type', 'round', 'prob', 'fail_type', 'val', 'attr'], defaults=(None,None))
     
     failure_config = FailureConfig(failures = [ Failure(src='_',dest='leader',msg_type=MsgType.Vote,round=1,prob=1,fail_type=FailType.Delay, val=0.1), 
                                                 Failure(src=2,dest='_',msg_type=MsgType.Wildcard,round=3,prob=0.5,fail_type=FailType.MsgLoss), 
                                                 Failure(src='leader',dest='_',msg_type=MsgType.Vote,round=3,prob=0.5,fail_type=FailType.SetAttr,val=2,attr='last_vote_round')],seed = 1)
+
+    
+    class MsgType(Enum):
+        Proposal = 1
+        QC =2
+        TimeOut = 3
+        Vote =4
+        Wildcard =5
+
+    class FailType(Enum):
+        MsgLoss =1
+        Delay =2
+        SetAttr =3
+
+    for i, failure in enumerate(failure_config.failures):
+        if failure.fail_type==1 and failure.msg_type==4:
+            pass
+        
+        elif failure.fail_type==2 and failure.msg_type==5:
+            pass
+
+        elif failure.fail_type==3 and failure.msg_type==4:
+            pass
+    
+
+    def send_response(txn_id,m):
+        client_id=txn_id[:txn_id.find('-')]
+        # print("================================replica")
+        # print(client_id)
+        sign_msg=str(random.random())+replica_id
+        for i, failure in enumerate(failure_config.failures):
+            if failure.fail_type==1 and failure.msg_type==4:
+                pass
+            
+            elif failure.fail_type==2 and failure.msg_type==5:
+                if random.uniform(0.0, 1,0) >0.5:
+                    await(timeout(1))
+                send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to=client_ids[client_id])
+
+            elif failure.fail_type==3 and failure.msg_type==4:
+                
+
+                send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to=client_ids[client_id])
+                pass
+        # send(("response",self,replica_id,sign_record(sign_msg,private_key),(txn_id,m)),to=client_ids[client_id])
+        
+    
+    
+    
+    
+    
+    def send_msg_replica(id,msg_type,m):
+        sign_msg=str(random.random())+replica_id+msg_type
+        for i, failure in enumerate(failure_config.failures):
+            if failure.fail_type==1 and failure.msg_type==4:
+                pass
+            
+            elif failure.fail_type==2 and failure.msg_type==5:
+                if random.uniform(0.0, 1,0) >0.5:
+                    await(timeout(failure.val))
+                send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=replicas_ids[id])
+
+            elif failure.fail_type==3 and failure.msg_type==4:
+                if random.uniform(0.0, 1,0) >0.5:
+                    m.vote_info.round = 2
+                send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=replicas_ids[id])
+        # send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=replicas_ids[id])
+
+    def broadcast_msg(msg_type,m):       
+        sign_msg=str(random.random())+replica_id+msg_type
+        send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=set(replicas_ids.values()))
