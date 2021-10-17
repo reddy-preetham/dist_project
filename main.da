@@ -12,6 +12,7 @@ config(channel = 'reliable')
 
 def main():
     test_cases = int(sys.argv[1]) if len(sys.argv) > 1 else 2
+    # rum different test cases
     for test_case in range(1, test_cases):
         output("Test Case "+str(test_case)+" running")
         config_vars = {}
@@ -19,7 +20,7 @@ def main():
             for line in myfile:
                 name, var = line.partition("=")[::2]
                 config_vars[name.strip()] = str(var)
-
+        # get config variables from test case file
         n_clients = int(config_vars["n_clients"])
         n_replicas = int(config_vars["n_replicas"])
         n_faluty_replicas = int(config_vars["n_faluty_replicas"])
@@ -30,13 +31,14 @@ def main():
         window_size = int(config_vars["replica_leader_window_size"])
         exclude_size = int(config_vars["replica_leader_exclude_size"])
 
-        
+        # creating replicas, faulty replicas, clients
         replicas = new(ReplicaFI, num= n_faluty_replicas).union(new (Replica, num=n_replicas-n_faluty_replicas))
         clients = new(Client, num= n_clients)
         client_ids={}
         client_pub_keys={}
         client_private_keys={}
 
+        # creating client, replicas public, private keys
         for i, client in enumerate(clients):
             client_ids["client_"+str(i)] = client
             private_key = SigningKey.generate()
@@ -55,15 +57,22 @@ def main():
             replica_pub_keys["replica_"+str(i)] = public_key
             replica_private_keys["replica_"+str(i)] = private_key
 
+        # setup clients, replicas
         for i,client in enumerate(clients):
             setup(client,("client_"+str(i), replicas, client_private_keys["client_"+str(i)], client_pub_keys["client_"+str(i)], replica_pub_keys, n_client_txns, n_faluty_replicas, rand_seed, client_timeout))
+        is_faulty = False
         for i,replica in enumerate(replicas):
-            setup(replica, ("replica_"+str(i), replica_ids, client_ids, replica_private_keys["replica_"+str(i)], replica_pub_keys["replica_"+str(i)], replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size))
-    
+            setup(replica, ("replica_"+str(i), replica_ids, client_ids, replica_private_keys["replica_"+str(i)], replica_pub_keys["replica_"+str(i)], replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size, is_faulty))
+
+        
         start(replicas)
         start(clients)
-        print("======================",clients)
+
+        # await for all clients to send done when terminating. ie await for clients termination
         await(each(c in clients, has=received(('done',), from_=c)))
         output('All clients done.')
+        # send done to replicas to terminate them after clients are terminated
         send(('done',), to= (replicas))
+
+        # end of test case terminated all replicas and clients
         output("Test Case "+str(test_case)+"done")

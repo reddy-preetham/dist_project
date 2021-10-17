@@ -1,7 +1,8 @@
 from utils import *
 import os
-from block import Tree
+from tree import Tree
 from cacheout import Cache
+import logging
 
 
 class LedgerBlock:
@@ -50,6 +51,7 @@ class Ledger:
         # block=cls.pending_ledger_tree.get_block(cls.block_state_map[block_id])
         if block.id not in cls.commited_blocks:
             # print(block.round,block.payload)
+            logging.info("Ledger : commited block txn = {}, round = {}, author = {}".format(block.payload, block.round, block.author))
             cls.persist(cls.block_state_map[block.id])
             cls.pending_ledger_tree.prune(cls.block_state_map[block.id])
             cls.commited_blocks.set(block.id,block)

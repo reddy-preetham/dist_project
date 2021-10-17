@@ -43,11 +43,11 @@ class Client(process):
 
     
     def receive(msg= ('response', replica,replica_id,signature,resp),at=(l1,l2,)):
-        verify_signature(signature,replica_public_keys[replica_id])
-        txn_id,m=resp
-        
-        if m=="processed":
-            results[txn_id].add(replica)
+        output("received response - {} from replica - {}".format(resp,replica_id))
+        if verify_signature(signature,replica_public_keys[replica_id]):
+            txn_id,m=resp
+            if m=="processed":
+                results[txn_id].add(replica)
         
 
     def send_request(request,replicas):
