@@ -12,7 +12,6 @@ class ReplicaFI(process, Replica):
         setattr(attr,val)
 
 
-
     def send_response(txn_id,m):
         client_id=txn_id[:txn_id.find('-')]
         # print("================================replica")
@@ -107,6 +106,3 @@ class ReplicaFI(process, Replica):
     def broadcast_msg(msg_type,m):       
         sign_msg=str(random.random())+replica_id+msg_type
         send((msg_type,self,replica_id,sign_record(sign_msg,private_key),m),to=set(replicas_ids.values()))
-=======
-    
-

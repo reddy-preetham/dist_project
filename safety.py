@@ -8,7 +8,7 @@ class Safety:
     __private_key=Config.private_key
     __public_keys=Config.replica_pub_keys
     __highest_vote_round=0
-    __highest_qc_round=-1
+    __highest_qc_round:int
 
     # @classmethod
     # def set_keys(cls,private_key,public_keys):
@@ -44,7 +44,7 @@ class Safety:
         else:
             return None
     @classmethod
-    def __valid_signatures(cls,sig_list):
+    def __valid_signatures(sig_list):
         return True
     @classmethod
     def make_vote(cls,b,last_tc):
@@ -52,7 +52,7 @@ class Safety:
         if cls.__valid_signatures((b,last_tc)) and cls.__safe_to_vote(b.round,qc_round,last_tc):
             cls.__update_highest_qc_round(qc_round)
             cls.__increase_highest_vote_round(b.round)
-            vote_info=VoteInfo(id=b.id,round=b.round,parent_id=b.qc.vote_info.id,parent_round=qc_round,exec_state_id=Ledger.pending_state(b.id))
+            vote_info=VoteInfo(id=b.id,round=b.round,parent_id=b.qc.vote_info.id,parentround=qc_round,exec_state_id=Ledger.pending_state(b.id))
             ledger_commit_info=LedgerCommitInfo(commit_state_id=cls.__commit_state_id_candidate(b.round,b.qc),vote_info_hash=hash(vote_info))
             return VoteMsg(vote_info,ledger_commit_info,BlockTree.high_commit_qc)
         return None

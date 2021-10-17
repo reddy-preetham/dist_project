@@ -3,6 +3,7 @@ NOPS=100
 import sys
 import time
 import random
+from crypto_utils import *
 from utils import *
 # from block_tree import BlockTree
 from leader_election import LeaderElection
@@ -51,20 +52,19 @@ class Replica(process):
     def receive(msg=("done",)):
         run_done=True
 
-    def receive(msg= ('request', p,client_id,m)):
-        print(client_public_keys[client_id] )
-        m=verify_decode(m,client_public_keys[client_id])
-        print(("received request from",p,m))
-       
-        # print(("dsd",Temp2.get()))
-        print(private_key)
-        send(("response",self,replica_id,sign(m,private_key)),to=p)
-        debug('### request', p)
-
-    # def receive(msg=("request",p,client_id,m)):
+    # def receive(msg= ('request', p,client_id,m)):
     #     m=verify_decode(m,client_public_keys[client_id])
     #     print(("received request from",p,m))
-    #     MemPool.push_transaction(m)
+    #     Temp.a=2
+
+    #     # print(("dsd",Temp2.get()))
+    #     send(("response",self,replica_id,sign(m,private_key)),to=p)
+    #     debug('### request', p)
+
+    def receive(msg=("request",p,client_id,m)):
+        m=verify_decode(m,client_public_keys[client_id])
+        print(("received request from",p,m))
+        MemPool.push_transaction(m)
 
     def send_response(txn_id,m):
         client_id=txn_id[:txn_id.index('-')]
