@@ -1,11 +1,11 @@
 n_clients = 3
-n_replicas = 5
-n_faluty_replicas = 0
-n_client_txns = 5
+n_replicas = 10
+n_faluty_replicas = 3
+n_client_txns = 3
 random_seed = 100
 client_timeout = 5
 network_delta = 0.25
 replica_leader_window_size = 10
 replica_leader_exclude_size = 3
 client_txn_delay = 0
-description = Zero faulty replicas and no transaction delays
+description = <n/3 faulty replicas with 2sec delay between transactions

@@ -13,10 +13,11 @@ config(channel='reliable')
 class Client(process):
     def setup(client_id: str, replicas: set, private_key: str, public_key: str,
               replica_public_keys: dict, n_req: int, n_faulty_replicas: int,
-              rand_seed: int, timeout_dur: float):
+              rand_seed: int, timeout_dur: float, client_txn_delay:float):
         self.cid = 0           # command id
         self.results = dict()  # map of command id to result of command
         self.count = dict()    # map of command id to number of responses
+        random.seed(rand_seed)
 
     def get_next_transaction():
         letters = string.ascii_lowercase
