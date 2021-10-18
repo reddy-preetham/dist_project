@@ -35,8 +35,13 @@ class Replica(process):
         self.pending_timeouts = {}
 
         # ======Mempool Variables======
+        # maintains a list of transactions that hasn't been processed yet
         self.transaction_queue = deque()
+
+        # maintains a list of transactions that hasnt been committed
         self.pending_transaction = set()
+
+        # tracks the status of the transaction
         self.req_cache = Cache()
 
         # ========Leader Election============
