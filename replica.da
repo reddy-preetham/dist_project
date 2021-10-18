@@ -319,7 +319,7 @@ class Replica(process):
             transaction_queue.append(txn)
             req_cache.add(txn_id, "queue")
 
-        elif req_cache.get(txn_id) == "queue":
+        elif req_cache.get(txn_id) == "queue" or req_cache.get(txn_id) == "processed":
             send_response(txn_id, req_cache.get(txn_id, default=None))
 
     def Mempool_processed_txns(txns):
