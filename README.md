@@ -1,5 +1,5 @@
 # dist_project
-Platform:
+Platform:<br/>
   python : 3.7 <br/>
   DistAlgo : <br/>
   Host : Laptop <br/>
