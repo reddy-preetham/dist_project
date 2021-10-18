@@ -300,17 +300,17 @@ class Replica(process):
     # ==================MemPool==================
 
     def Mempool_get_transactions():
+        # returns top transaction that hasnt processeed yet and update the status of it in cache
         if len(transaction_queue) == 0:
             return [""]
         txn = transaction_queue.popleft()
-        while(txn in req_cache):
-            txn = transaction_queue.popleft()
         txn_id = txn[:txn.find(':')]
         req_cache.add(txn_id, "processing")
 
         return [txn]
 
     def Mempool_push_transaction(txn):
+        # Adds new transaction or "in process" transaction to the queue
         txn_id = txn[:txn.find(':')]
         if req_cache.has(txn_id):
             logging.info("Received duplicate transaction = {}".format(txn_id))
@@ -319,10 +319,13 @@ class Replica(process):
             transaction_queue.append(txn)
             req_cache.add(txn_id, "queue")
 
+        # sends the response to the client if it is been committed or if it is still not processed yet.
         elif req_cache.get(txn_id) == "queue" or req_cache.get(txn_id) == "processed":
             send_response(txn_id, req_cache.get(txn_id, default=None))
 
     def Mempool_processed_txns(txns):
+        # transaction is removed from the pending transaction queue and update
+        # the status in cache to processed and send the response to client that it has committed
         for txn in txns:
             txn_id = txn[:txn.find(':')]
             req_cache.set(txn_id, "processed")
@@ -331,6 +334,7 @@ class Replica(process):
                 send_response(txn_id, req_cache.get(txn_id, default=None))
 
     def Mempool_remove_txns(txns):
+        # removes the transaction from the transaction queue and update its status in cache to processing
         for txn in txns:
             if txn in transaction_queue:
                 transaction_queue.remove(txn)
