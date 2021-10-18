@@ -28,13 +28,13 @@ class Client(process):
         for i in range(n_req):
 
             req = str(client_id)+"-"+str(cid)+":"+str(get_next_transaction())
-
+            print(req,"==========================")
             send_request(req, replicas)
 
             txn_id = str(client_id)+"-"+str(cid)
             results.setdefault(txn_id, set())
             --l2
-            # await (timeout(1))
+            await (timeout(client_txn_delay))
 
             cid += 1
 
