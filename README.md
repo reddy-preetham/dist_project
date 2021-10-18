@@ -1,6 +1,11 @@
 # dist_project
 Platform:
-  Ubuntu : 20
   python : 3.7
   DistAlgo : 
-  Host 
+  Host : Laptop
+  Operating Systems and version: Ubuntu ,20
+  
+Workload Generation:
+  client.da: 
+  
+  
