@@ -39,30 +39,30 @@ class ReplicaFI(process, Replica):
                                             Failure(src="_", dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.SetAttr, val=1, attr='current_round')], seed=99)
         random.seed(self.failure_config.seed)
 
-    # def send(m, to):
+    def send(m, to):
 
-    #     msg_type, _, replica_id, _, msg = m
+        msg_type, _, replica_id, _, msg = m
 
-    #     for i, failure in enumerate(failure_config.failures):
-    #         src = ""
-    #         dest = replicas_ids.get(failure.dest, "_")
-    #         if(failure.src == 'leader'):
-    #             src = LeaderElection_get_leader(failure.round)
+        for i, failure in enumerate(failure_config.failures):
+            src = ""
+            dest = replicas_ids.get(failure.dest, "_")
+            if(failure.src == 'leader'):
+                src = LeaderElection_get_leader(failure.round)
 
-    #         if(failure.dest == 'leader'):
-    #             dest = replicas_ids[LeaderElection_get_leader(failure.round)]
-    #         # check if msg info is matching failure config
-    #         if (src == replica_id or src == "_") and (dest == "_" or dest in to) and (failure.msg_type == MsgType[msg_type] or failure.msg_type == MsgType.wildcard) and random.uniform(0.0, 1.0) >= failure.prob and (failure.round==-1 or current_round == failure.round):
-    #             # failure triggered
-    #             attr = failure.attr
-    #             value = failure.val
-    #             fail_type = failure.fail_type
-    #             logging.info(failure)
-    #             if fail_type == FailType.Delay:
-    #                 await(timeout(value))
-    #             elif fail_type == FailType.SetAttr:
-    #                 setattr(attr, value)
-    #             elif fail_type == FailType.MsgLoss:
-    #                 return
+            if(failure.dest == 'leader'):
+                dest = replicas_ids[LeaderElection_get_leader(failure.round)]
+            # check if msg info is matching failure config
+            if (src == replica_id or src == "_") and (dest == "_" or dest in to) and (failure.msg_type == MsgType[msg_type] or failure.msg_type == MsgType.wildcard) and random.uniform(0.0, 1.0) >= failure.prob and (failure.round==-1 or current_round == failure.round):
+                # failure triggered
+                attr = failure.attr
+                value = failure.val
+                fail_type = failure.fail_type
+                logging.info(failure)
+                if fail_type == FailType.Delay:
+                    await(timeout(value))
+                elif fail_type == FailType.SetAttr:
+                    setattr(attr, value)
+                elif fail_type == FailType.MsgLoss:
+                    return
 
-    #     super().send(m, to)
+        super().send(m, to)

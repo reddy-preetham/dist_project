@@ -22,7 +22,7 @@ class Replica(process):
 
     def setup(replica_id: str, replicas_ids: dict, client_ids: dict, private_key: str, public_key: str,
               replica_public_keys: dict, client_public_keys: dict, n_faulty_replicas: int,
-              rand_seed: int, network_delta: float, window_size: int, exclude_size: int, is_faulty: bool):
+              rand_seed: int, network_delta: float, window_size: int, exclude_size: int):
         self.n_replicas = len(replicas_ids)
         # run_done and round_done used for exiting of run method and timer logic respectively
         self.run_done = False
@@ -55,11 +55,7 @@ class Replica(process):
         self.__highest_qc_round = -1
 
         # ===========logging==============
-        log_file = "logs/"+str(replica_id)+".log"
-        if is_faulty:
-            log_file = "logs/faulty_"+str(replica_id)+".log"
-
-        logging.basicConfig(filename=log_file,
+        logging.basicConfig(filename="logs/"+str(replica_id)+".log",
                             filemode='a',
                             format='%(asctime)s %(levelname)s - %(message)s',
                             datefmt='%H:%M:%S',
@@ -118,40 +114,45 @@ class Replica(process):
         else:
             logging.error('Replica.setattr: unsupported attribute')
 
+    # broadcasts messages to a client when a transaction of that client is committed
     def send_response(txn_id, m):
         client_id = txn_id[:txn_id.find('-')]
         sign_msg = str(random.random())+replica_id
         send(("response", self, replica_id, sign_record(
             sign_msg, private_key), (txn_id, m)), to={client_ids[client_id]})
 
+    # broadcasts vote message to a specific replica
     def send_msg_replica(id, msg_type, m):
         sign_msg = str(random.random())+replica_id+msg_type
         send((msg_type, self, replica_id, sign_record(
             sign_msg, private_key), m), to={replicas_ids[id]})
 
+    # broadcasts timeout messages and proposal messages to all replicas
     def broadcast_msg(msg_type, m):
         sign_msg = str(random.random())+replica_id+msg_type
         send((msg_type, self, replica_id, sign_record(
             sign_msg, private_key), m), to=set(replicas_ids.values()))
 
+    # receives vote, timeout, proposal and client request messages from a specific replica or client
     def receive(msg=(msg_type, p, id, signature, m)):
         logging.info(
             "received msg of type = {} from id = {}".format(msg_type, id))
         if msg_type == "client_request":
+            # If the request is from a client then it verifies the signature of the client and push the transaction to mempool
             if not verify_signature(signature, client_public_keys[id]):
                 logging.error(
                     "signature not verified: msg of type = {} from id = {}".format(msg_type, id))
                 return
             Mempool_push_transaction(m)
         elif msg_type == "local_timeout":
-
+            # If the message is local timeout message then it verifies the signature of the sender and triggers Pacemaker_local_timeout_round
             if not verify_signature(signature, replica_public_keys[id]):
                 logging.error(
                     "signature not verified: msg of type = {} from id = {}".format(msg_type, id))
                 return
             Pacemaker_local_timeout_round()
         elif msg_type == "proposal_message":
-
+            # If the message is a proposal message then it verifies the signature of the leader and then process the proposal message
             if not verify_signature(signature, replica_public_keys[id]) or not verify_signature(m.signature, replica_public_keys[m.sender]):
                 logging.error(
                     "signature not verified: msg of type = {} from id = {}".format(msg_type, id))
@@ -160,12 +161,15 @@ class Replica(process):
             process_proposal_msg(m)
 
         elif msg_type == "vote_message":
+            # If the message is a vote message then it verifies the signature of the sender and then process the vote message
             if not verify_signature(signature, replica_public_keys[id]):
                 logging.error(
                     "signature not verified: msg of type = {} from id = {}".format(msg_type, id))
                 return
             process_vote_msg(m)
+
         elif msg_type == "timeout_message":
+            # If the message is a timeout message then it verifies the signature of the sender and then process the timeout message
             if not verify_signature(signature, replica_public_keys[id]):
                 logging.error(
                     "signature not verified: msg of type = {} from id = {}".format(msg_type, id))
@@ -173,6 +177,7 @@ class Replica(process):
             process_timeout_msg(m)
 
     def process_certificate_qc(qc):
+        # It verifies signatures of all the 2f+1 replicas that signs the qc and verifies the signature of the author
         if not validate_signatures(qc.signatures) or not verify_signature(qc.author_signature, replica_public_keys[qc.author]):
             logging.error("signature not verified")
             return
@@ -218,6 +223,7 @@ class Replica(process):
             process_new_round_event(tc)
 
     def process_vote_msg(M):
+        # verifies the signature of the proposal message with its sender
         if not verify_signature(M.signature, replica_public_keys[M.sender]):
             logging.error("signature not verified")
             return
@@ -231,9 +237,9 @@ class Replica(process):
 
     def process_new_round_event(last_tc):
         if replica_id == LeaderElection_get_leader(current_round):
-            b = BlockTree_generate_block(
-                Mempool_get_transactions(), current_round)
-            if len(b.payload) > 0:
+            if len(pending_transaction) > 0:
+                b = BlockTree_generate_block(
+                    Mempool_get_transactions(), current_round)
                 logging.info("Generated block for txn = {} in round = {} and broadcasted".format(
                     b.payload, b.round))
                 broadcast_msg("proposal_message", ProposalMsg(
@@ -294,8 +300,6 @@ class Replica(process):
     # ==================MemPool==================
 
     def Mempool_get_transactions():
-        if len(pending_transaction) == 0:
-            return []
         if len(transaction_queue) == 0:
             return [""]
         txn = transaction_queue.popleft()
