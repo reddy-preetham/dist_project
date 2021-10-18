@@ -12,85 +12,87 @@ config(channel='reliable')
 
 
 def main():
-    test_cases = int(sys.argv[1]) if len(sys.argv) > 1 else 2
+    test_case = int(sys.argv[1]) if len(sys.argv) > 1 else 2
     # rum different test cases
-    for test_case in range(1, test_cases):
-        
-        config_vars = {}
-        with open("test_cases/test_case_"+str(test_case)+".txt") as myfile:
-            for line in myfile:
-                name, var = line.partition("=")[::2]
-                config_vars[name.strip()] = str(var)
-        # get config variables from test case file
-        n_clients = int(config_vars["n_clients"])
-        n_replicas = int(config_vars["n_replicas"])
-        n_faluty_replicas = int(config_vars["n_faluty_replicas"])
-        n_client_txns = int(config_vars["n_client_txns"])
-        rand_seed = int(config_vars["random_seed"])
-        client_timeout = float(config_vars["client_timeout"])
-        network_delta = float(config_vars["network_delta"])
-        window_size = int(config_vars["replica_leader_window_size"])
-        exclude_size = int(config_vars["replica_leader_exclude_size"])
-        client_txn_delay = float(config_vars["client_txn_delay"])
-        description = str(config_vars["description"])
 
-        output("Test Case "+str(test_case)+" running")
-        output("Test Case - {}".format(description))
+    
+    config_vars = {}
+    with open("test_cases/test_case_"+str(test_case)+".txt") as myfile:
+        for line in myfile:
+            name, var = line.partition("=")[::2]
+            config_vars[name.strip()] = str(var)
+    # get config variables from test case file
+    n_clients = int(config_vars["n_clients"])
+    n_replicas = int(config_vars["n_replicas"])
+    n_faluty_replicas = int(config_vars["n_faluty_replicas"])
+    n_client_txns = int(config_vars["n_client_txns"])
+    rand_seed = int(config_vars["random_seed"])
+    client_timeout = float(config_vars["client_timeout"])
+    network_delta = float(config_vars["network_delta"])
+    window_size = int(config_vars["replica_leader_window_size"])
+    exclude_size = int(config_vars["replica_leader_exclude_size"])
+    client_txn_delay = float(config_vars["client_txn_delay"])
+    description = str(config_vars["description"])
 
-        # creating replicas, faulty replicas, clients
-        faulty_replicas = new(ReplicaFI, num=n_faluty_replicas)
-        replicas = new(Replica, num=n_replicas-n_faluty_replicas)
-        clients = new(Client, num=n_clients)
+    output("Test Case "+str(test_case)+" running")
+    output("Test Case - {}".format(description))
 
-        # creating client, replicas public, private keys
-        client_ids = {}
-        client_pub_keys = {}
-        client_private_keys = {}
-        for i, client in enumerate(clients):
-            client_ids["client_"+str(i)] = client
-            private_key = SigningKey.generate()
-            public_key = private_key.verify_key.encode(encoder=HexEncoder)
-            client_pub_keys["client_"+str(i)] = public_key
-            client_private_keys["client_"+str(i)] = private_key
+    # creating replicas, faulty replicas, clients
+    faulty_replicas = new(ReplicaFI, num=n_faluty_replicas)
+    replicas = new(Replica, num=n_replicas-n_faluty_replicas)
+    clients = new(Client, num=n_clients)
 
-        replica_ids = {}
-        replica_pub_keys = {}
-        replica_private_keys = {}
+    # creating client, replicas public, private keys
+    client_ids = {}
+    client_pub_keys = {}
+    client_private_keys = {}
+    for i, client in enumerate(clients):
+        client_ids["client_"+str(i)] = client
+        private_key = SigningKey.generate()
+        public_key = private_key.verify_key.encode(encoder=HexEncoder)
+        client_pub_keys["client_"+str(i)] = public_key
+        client_private_keys["client_"+str(i)] = private_key
 
-        for i, replica in enumerate(replicas):
-            replica_ids["replica_"+str(i)] = replica
-            private_key = SigningKey.generate()
-            public_key = private_key.verify_key.encode(encoder=HexEncoder)
-            replica_pub_keys["replica_"+str(i)] = public_key
-            replica_private_keys["replica_"+str(i)] = private_key
+    replica_ids = {}
+    replica_pub_keys = {}
+    replica_private_keys = {}
 
-        for i, replica in enumerate(faulty_replicas):
-            replica_ids["faulty_replica_"+str(i)] = replica
-            private_key = SigningKey.generate()
-            public_key = private_key.verify_key.encode(encoder=HexEncoder)
-            replica_pub_keys["faulty_replica_"+str(i)] = public_key
-            replica_private_keys["faulty_replica_"+str(i)] = private_key
+    for i, replica in enumerate(replicas):
+        replica_ids["replica_"+str(i)] = replica
+        private_key = SigningKey.generate()
+        public_key = private_key.verify_key.encode(encoder=HexEncoder)
+        replica_pub_keys["replica_"+str(i)] = public_key
+        replica_private_keys["replica_"+str(i)] = private_key
 
-        replicas = replicas.union(faulty_replicas)
+    for i, replica in enumerate(faulty_replicas):
+        replica_ids["faulty_replica_"+str(i)] = replica
+        private_key = SigningKey.generate()
+        public_key = private_key.verify_key.encode(encoder=HexEncoder)
+        replica_pub_keys["faulty_replica_"+str(i)] = public_key
+        replica_private_keys["faulty_replica_"+str(i)] = private_key
 
-        # setup clients, replicas
-        for i, client in enumerate(clients):
-            setup(client, ("client_"+str(i), replicas, client_private_keys["client_"+str(i)], client_pub_keys["client_"+str(i)],
-                  replica_pub_keys, n_client_txns, n_faluty_replicas, rand_seed, client_timeout, client_txn_delay))
-        
-        for replica_id in replica_ids.keys():
-            setup(replica_ids[replica_id], (replica_id, replica_ids, client_ids, replica_private_keys[replica_id], replica_pub_keys[replica_id],
-                  replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size))
+    replicas = replicas.union(faulty_replicas)
 
-        start(replicas)
-        # start(faulty_replicas)
-        start(clients)
+    # setup clients, replicas
+    for i, client in enumerate(clients):
+        setup(client, ("client_"+str(i), replicas, client_private_keys["client_"+str(i)], client_pub_keys["client_"+str(i)],
+                replica_pub_keys, n_client_txns, n_faluty_replicas, rand_seed, client_timeout, client_txn_delay))
+    
+    for replica_id in replica_ids.keys():
+        setup(replica_ids[replica_id], (replica_id, replica_ids, client_ids, replica_private_keys[replica_id], replica_pub_keys[replica_id],
+                replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size))
 
-        # await for all clients to send done when terminating. ie await for clients termination
-        await(each(c in clients, has=received(('done',), from_=c)))
+    start(replicas)
+    # start(faulty_replicas)
+    start(clients)
+
+    # await for all clients to send done when terminating. ie await for clients termination
+    if await(each(c in clients, has=received(('done',), from_=c))):
         output('All clients done.')
-        # send done to replicas to terminate them after clients are terminated
-        send(('done',), to=(replicas.union(faulty_replicas)))
+    elif timeout(25):
+        output('Timeout - terminating')
+    # send done to replicas to terminate them after clients are terminated
+    send(('done',), to=(replicas.union(faulty_replicas)))
 
-        # end of test case terminated all replicas and clients
-        output("Test Case "+str(test_case)+"done")
+    # end of test case terminated all replicas and clients
+    output("Test Case "+str(test_case)+"done")

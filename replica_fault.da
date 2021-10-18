@@ -33,7 +33,7 @@ class ReplicaFI(process, Replica):
                                   'src', 'dest', 'msg_type', 'round', 'prob', 'fail_type', 'val', 'attr'], defaults=[None]*8)
         # failure config to set different failures
         self.failure_config = FailureConfig(failures=[Failure(src='_', dest='leader', msg_type=MsgType.vote_message, round=1, prob=1, fail_type=FailType.Delay, val=0.1),
-                                            Failure(src="replica_2", dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.MsgLoss),
+                                            Failure(src="faulty_replica_2", dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.MsgLoss),
                                             Failure(src='_', dest='_', msg_type=MsgType.vote_message, round=3, prob=0.5, fail_type=FailType.SetAttr, val=5, attr='highest_vote_round'),
                                             Failure(src="leader", dest='_', msg_type=MsgType.vote_message, round=-1, prob=0.5, fail_type=FailType.MsgLoss),
                                             Failure(src="_", dest='_', msg_type=MsgType.wildcard, round=3, prob=0.5, fail_type=FailType.SetAttr, val=1, attr='current_round')], seed=99)
