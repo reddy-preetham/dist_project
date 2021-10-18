@@ -453,10 +453,12 @@ class Replica(process):
             return None
 
     def __Safety_valid_signatures(qc, tc):
+        # verifies all the replicas that signed the qc, author signature and signatures that signed the tc
         return validate_signatures(qc.signatures) and verify_signature(qc.author_signature, replica_public_keys[qc.author]) and (not tc or validate_signatures(tc.tmo_signatures))
 
     def Safety_make_vote(b, last_tc):
         qc_round = b.qc.vote_info.round
+        # verifies the signatures of last_tc and qc of the block
         if __Safety_valid_signatures(b.qc, last_tc) and __Safety_safe_to_vote(b.round, qc_round, last_tc):
             __Safety_update_highest_qc_round(qc_round)
             __Safety_increase_highest_vote_round(b.round)
@@ -469,10 +471,8 @@ class Replica(process):
 
     def Safety_make_timeout(round, high_qc, last_tc):
         qc_round = high_qc.vote_info.round
+        # verifies the signatures of the last_tc and the high_qc
         if __Safety_valid_signatures(high_qc, last_tc) and __Safety_safe_to_timeout(round, qc_round, last_tc):
             __Safety_increase_highest_vote_round(round)
             return TimeoutInfo(round, high_qc)
         return None
-
-    # def to_string(self):
-    #     return hash("".join(self.vote_info).join(self.ledger_commit_info.to_string()).join(self.signatures).join(self.author).join(self.author_signature))
