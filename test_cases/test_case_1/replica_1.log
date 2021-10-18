@@ -1,0 +1,149 @@
+20:19:08 INFO - replica_1 process is started
+20:19:08 INFO - received msg of type = client_request from id = client_0
+20:19:08 INFO - received msg of type = client_request from id = client_1
+20:19:08 INFO - received msg of type = client_request from id = client_2
+20:19:08 INFO - received msg of type = client_request from id = client_0
+20:19:08 INFO - received msg of type = client_request from id = client_0
+20:19:08 INFO - received msg of type = client_request from id = client_0
+20:19:08 INFO - received msg of type = client_request from id = client_1
+20:19:08 INFO - received msg of type = client_request from id = client_0
+20:19:08 INFO - received msg of type = client_request from id = client_2
+20:19:08 INFO - received msg of type = client_request from id = client_1
+20:19:08 INFO - received msg of type = client_request from id = client_2
+20:19:08 INFO - received msg of type = client_request from id = client_1
+20:19:08 INFO - received msg of type = client_request from id = client_2
+20:19:08 INFO - received msg of type = client_request from id = client_1
+20:19:08 INFO - received msg of type = client_request from id = client_2
+20:19:09 INFO - Local timeout round triggered for round = 0
+20:19:09 INFO - Created Timeout Message for round = 0 and broadcasted
+20:19:09 INFO - received msg of type = timeout_message from id = replica_0
+20:19:09 INFO - Local timeout round triggered for round = 0
+20:19:09 INFO - Created Timeout Message for round = 0 and broadcasted
+20:19:09 INFO - TC created for round = 0
+20:19:09 INFO - New round = 1 started
+20:19:09 INFO - received msg of type = timeout_message from id = replica_3
+20:19:09 INFO - received msg of type = timeout_message from id = replica_1
+20:19:09 INFO - received msg of type = timeout_message from id = replica_2
+20:19:09 INFO - received msg of type = timeout_message from id = replica_4
+20:19:09 INFO - received msg of type = timeout_message from id = replica_0
+20:19:09 INFO - received msg of type = timeout_message from id = replica_1
+20:19:09 INFO - received msg of type = timeout_message from id = replica_3
+20:19:09 INFO - received msg of type = proposal_message from id = replica_0
+20:19:09 INFO - vote created for round = 1, by = replica_1, send to leader = replica_1
+20:19:09 INFO - received msg of type = timeout_message from id = replica_2
+20:19:09 INFO - received msg of type = timeout_message from id = replica_4
+20:19:09 INFO - received msg of type = vote_message from id = replica_1
+20:19:09 INFO - QC created for round = 1 and parent round = -1
+20:19:09 INFO - New round = 2 started
+20:19:09 INFO - Generated block for txn = ['client_1-0:wwmgobfpib'] in round = 2 and broadcasted
+20:19:09 INFO - received msg of type = vote_message from id = replica_0
+20:19:09 INFO - received msg of type = vote_message from id = replica_2
+20:19:09 INFO - received msg of type = vote_message from id = replica_3
+20:19:09 INFO - received msg of type = vote_message from id = replica_4
+20:19:09 INFO - received msg of type = proposal_message from id = replica_1
+20:19:09 INFO - vote created for round = 2, by = replica_1, send to leader = replica_1
+20:19:09 INFO - received msg of type = vote_message from id = replica_0
+20:19:09 INFO - QC created for round = 2 and parent round = 1
+20:19:09 INFO - Ledger : commited block txn = ['client_0-0:qnyxuxphcn'], round = 1, author = replica_0
+20:19:09 INFO - New round = 3 started
+20:19:09 INFO - Generated block for txn = ['client_2-0:qretcmsjwz'] in round = 3 and broadcasted
+20:19:09 INFO - received msg of type = vote_message from id = replica_2
+20:19:09 INFO - received msg of type = vote_message from id = replica_3
+20:19:09 INFO - received msg of type = vote_message from id = replica_4
+20:19:09 INFO - received msg of type = vote_message from id = replica_1
+20:19:09 INFO - received msg of type = proposal_message from id = replica_1
+20:19:09 INFO - vote created for round = 3, by = replica_1, send to leader = replica_2
+20:19:09 INFO - received msg of type = proposal_message from id = replica_2
+20:19:09 INFO - Ledger : commited block txn = ['client_1-0:wwmgobfpib'], round = 2, author = replica_1
+20:19:09 INFO - New round = 4 started
+20:19:09 INFO - vote created for round = 4, by = replica_1, send to leader = replica_2
+20:19:09 INFO - received msg of type = proposal_message from id = replica_2
+20:19:09 INFO - Ledger : commited block txn = ['client_2-0:qretcmsjwz'], round = 3, author = replica_1
+20:19:09 INFO - New round = 5 started
+20:19:09 INFO - vote created for round = 5, by = replica_1, send to leader = replica_3
+20:19:09 INFO - received msg of type = proposal_message from id = replica_3
+20:19:09 INFO - Ledger : commited block txn = ['client_0-1:brjfythvxv'], round = 4, author = replica_2
+20:19:09 INFO - New round = 6 started
+20:19:09 INFO - vote created for round = 6, by = replica_1, send to leader = replica_3
+20:19:09 INFO - received msg of type = proposal_message from id = replica_3
+20:19:09 INFO - Ledger : commited block txn = ['client_0-2:agadvzefyr'], round = 5, author = replica_2
+20:19:09 INFO - New round = 7 started
+20:19:09 INFO - vote created for round = 7, by = replica_1, send to leader = replica_4
+20:19:10 INFO - received msg of type = proposal_message from id = replica_4
+20:19:10 INFO - Ledger : commited block txn = ['client_0-3:ugjjazxpdm'], round = 6, author = replica_3
+20:19:10 INFO - New round = 8 started
+20:19:10 INFO - vote created for round = 8, by = replica_1, send to leader = replica_4
+20:19:10 INFO - received msg of type = proposal_message from id = replica_4
+20:19:10 INFO - Ledger : commited block txn = ['client_1-1:cnbhijebqz'], round = 7, author = replica_3
+20:19:10 INFO - New round = 9 started
+20:19:10 INFO - vote created for round = 9, by = replica_1, send to leader = replica_0
+20:19:10 INFO - received msg of type = proposal_message from id = replica_0
+20:19:10 INFO - Ledger : commited block txn = ['client_2-1:llmftvqdlr'], round = 8, author = replica_4
+20:19:10 INFO - New round = 10 started
+20:19:10 INFO - vote created for round = 10, by = replica_1, send to leader = replica_0
+20:19:10 INFO - received msg of type = proposal_message from id = replica_0
+20:19:10 INFO - Ledger : commited block txn = ['client_0-4:bmqclvsyyu'], round = 9, author = replica_4
+20:19:10 INFO - New round = 11 started
+20:19:10 INFO - vote created for round = 11, by = replica_1, send to leader = replica_1
+20:19:10 INFO - received msg of type = vote_message from id = replica_1
+20:19:10 INFO - QC created for round = 11 and parent round = 10
+20:19:10 INFO - Ledger : commited block txn = ['client_1-2:yfwdibrwck'], round = 10, author = replica_0
+20:19:10 INFO - New round = 12 started
+20:19:10 INFO - Generated block for txn = ['client_1-3:djphkgtftn'] in round = 12 and broadcasted
+20:19:10 INFO - received msg of type = vote_message from id = replica_3
+20:19:10 INFO - received msg of type = vote_message from id = replica_2
+20:19:10 INFO - received msg of type = vote_message from id = replica_4
+20:19:10 INFO - received msg of type = vote_message from id = replica_0
+20:19:10 INFO - received msg of type = proposal_message from id = replica_1
+20:19:10 INFO - vote created for round = 12, by = replica_1, send to leader = replica_1
+20:19:10 INFO - received msg of type = vote_message from id = replica_1
+20:19:10 INFO - QC created for round = 12 and parent round = 11
+20:19:10 INFO - Ledger : commited block txn = ['client_2-2:lliuqtptej'], round = 11, author = replica_0
+20:19:10 INFO - New round = 13 started
+20:19:10 INFO - Generated block for txn = ['client_2-3:vhbaeqasma'] in round = 13 and broadcasted
+20:19:10 INFO - received msg of type = vote_message from id = replica_3
+20:19:10 INFO - received msg of type = vote_message from id = replica_4
+20:19:10 INFO - received msg of type = vote_message from id = replica_0
+20:19:10 INFO - received msg of type = vote_message from id = replica_2
+20:19:10 INFO - received msg of type = proposal_message from id = replica_1
+20:19:10 INFO - vote created for round = 13, by = replica_1, send to leader = replica_2
+20:19:10 INFO - received msg of type = proposal_message from id = replica_2
+20:19:10 INFO - Ledger : commited block txn = ['client_1-3:djphkgtftn'], round = 12, author = replica_1
+20:19:10 INFO - New round = 14 started
+20:19:10 INFO - vote created for round = 14, by = replica_1, send to leader = replica_2
+20:19:10 INFO - received msg of type = proposal_message from id = replica_2
+20:19:10 INFO - Ledger : commited block txn = ['client_2-3:vhbaeqasma'], round = 13, author = replica_1
+20:19:10 INFO - New round = 15 started
+20:19:10 INFO - vote created for round = 15, by = replica_1, send to leader = replica_3
+20:19:10 INFO - received msg of type = proposal_message from id = replica_3
+20:19:10 INFO - Ledger : commited block txn = ['client_2-4:bcbuknpvzq'], round = 14, author = replica_2
+20:19:10 INFO - New round = 16 started
+20:19:10 INFO - vote created for round = 16, by = replica_1, send to leader = replica_3
+20:19:11 INFO - received msg of type = timeout_message from id = replica_0
+20:19:11 INFO - Local timeout round triggered for round = 16
+20:19:11 INFO - Created Timeout Message for round = 16 and broadcasted
+20:19:11 INFO - TC created for round = 16
+20:19:11 INFO - New round = 17 started
+20:19:11 INFO - received msg of type = timeout_message from id = replica_2
+20:19:11 INFO - received msg of type = timeout_message from id = replica_4
+20:19:11 INFO - received msg of type = timeout_message from id = replica_1
+20:19:11 INFO - received msg of type = timeout_message from id = replica_2
+20:19:11 INFO - received msg of type = timeout_message from id = replica_0
+20:19:11 INFO - received msg of type = timeout_message from id = replica_4
+20:19:12 INFO - Local timeout round triggered for round = 17
+20:19:12 INFO - Created Timeout Message for round = 17 and broadcasted
+20:19:12 INFO - received msg of type = timeout_message from id = replica_1
+20:19:12 INFO - Local timeout round triggered for round = 17
+20:19:12 INFO - Created Timeout Message for round = 17 and broadcasted
+20:19:12 INFO - TC created for round = 17
+20:19:12 INFO - New round = 18 started
+20:19:12 INFO - received msg of type = timeout_message from id = replica_2
+20:19:12 INFO - received msg of type = timeout_message from id = replica_1
+20:19:12 INFO - received msg of type = timeout_message from id = replica_0
+20:19:12 INFO - received msg of type = timeout_message from id = replica_3
+20:19:12 INFO - Ledger : commited block txn = ['client_1-4:ppkmclkehx'], round = 15, author = replica_2
+20:19:12 INFO - received msg of type = timeout_message from id = replica_4
+20:19:12 INFO - received msg of type = timeout_message from id = replica_2
+20:19:12 INFO - received msg of type = proposal_message from id = replica_4
+20:19:12 INFO - vote created for round = 18, by = replica_1, send to leader = replica_4
+20:19:20 WARNING - terminating
