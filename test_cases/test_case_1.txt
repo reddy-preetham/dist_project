@@ -1,6 +1,6 @@
 n_clients = 3
-n_replicas = 10
-n_faluty_replicas = 3
+n_replicas = 5
+n_faluty_replicas = 0
 n_client_txns = 5
 random_seed = 100
 client_timeout = 5
