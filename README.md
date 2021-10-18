@@ -9,8 +9,7 @@ Workload Generation: Generate random strings of length and append it to
 client\_id-command\_id: to generate transactions. ex :
 client\_1-0:hdtuosplne number of transactions to generate is set through
 test case config file as mentioned in user manual.
-
-    Files used : client.da
+Files used : client.da
 
 Timeouts: Replica: replica timeout formula for a round : 4 \* network
 delta path in code: replica.da/Pacemaker\_get\_round\_timer network
