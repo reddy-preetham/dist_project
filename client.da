@@ -14,7 +14,7 @@ class Client(process):
 
     def setup(client_id: str, replicas: set, private_key: str, public_key: str,
               replica_public_keys: dict, n_req: int, n_faulty_replicas: int,
-              rand_seed: int, timeout_dur: float, client_txn_delay:float):
+              rand_seed: int, timeout_dur: float, client_txn_delay: float):
         self.cid = 0           # command id
         self.results = dict()  # map of transaction and commited replicas set
         random.seed(random.random())
@@ -40,13 +40,13 @@ class Client(process):
 
         --l1
         # wait for f+1 comited responses from replicas for each sent transaction else timoeout after timeout duration set in config file
-        if await(each(txn_id in results.keys(), has=len(results[txn_id]) >= n_faulty_replicas+1)):pass
+        if await(each(txn_id in results.keys(), has=len(results[txn_id]) >= n_faulty_replicas+1)):
+            pass
         elif timeout(timeout_dur):
             output("timeout - terminating")
 
         output('terminating')
         send(('done',), to=parent())
-        
 
     def receive(msg=('response', replica, replica_id, signature, resp), at=(l1, l2,)):
         output("received response - {} from replica - {}".format(resp, replica_id))

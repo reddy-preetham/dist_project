@@ -15,7 +15,6 @@ def main():
     test_case = int(sys.argv[1]) if len(sys.argv) > 1 else 2
     # rum different test cases
 
-    
     config_vars = {}
     with open("test_cases/test_case_"+str(test_case)+".txt") as myfile:
         for line in myfile:
@@ -76,11 +75,11 @@ def main():
     # setup clients, replicas
     for i, client in enumerate(clients):
         setup(client, ("client_"+str(i), replicas, client_private_keys["client_"+str(i)], client_pub_keys["client_"+str(i)],
-                replica_pub_keys, n_client_txns, n_faluty_replicas, rand_seed, client_timeout, client_txn_delay))
-    
+                       replica_pub_keys, n_client_txns, n_faluty_replicas, rand_seed, client_timeout, client_txn_delay))
+
     for replica_id in replica_ids.keys():
         setup(replica_ids[replica_id], (replica_id, replica_ids, client_ids, replica_private_keys[replica_id], replica_pub_keys[replica_id],
-                replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size))
+                                        replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size))
 
     start(replicas)
     # start(faulty_replicas)
