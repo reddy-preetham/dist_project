@@ -38,14 +38,14 @@ def main():
         output("Test Case - {}".format(description))
 
         # creating replicas, faulty replicas, clients
-        replicas = new(ReplicaFI, num=n_faluty_replicas).union(
-            new(Replica, num=n_replicas-n_faluty_replicas))
+        faulty_replicas = new(ReplicaFI, num=n_faluty_replicas)
+        replicas = new(Replica, num=n_replicas-n_faluty_replicas)
         clients = new(Client, num=n_clients)
+
+        # creating client, replicas public, private keys
         client_ids = {}
         client_pub_keys = {}
         client_private_keys = {}
-
-        # creating client, replicas public, private keys
         for i, client in enumerate(clients):
             client_ids["client_"+str(i)] = client
             private_key = SigningKey.generate()
@@ -64,23 +64,33 @@ def main():
             replica_pub_keys["replica_"+str(i)] = public_key
             replica_private_keys["replica_"+str(i)] = private_key
 
+        for i, replica in enumerate(faulty_replicas):
+            replica_ids["faulty_replica_"+str(i)] = replica
+            private_key = SigningKey.generate()
+            public_key = private_key.verify_key.encode(encoder=HexEncoder)
+            replica_pub_keys["faulty_replica_"+str(i)] = public_key
+            replica_private_keys["faulty_replica_"+str(i)] = private_key
+
+        replicas = replicas.union(faulty_replicas)
+
         # setup clients, replicas
         for i, client in enumerate(clients):
             setup(client, ("client_"+str(i), replicas, client_private_keys["client_"+str(i)], client_pub_keys["client_"+str(i)],
                   replica_pub_keys, n_client_txns, n_faluty_replicas, rand_seed, client_timeout, client_txn_delay))
-        is_faulty = False
-        for i, replica in enumerate(replicas):
-            setup(replica, ("replica_"+str(i), replica_ids, client_ids, replica_private_keys["replica_"+str(i)], replica_pub_keys["replica_"+str(i)],
-                  replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size, is_faulty))
+        
+        for replica_id in replica_ids.keys():
+            setup(replica_ids[replica_id], (replica_id, replica_ids, client_ids, replica_private_keys[replica_id], replica_pub_keys[replica_id],
+                  replica_pub_keys, client_pub_keys, n_faluty_replicas, rand_seed, network_delta, window_size, exclude_size))
 
         start(replicas)
+        # start(faulty_replicas)
         start(clients)
 
         # await for all clients to send done when terminating. ie await for clients termination
         await(each(c in clients, has=received(('done',), from_=c)))
         output('All clients done.')
         # send done to replicas to terminate them after clients are terminated
-        send(('done',), to=(replicas))
+        send(('done',), to=(replicas.union(faulty_replicas)))
 
         # end of test case terminated all replicas and clients
         output("Test Case "+str(test_case)+"done")
