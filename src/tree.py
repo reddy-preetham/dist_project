@@ -32,8 +32,11 @@ class Tree:
             self.map[parent_id].children.append(node)
         else:
             parent_id = blk.qc.vote_info.id
-            self.map[parent_id].children.append(node)
+            if parent_id in self.map:
+                self.map[parent_id].children.append(node)
 
     def get_block(self, block_id):
         """Returns block when block id is requested"""
+        if block_id not in self.map:
+            return None
         return self.map[block_id].blk

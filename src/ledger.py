@@ -52,7 +52,7 @@ class Ledger:
     @classmethod
     def commit(cls, block):
         # block=cls.pending_ledger_tree.get_block(cls.block_state_map[block_id])
-        if block.id not in cls.commited_blocks:
+        if block and block.id not in cls.commited_blocks:
             # print(block.round,block.payload)
             logging.info("Ledger : commited block txn = {}, round = {}, author = {}".
                          format(block.payload, block.round, block.author))

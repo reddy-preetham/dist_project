@@ -397,7 +397,7 @@ class Replica(process):
 
     def BlockTree_process_qc(qc):
 
-        if qc.ledger_commit_info.commit_state_id is not None:
+        if qc.ledger_commit_info.commit_state_id is not None and pending_block_tree.get_block(qc.vote_info.parent_id):
             Ledger.commit(pending_block_tree.get_block(qc.vote_info.parent_id))
             Mempool_processed_txns(pending_block_tree.get_block(
                 qc.vote_info.parent_id).payload)
