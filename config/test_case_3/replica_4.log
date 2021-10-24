@@ -1,0 +1,330 @@
+20:46:02 INFO - replica_4 process is started
+20:46:02 INFO - received msg of type = client_request from id = client_1
+20:46:02 INFO - received msg of type = client_request from id = client_0
+20:46:02 INFO - received msg of type = client_request from id = client_2
+20:46:02 INFO - received msg of type = client_request from id = client_0
+20:46:02 INFO - received msg of type = client_request from id = client_1
+20:46:02 INFO - received msg of type = client_request from id = client_1
+20:46:02 INFO - received msg of type = client_request from id = client_0
+20:46:02 INFO - received msg of type = client_request from id = client_2
+20:46:02 INFO - received msg of type = client_request from id = client_1
+20:46:02 INFO - received msg of type = client_request from id = client_1
+20:46:02 INFO - received msg of type = client_request from id = client_2
+20:46:02 INFO - received msg of type = client_request from id = client_0
+20:46:02 INFO - received msg of type = client_request from id = client_2
+20:46:02 INFO - received msg of type = client_request from id = client_1
+20:46:02 INFO - received msg of type = client_request from id = client_0
+20:46:02 INFO - received msg of type = client_request from id = client_0
+20:46:02 INFO - received msg of type = client_request from id = client_2
+20:46:02 INFO - received msg of type = client_request from id = client_2
+20:46:03 INFO - Local timeout round triggered for round = 0
+20:46:03 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:03 INFO - received msg of type = timeout_message from id = replica_0
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:03 INFO - received msg of type = timeout_message from id = replica_2
+20:46:03 INFO - received msg of type = timeout_message from id = replica_1
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:03 INFO - received msg of type = timeout_message from id = replica_3
+20:46:03 INFO - Local timeout round triggered for round = 0
+20:46:03 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:03 INFO - received msg of type = timeout_message from id = replica_4
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:03 INFO - received msg of type = timeout_message from id = replica_0
+20:46:03 INFO - received msg of type = timeout_message from id = replica_2
+20:46:03 INFO - received msg of type = timeout_message from id = replica_1
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:03 INFO - received msg of type = timeout_message from id = replica_3
+20:46:03 INFO - received msg of type = timeout_message from id = replica_4
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:03 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:04 INFO - received msg of type = timeout_message from id = replica_0
+20:46:04 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:04 INFO - received msg of type = timeout_message from id = replica_2
+20:46:04 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:04 INFO - Local timeout round triggered for round = 0
+20:46:04 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:04 INFO - received msg of type = timeout_message from id = replica_1
+20:46:04 INFO - received msg of type = timeout_message from id = replica_3
+20:46:04 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:04 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:04 INFO - received msg of type = timeout_message from id = replica_4
+20:46:04 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:05 INFO - received msg of type = timeout_message from id = replica_0
+20:46:05 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:05 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:05 INFO - Local timeout round triggered for round = 0
+20:46:05 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:05 INFO - received msg of type = timeout_message from id = replica_2
+20:46:05 INFO - received msg of type = timeout_message from id = replica_3
+20:46:05 INFO - received msg of type = timeout_message from id = replica_1
+20:46:05 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:05 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:05 INFO - received msg of type = timeout_message from id = replica_4
+20:46:05 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:06 INFO - received msg of type = timeout_message from id = replica_0
+20:46:06 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:06 INFO - received msg of type = timeout_message from id = replica_1
+20:46:06 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:06 INFO - received msg of type = timeout_message from id = replica_3
+20:46:06 INFO - received msg of type = timeout_message from id = replica_2
+20:46:06 INFO - Local timeout round triggered for round = 0
+20:46:06 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:06 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:06 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:06 INFO - received msg of type = timeout_message from id = replica_4
+20:46:06 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:07 INFO - received msg of type = timeout_message from id = replica_0
+20:46:07 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:07 INFO - received msg of type = timeout_message from id = replica_1
+20:46:07 INFO - received msg of type = timeout_message from id = replica_3
+20:46:07 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:07 INFO - received msg of type = timeout_message from id = replica_2
+20:46:07 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:07 INFO - Local timeout round triggered for round = 0
+20:46:07 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:07 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:07 INFO - received msg of type = timeout_message from id = replica_4
+20:46:07 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:08 INFO - received msg of type = timeout_message from id = replica_0
+20:46:08 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:08 INFO - received msg of type = timeout_message from id = replica_1
+20:46:08 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:08 INFO - received msg of type = timeout_message from id = replica_2
+20:46:08 INFO - received msg of type = timeout_message from id = replica_3
+20:46:08 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:08 INFO - Local timeout round triggered for round = 0
+20:46:08 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:08 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:08 INFO - received msg of type = timeout_message from id = replica_4
+20:46:08 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:09 INFO - received msg of type = timeout_message from id = replica_0
+20:46:09 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:09 INFO - received msg of type = timeout_message from id = replica_1
+20:46:09 INFO - received msg of type = timeout_message from id = replica_2
+20:46:09 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:09 INFO - received msg of type = timeout_message from id = replica_3
+20:46:09 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:09 INFO - Local timeout round triggered for round = 0
+20:46:09 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:09 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:09 INFO - received msg of type = timeout_message from id = replica_4
+20:46:09 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:10 INFO - received msg of type = timeout_message from id = replica_0
+20:46:10 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:10 INFO - received msg of type = timeout_message from id = replica_1
+20:46:10 INFO - received msg of type = timeout_message from id = replica_2
+20:46:10 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:10 INFO - received msg of type = timeout_message from id = replica_3
+20:46:10 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:10 INFO - Local timeout round triggered for round = 0
+20:46:10 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:10 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:10 INFO - received msg of type = timeout_message from id = replica_4
+20:46:10 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:11 INFO - received msg of type = timeout_message from id = replica_0
+20:46:11 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:11 INFO - received msg of type = timeout_message from id = replica_1
+20:46:11 INFO - received msg of type = timeout_message from id = replica_2
+20:46:11 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:11 INFO - received msg of type = timeout_message from id = replica_3
+20:46:11 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:11 INFO - Local timeout round triggered for round = 0
+20:46:11 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:11 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:11 INFO - received msg of type = timeout_message from id = replica_4
+20:46:11 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:12 INFO - received msg of type = timeout_message from id = replica_0
+20:46:12 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:12 INFO - received msg of type = timeout_message from id = replica_1
+20:46:12 INFO - received msg of type = timeout_message from id = replica_2
+20:46:12 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:12 INFO - received msg of type = timeout_message from id = replica_3
+20:46:12 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:12 INFO - Local timeout round triggered for round = 0
+20:46:12 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:12 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:12 INFO - received msg of type = timeout_message from id = replica_4
+20:46:12 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:13 INFO - received msg of type = timeout_message from id = replica_0
+20:46:13 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:13 INFO - received msg of type = timeout_message from id = replica_1
+20:46:13 INFO - received msg of type = timeout_message from id = replica_2
+20:46:13 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:13 INFO - received msg of type = timeout_message from id = replica_3
+20:46:13 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:13 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:13 INFO - Local timeout round triggered for round = 0
+20:46:13 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:13 INFO - received msg of type = timeout_message from id = replica_4
+20:46:13 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:14 INFO - received msg of type = timeout_message from id = replica_0
+20:46:14 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:14 INFO - received msg of type = timeout_message from id = replica_1
+20:46:14 INFO - received msg of type = timeout_message from id = replica_2
+20:46:14 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:14 INFO - received msg of type = timeout_message from id = replica_3
+20:46:14 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:14 INFO - Local timeout round triggered for round = 0
+20:46:14 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:14 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:14 INFO - received msg of type = timeout_message from id = replica_4
+20:46:14 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:15 INFO - received msg of type = timeout_message from id = replica_0
+20:46:15 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:15 INFO - received msg of type = timeout_message from id = replica_1
+20:46:15 INFO - received msg of type = timeout_message from id = replica_2
+20:46:15 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:15 INFO - received msg of type = timeout_message from id = replica_3
+20:46:15 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:15 INFO - Local timeout round triggered for round = 0
+20:46:15 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:15 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:15 INFO - received msg of type = timeout_message from id = replica_4
+20:46:15 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:16 INFO - received msg of type = timeout_message from id = replica_0
+20:46:16 INFO - received msg of type = timeout_message from id = replica_1
+20:46:16 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:16 INFO - received msg of type = timeout_message from id = replica_2
+20:46:16 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:16 INFO - received msg of type = timeout_message from id = replica_3
+20:46:16 INFO - Local timeout round triggered for round = 0
+20:46:16 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:16 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:16 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:16 INFO - received msg of type = timeout_message from id = replica_4
+20:46:16 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:17 INFO - received msg of type = timeout_message from id = replica_0
+20:46:17 INFO - received msg of type = timeout_message from id = replica_1
+20:46:17 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:17 INFO - received msg of type = timeout_message from id = replica_2
+20:46:17 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:17 INFO - received msg of type = timeout_message from id = replica_3
+20:46:17 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:17 INFO - Local timeout round triggered for round = 0
+20:46:17 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:17 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:17 INFO - received msg of type = timeout_message from id = replica_4
+20:46:17 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:18 INFO - received msg of type = timeout_message from id = replica_0
+20:46:18 INFO - received msg of type = timeout_message from id = replica_1
+20:46:18 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:18 INFO - received msg of type = timeout_message from id = replica_2
+20:46:18 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:18 INFO - received msg of type = timeout_message from id = replica_3
+20:46:18 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:18 INFO - Local timeout round triggered for round = 0
+20:46:18 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:18 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:18 INFO - received msg of type = timeout_message from id = replica_4
+20:46:18 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:19 INFO - received msg of type = timeout_message from id = replica_0
+20:46:19 INFO - received msg of type = timeout_message from id = replica_1
+20:46:19 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:19 INFO - received msg of type = timeout_message from id = replica_2
+20:46:19 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:19 INFO - received msg of type = timeout_message from id = replica_3
+20:46:19 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:19 INFO - Local timeout round triggered for round = 0
+20:46:19 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:19 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:19 INFO - received msg of type = timeout_message from id = replica_4
+20:46:19 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:20 INFO - received msg of type = timeout_message from id = replica_0
+20:46:20 INFO - received msg of type = timeout_message from id = replica_1
+20:46:20 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:20 INFO - received msg of type = timeout_message from id = replica_2
+20:46:20 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:20 INFO - received msg of type = timeout_message from id = replica_3
+20:46:20 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:20 INFO - Local timeout round triggered for round = 0
+20:46:20 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:20 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:20 INFO - received msg of type = timeout_message from id = replica_4
+20:46:20 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:21 INFO - received msg of type = timeout_message from id = replica_0
+20:46:21 INFO - received msg of type = timeout_message from id = replica_1
+20:46:21 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:21 INFO - received msg of type = timeout_message from id = replica_2
+20:46:21 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:21 INFO - received msg of type = timeout_message from id = replica_3
+20:46:21 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:21 INFO - Local timeout round triggered for round = 0
+20:46:21 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:21 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:21 INFO - received msg of type = timeout_message from id = replica_4
+20:46:21 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:22 INFO - received msg of type = timeout_message from id = replica_0
+20:46:22 INFO - received msg of type = timeout_message from id = replica_1
+20:46:22 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:22 INFO - received msg of type = timeout_message from id = replica_2
+20:46:22 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:22 INFO - received msg of type = timeout_message from id = replica_3
+20:46:22 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:22 INFO - Local timeout round triggered for round = 0
+20:46:22 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:22 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:22 INFO - received msg of type = timeout_message from id = replica_4
+20:46:22 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:23 INFO - received msg of type = timeout_message from id = replica_0
+20:46:23 INFO - received msg of type = timeout_message from id = replica_1
+20:46:23 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:23 INFO - received msg of type = timeout_message from id = replica_2
+20:46:23 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:23 INFO - received msg of type = timeout_message from id = replica_3
+20:46:23 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:23 INFO - Local timeout round triggered for round = 0
+20:46:23 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:23 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:23 INFO - received msg of type = timeout_message from id = replica_4
+20:46:23 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:24 INFO - received msg of type = timeout_message from id = replica_0
+20:46:24 INFO - received msg of type = timeout_message from id = replica_1
+20:46:24 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:24 INFO - received msg of type = timeout_message from id = replica_2
+20:46:24 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:24 INFO - received msg of type = timeout_message from id = replica_3
+20:46:24 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:24 INFO - Local timeout round triggered for round = 0
+20:46:24 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:24 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:24 INFO - received msg of type = timeout_message from id = replica_4
+20:46:24 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:25 INFO - received msg of type = timeout_message from id = replica_0
+20:46:25 INFO - received msg of type = timeout_message from id = replica_1
+20:46:25 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:25 INFO - received msg of type = timeout_message from id = replica_2
+20:46:25 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:25 INFO - received msg of type = timeout_message from id = replica_3
+20:46:25 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:25 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:25 INFO - Local timeout round triggered for round = 0
+20:46:25 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:25 INFO - received msg of type = timeout_message from id = replica_4
+20:46:25 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:26 INFO - received msg of type = timeout_message from id = replica_0
+20:46:26 INFO - received msg of type = timeout_message from id = replica_1
+20:46:26 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:26 INFO - received msg of type = timeout_message from id = replica_2
+20:46:26 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:26 INFO - received msg of type = timeout_message from id = replica_3
+20:46:26 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:26 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:26 INFO - Local timeout round triggered for round = 0
+20:46:26 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:26 INFO - received msg of type = timeout_message from id = replica_4
+20:46:26 INFO - received msg of type = timeout_message from id = faulty_replica_4
+20:46:27 INFO - received msg of type = timeout_message from id = replica_0
+20:46:27 INFO - received msg of type = timeout_message from id = replica_1
+20:46:27 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:46:27 INFO - received msg of type = timeout_message from id = replica_2
+20:46:27 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:46:27 INFO - received msg of type = timeout_message from id = replica_3
+20:46:27 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:46:27 INFO - received msg of type = timeout_message from id = faulty_replica_3
+20:46:27 INFO - Local timeout round triggered for round = 0
+20:46:27 INFO - Created Timeout Message for round = 0 and broadcasted
+20:46:27 WARNING - terminating

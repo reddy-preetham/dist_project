@@ -1,0 +1,185 @@
+20:49:53 INFO - faulty_replica_2 process is started
+20:49:53 INFO - received msg of type = client_request from id = client_0
+20:49:53 INFO - received msg of type = client_request from id = client_1
+20:49:53 INFO - received msg of type = client_request from id = client_2
+20:49:54 INFO - Local timeout round triggered for round = 0
+20:49:54 INFO - Created Timeout Message for round = 0 and broadcasted
+20:49:54 INFO - received msg of type = timeout_message from id = replica_0
+20:49:54 INFO - received msg of type = timeout_message from id = replica_1
+20:49:54 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:49:54 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:49:54 INFO - Local timeout round triggered for round = 0
+20:49:54 INFO - Created Timeout Message for round = 0 and broadcasted
+20:49:54 INFO - received msg of type = timeout_message from id = replica_2
+20:49:54 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:49:54 INFO - received msg of type = timeout_message from id = replica_3
+20:49:54 INFO - TC created for round = 0
+20:49:54 INFO - New round = 1 started
+20:49:54 INFO - received msg of type = timeout_message from id = replica_4
+20:49:54 INFO - received msg of type = timeout_message from id = replica_6
+20:49:54 INFO - received msg of type = timeout_message from id = replica_5
+20:49:54 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:49:54 INFO - received msg of type = timeout_message from id = replica_1
+20:49:54 INFO - received msg of type = timeout_message from id = replica_0
+20:49:54 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:49:54 INFO - received msg of type = timeout_message from id = replica_2
+20:49:54 INFO - received msg of type = timeout_message from id = replica_5
+20:49:54 INFO - received msg of type = timeout_message from id = replica_3
+20:49:54 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:49:54 INFO - received msg of type = timeout_message from id = replica_4
+20:49:54 INFO - received msg of type = timeout_message from id = replica_6
+20:49:54 INFO - received msg of type = proposal_message from id = replica_0
+20:49:54 INFO - vote created for round = 1, by = faulty_replica_2, send to leader = replica_1
+20:49:54 INFO - Failure(src='leader', dest='_', msg_type=<MsgType.vote_message: 3>, round=-1, prob=0.5, fail_type=<FailType.MsgLoss: 1>, val=None, attr=None)
+20:49:54 INFO - received msg of type = proposal_message from id = replica_1
+20:49:54 INFO - New round = 2 started
+20:49:54 INFO - vote created for round = 2, by = faulty_replica_2, send to leader = replica_1
+20:49:54 INFO - received msg of type = proposal_message from id = replica_1
+20:49:54 INFO - Ledger : commited block txn = ['client_0-0:ypnrspzzdy'], round = 1, author = replica_0
+20:49:54 INFO - New round = 3 started
+20:49:54 INFO - vote created for round = 3, by = faulty_replica_2, send to leader = replica_2
+20:49:54 INFO - Failure(src='leader', dest='_', msg_type=<MsgType.vote_message: 3>, round=-1, prob=0.5, fail_type=<FailType.MsgLoss: 1>, val=None, attr=None)
+20:49:54 INFO - received msg of type = proposal_message from id = replica_2
+20:49:54 INFO - Ledger : commited block txn = ['client_1-0:zjeyghwkir'], round = 2, author = replica_1
+20:49:54 INFO - New round = 4 started
+20:49:54 INFO - vote created for round = 4, by = faulty_replica_2, send to leader = replica_2
+20:49:54 INFO - Failure(src='leader', dest='_', msg_type=<MsgType.vote_message: 3>, round=-1, prob=0.5, fail_type=<FailType.MsgLoss: 1>, val=None, attr=None)
+20:49:55 INFO - received msg of type = client_request from id = client_0
+20:49:55 INFO - received msg of type = client_request from id = client_1
+20:49:55 INFO - received msg of type = client_request from id = client_2
+20:49:55 INFO - Local timeout round triggered for round = 4
+20:49:55 INFO - Created Timeout Message for round = 4 and broadcasted
+20:49:55 INFO - received msg of type = timeout_message from id = replica_0
+20:49:56 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:49:56 INFO - received msg of type = timeout_message from id = replica_1
+20:49:56 INFO - received msg of type = timeout_message from id = replica_5
+20:49:56 INFO - Local timeout round triggered for round = 4
+20:49:56 INFO - Created Timeout Message for round = 4 and broadcasted
+20:49:56 INFO - received msg of type = timeout_message from id = replica_3
+20:49:56 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:49:56 INFO - received msg of type = timeout_message from id = replica_4
+20:49:56 INFO - TC created for round = 4
+20:49:56 INFO - New round = 5 started
+20:49:56 INFO - received msg of type = timeout_message from id = replica_6
+20:49:56 INFO - received msg of type = timeout_message from id = replica_2
+20:49:56 INFO - Ledger : commited block txn = ['client_2-0:emmdcpdibx'], round = 3, author = replica_1
+20:49:56 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:49:56 INFO - received msg of type = timeout_message from id = replica_0
+20:49:56 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:49:56 INFO - received msg of type = timeout_message from id = replica_1
+20:49:56 INFO - received msg of type = timeout_message from id = replica_5
+20:49:56 INFO - received msg of type = timeout_message from id = replica_3
+20:49:56 INFO - received msg of type = timeout_message from id = replica_6
+20:49:56 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:49:56 INFO - received msg of type = timeout_message from id = replica_4
+20:49:56 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:49:57 INFO - received msg of type = timeout_message from id = replica_2
+20:49:57 INFO - received msg of type = timeout_message from id = replica_0
+20:49:57 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:49:57 INFO - Local timeout round triggered for round = 5
+20:49:57 INFO - Created Timeout Message for round = 5 and broadcasted
+20:49:57 INFO - received msg of type = timeout_message from id = replica_5
+20:49:57 INFO - Local timeout round triggered for round = 5
+20:49:57 INFO - Created Timeout Message for round = 5 and broadcasted
+20:49:57 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:49:57 INFO - received msg of type = client_request from id = client_0
+20:49:57 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:49:57 INFO - received msg of type = timeout_message from id = replica_1
+20:49:57 INFO - TC created for round = 5
+20:49:57 INFO - New round = 6 started
+20:49:57 INFO - received msg of type = client_request from id = client_1
+20:49:57 INFO - received msg of type = client_request from id = client_2
+20:49:57 INFO - received msg of type = timeout_message from id = replica_6
+20:49:57 INFO - received msg of type = timeout_message from id = replica_3
+20:49:57 INFO - received msg of type = timeout_message from id = replica_4
+20:49:57 INFO - received msg of type = timeout_message from id = replica_2
+20:49:57 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:49:57 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:49:57 INFO - received msg of type = timeout_message from id = replica_1
+20:49:58 INFO - received msg of type = timeout_message from id = replica_5
+20:49:58 INFO - received msg of type = timeout_message from id = replica_4
+20:49:58 INFO - received msg of type = timeout_message from id = replica_3
+20:49:58 INFO - received msg of type = timeout_message from id = replica_0
+20:49:58 INFO - received msg of type = timeout_message from id = replica_6
+20:49:58 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:49:58 INFO - received msg of type = proposal_message from id = replica_3
+20:49:58 INFO - vote created for round = 6, by = faulty_replica_2, send to leader = replica_3
+20:49:58 INFO - received msg of type = proposal_message from id = replica_3
+20:49:58 INFO - New round = 7 started
+20:49:58 INFO - vote created for round = 7, by = faulty_replica_2, send to leader = replica_4
+20:49:58 INFO - Failure(src='leader', dest='_', msg_type=<MsgType.vote_message: 3>, round=-1, prob=0.5, fail_type=<FailType.MsgLoss: 1>, val=None, attr=None)
+20:49:58 INFO - received msg of type = proposal_message from id = replica_4
+20:49:58 INFO - Ledger : commited block txn = ['client_0-1:icadnamvuj'], round = 6, author = replica_3
+20:49:58 INFO - New round = 8 started
+20:49:58 INFO - vote created for round = 8, by = faulty_replica_2, send to leader = replica_4
+20:49:58 INFO - received msg of type = proposal_message from id = replica_4
+20:49:58 INFO - Ledger : commited block txn = ['client_1-1:lynxivxjmn'], round = 7, author = replica_3
+20:49:58 INFO - New round = 9 started
+20:49:58 INFO - vote created for round = 9, by = faulty_replica_2, send to leader = replica_5
+20:49:58 INFO - Failure(src='leader', dest='_', msg_type=<MsgType.vote_message: 3>, round=-1, prob=0.5, fail_type=<FailType.MsgLoss: 1>, val=None, attr=None)
+20:49:58 INFO - received msg of type = proposal_message from id = replica_5
+20:49:58 INFO - Ledger : commited block txn = ['client_2-1:vnonhpixjn'], round = 8, author = replica_4
+20:49:58 INFO - New round = 10 started
+20:49:58 INFO - vote created for round = 10, by = faulty_replica_2, send to leader = replica_5
+20:49:59 INFO - received msg of type = proposal_message from id = replica_5
+20:49:59 INFO - Ledger : commited block txn = ['client_0-2:wqodttmsyk'], round = 9, author = replica_4
+20:49:59 INFO - New round = 11 started
+20:49:59 INFO - vote created for round = 11, by = faulty_replica_2, send to leader = replica_6
+20:49:59 INFO - received msg of type = proposal_message from id = replica_6
+20:49:59 INFO - Ledger : commited block txn = ['client_1-2:mkysfejuru'], round = 10, author = replica_5
+20:49:59 INFO - New round = 12 started
+20:49:59 INFO - vote created for round = 12, by = faulty_replica_2, send to leader = replica_6
+20:49:59 INFO - Failure(src='leader', dest='_', msg_type=<MsgType.vote_message: 3>, round=-1, prob=0.5, fail_type=<FailType.MsgLoss: 1>, val=None, attr=None)
+20:50:00 INFO - received msg of type = timeout_message from id = replica_0
+20:50:00 INFO - Local timeout round triggered for round = 12
+20:50:00 INFO - Created Timeout Message for round = 12 and broadcasted
+20:50:00 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:50:00 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:50:00 INFO - received msg of type = timeout_message from id = replica_3
+20:50:00 INFO - Local timeout round triggered for round = 12
+20:50:00 INFO - Created Timeout Message for round = 12 and broadcasted
+20:50:00 INFO - received msg of type = timeout_message from id = replica_5
+20:50:00 INFO - received msg of type = timeout_message from id = replica_1
+20:50:00 INFO - received msg of type = timeout_message from id = replica_4
+20:50:00 INFO - TC created for round = 12
+20:50:00 INFO - New round = 13 started
+20:50:00 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:50:00 INFO - received msg of type = timeout_message from id = replica_2
+20:50:00 INFO - received msg of type = timeout_message from id = replica_3
+20:50:00 INFO - received msg of type = timeout_message from id = replica_4
+20:50:00 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:50:00 INFO - received msg of type = timeout_message from id = replica_5
+20:50:00 INFO - received msg of type = timeout_message from id = replica_0
+20:50:00 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:50:00 INFO - received msg of type = timeout_message from id = replica_2
+20:50:01 INFO - received msg of type = timeout_message from id = replica_1
+20:50:01 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:50:01 INFO - received msg of type = timeout_message from id = replica_3
+20:50:01 INFO - received msg of type = timeout_message from id = replica_0
+20:50:01 INFO - Local timeout round triggered for round = 13
+20:50:01 INFO - Created Timeout Message for round = 13 and broadcasted
+20:50:01 INFO - received msg of type = timeout_message from id = replica_5
+20:50:01 INFO - received msg of type = timeout_message from id = replica_1
+20:50:01 INFO - Local timeout round triggered for round = 13
+20:50:01 INFO - Created Timeout Message for round = 13 and broadcasted
+20:50:01 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:50:01 INFO - received msg of type = timeout_message from id = replica_2
+20:50:01 INFO - received msg of type = timeout_message from id = replica_4
+20:50:01 INFO - TC created for round = 13
+20:50:01 INFO - New round = 14 started
+20:50:01 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:50:01 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:50:02 INFO - received msg of type = timeout_message from id = replica_6
+20:50:02 INFO - Ledger : commited block txn = ['client_2-2:mabpdxwmku'], round = 11, author = replica_5
+20:50:02 INFO - received msg of type = timeout_message from id = replica_3
+20:50:02 INFO - received msg of type = timeout_message from id = replica_1
+20:50:02 INFO - received msg of type = timeout_message from id = replica_0
+20:50:02 INFO - received msg of type = timeout_message from id = faulty_replica_2
+20:50:02 INFO - received msg of type = timeout_message from id = faulty_replica_0
+20:50:02 INFO - received msg of type = timeout_message from id = replica_2
+20:50:02 INFO - received msg of type = timeout_message from id = replica_5
+20:50:02 INFO - received msg of type = timeout_message from id = replica_4
+20:50:02 INFO - received msg of type = timeout_message from id = faulty_replica_1
+20:50:02 INFO - received msg of type = proposal_message from id = faulty_replica_0
+20:50:02 INFO - vote created for round = 14, by = faulty_replica_2, send to leader = faulty_replica_0
+20:50:02 WARNING - terminating
