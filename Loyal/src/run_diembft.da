@@ -77,13 +77,13 @@ class RunDiemBFT(process):
         if await(each(c in clients, has=received(('Done',), from_=c))):
             output("All clients done, informing all validators.", config_id)
             await(timeout(1))
-            print("val_list",validators)
+            # print("val_list",validators)
             send(('Done',), to=validators)
             send(('Done',), to=play_ground)
 
     def receive(msg=('Done', )):
         # if p==self.play_ground:
-        print("-------------")
+        # print("-------------")
         send(('Done',), to=self.clients)
 
 

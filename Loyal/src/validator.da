@@ -49,7 +49,7 @@ class Validator (process):
         self.mempool = MemPool(validator_id)
         self.leader_election = LeaderElection(
             validator_id, replicas, self.ledger, self.pacemaker, config['window_size'], config['exclude_size'], leader_data)
-
+        self.high_known_round=1
         Cryptography.private_key = self.private_key
         Cryptography.replicas = self.replicas
         Cryptography.public_keys_validators = self.public_keys_validators
@@ -117,6 +117,7 @@ class Validator (process):
 
         '''Pacemaker.advance round(qc.vote info.round)'''
         self.pacemaker.advance_round_qc(qc)
+        self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
 
         LOGGER.log('Validator: process_certificate_qc ended', qc)
 
@@ -166,12 +167,14 @@ class Validator (process):
 
         LOGGER.log("Validator: process_new_round_event ends", None)
 
-    def check_behind(proposal_msg):
-        if len(self.proposal_messages)==0 and proposal_msg.block.round>1:
-            send(('Sync', None, self.pacemaker.current_round), to=self.play_ground)
+    def check_behind(round):
+        if len(self.proposal_messages)==0 and round>1:#proposal_msg.block.round>1:
+            # print(('Sync', self.pacemaker.current_round,self.validator_id))
+            send(('Sync', None, self.pacemaker.current_round, self.high_known_round), to=self.play_ground)
             return True
-        elif len(self.proposal_messages)!=0 and self.proposal_messages[-1][0].block.round +1 <proposal_msg.block.round:
-            send(('Sync', self.proposal_messages[-1][0], self.pacemaker.current_round), to=self.play_ground)
+        elif len(self.proposal_messages)!=0 and self.proposal_messages[-1][0].block.round +1 <round:#proposal_msg.block.round:
+            # print(('Sync', self.pacemaker.current_round,self.validator_id))
+            send(('Sync', self.proposal_messages[-1][0], self.pacemaker.current_round, self.high_known_round), to=self.play_ground)
             return True
         return False
 
@@ -186,8 +189,9 @@ class Validator (process):
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
 
+        self.high_known_round= max(self.high_known_round,proposal_msg.block.round)
 
-        if check_behind(proposal_msg):
+        if check_behind(proposal_msg.block.round):
             if (proposal_msg,p) not in self.pending_proposal_messages:
                 self.pending_proposal_messages.append((proposal_msg,p))
                 self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
@@ -201,7 +205,7 @@ class Validator (process):
                 (proposal_msg,p) = valid_proposal_message()
 
     def receive(msg=('Proposal_Sync', proposal_msg, p), from_=playground):
-        LOGGER.log_event("Received", "Proposal", proposal_msg, p)
+        LOGGER.log_event("Received", "Proposal_Sync", proposal_msg, p)
 
         signature_verified = Cryptography.get_verified_message(
             proposal_msg.signature, public_keys_validators[p])
@@ -209,7 +213,9 @@ class Validator (process):
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
 
-        if (proposal_msg,p) not in self.pending_proposal_messages:
+        if (proposal_msg,p) not in self.pending_proposal_messages and (len(self.proposal_messages)==0 or proposal_msg.block.round != self.proposal_messages[-1][0].block.round):
+            # if(self.validator_id==4):
+            #     print(proposal_msg,proposal_messages)
             self.pending_proposal_messages.append((proposal_msg,p))
             self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
          
@@ -222,6 +228,7 @@ class Validator (process):
 
     def get_proposal_data(last_msg_round):
         data = set()
+
         for d in self.proposal_messages:
             if d[0].block.round>last_msg_round:
                 data.add(d)
@@ -248,7 +255,8 @@ class Validator (process):
             curr_round = self.proposal_messages[-1][0].block.round
         if len(self.pending_proposal_messages)!=0:
             pending_round = self.pending_proposal_messages[0][0].block.round
-        
+        # if(self.validator_id==4):
+        #     print(curr_round,pending_round)
         if pending_round==-1:
             return (None, None)
         if curr_round+1 == pending_round:
@@ -272,6 +280,7 @@ class Validator (process):
 
         '''Pacemaker.advance round tc(P.last round tc)'''
         self.pacemaker.advance_round_tc(proposal_msg.last_round_tc)
+        self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
 
         '''round ← Pacemaker.current round'''
         round = self.pacemaker.current_round
@@ -317,9 +326,12 @@ class Validator (process):
         signature_verified = Cryptography.get_verified_message(
             vote_msg.signature, public_keys_validators[p])
 
+        
         if signature_verified is not None:
             LOGGER.log_action("Verified VoteMsg signature", True)
-
+            self.high_known_round= max(self.high_known_round,vote_msg.vote_info.round)
+            if check_behind(vote_msg.vote_info.round):
+                return
             '''qc ← Block-Tree.process vote(M)'''
             qc = self.blocktree.process_vote(vote_msg)
             '''if qc != ⊥ then'''
@@ -343,6 +355,8 @@ class Validator (process):
 
         if signature_verified is not None:
             LOGGER.log_action("Verified TimeoutMsg signature", True)
+            self.high_known_round= max(self.high_known_round,timeout_msg.tmo_info.round)
+            check_behind(timeout_msg.tmo_info.round)
 
             '''process certificate qc(M.tmo info.high qc)
             process certificate qc(M.high commit qc)'''
@@ -351,6 +365,7 @@ class Validator (process):
 
             '''Pacemaker.advance round tc(M.last round tc)'''
             self.pacemaker.advance_round_tc(timeout_msg.last_round_tc)
+            self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
 
             '''tc ← Pacemaker.process remote timeout(M)'''
             tc = self.pacemaker.process_remote_timeout(timeout_msg)
@@ -360,6 +375,7 @@ class Validator (process):
                 '''process certificate qc(qc)
                 process new round event(⊥)'''
                 self.pacemaker.advance_round_tc(tc)
+                self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
                 process_new_round_event(tc)
         else:
             LOGGER.log_action("Verified TimeoutMsg signature", False)

@@ -24,7 +24,7 @@ class PlayGround (process):
         self.twins = new(Validator, num = nTwins)
         self.twins = list(self.twins)
         self.delay = config['delay']
-
+        
         # print(leader_data)
         for i, v in enumerate(self.twins):
             setup({v}, (config, config_id, i, list(validators), list(clients),
@@ -91,20 +91,33 @@ class PlayGround (process):
         elif p in self.twins:
             return str(self.twins.index(p)) + 'f'
 
-    def receive(msg=('Sync', proposal_msg, round), from_=p):
-        to_list = partition_list(p, round)
+    def receive(msg=('Sync', proposal_msg, round, high_round), from_=p):
+        to_list = set(self.validators + self.twins)
+        if high_round in self.leader_data.keys():
+            to_list = partition_list(p, high_round)
+        # print('Sync',round,'from',ids(p), ids( next(iter(to_list))))
         send(('Sync', proposal_msg, round, p), to=to_list)
 
     def receive(msg=('Sync_data', (proposal_msg, sendie), recei), from_=p):
+        # print('Sync_data','from',ids(p), ids(recei))
         send(('Proposal_Sync', proposal_msg, sendie), to=recei)
 
 
     def receive(msg=('Proposal', proposal_msg), from_=p):
         round  = proposal_msg.block.round
-        print("===================Proposal msg", round, ids(p))
-        if round not in self.leader_data.keys():
-            print("============")
+        # print("===================Proposal msg", round, ids(p))
+        p_twin = p
+        if p in self.twins:
+            p_twin = self.validators[self.twins.index(p)]
+        if round > max(self.leader_data.keys())+1:
+            # print("============")
+            # send(('Proposal', proposal_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
+            return
+        if round not in self.leader_data.keys():
+            # print("============")
+            send(('Proposal', proposal_msg, p_twin), to=set(self.validators + self.twins))
+            # send(('Done',), to=parent())
             return
         to_list = partition_list(p, round)
         to_list = dropping_messages(p, round, to_list, 0)
@@ -122,10 +135,19 @@ class PlayGround (process):
     def receive(msg=('Vote', vote_msg, next_leader), from_=p):
         round = vote_msg.vote_info.round
         print("===================Vote msg", round, ids(p))
-        if round not in self.leader_data.keys():
-            print("============")
+        p_twin = p
+        if p in self.twins:
+            p_twin = self.validators[self.twins.index(p)]
+        if round > max(self.leader_data.keys())+1:
+            # print("============")
+            # send(('Vote', vote_msg, p), to=next_leader)
             send(('Done',), to=parent())
             return 
+        if round not in self.leader_data.keys():
+            # print("============")
+            send(('Vote', vote_msg, p_twin), to=next_leader)
+            # send(('Done',), to=parent())
+            return
         to_list = partition_list(p, round)
         dest = set()
         if next_leader in to_list:
@@ -150,9 +172,18 @@ class PlayGround (process):
     def receive(msg=('Timeout', timeout_msg), from_=p):
         round = timeout_msg.tmo_info.round
         print("===================Timeout msg", round, ids(p))
-        if round not in self.leader_data.keys():
+        p_twin = p
+        if p in self.twins:
+            p_twin = self.validators[self.twins.index(p)]
+        if round > max(self.leader_data.keys())+1:
+            # send(('Timeout', timeout_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
             return
+        if round not in self.leader_data.keys():
+            # print("============")
+            send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
+            return
+
         to_list = partition_list(p, round)
         to_list = dropping_messages(p, round, to_list, 2)
         delay_set = set()
