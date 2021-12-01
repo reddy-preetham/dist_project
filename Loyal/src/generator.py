@@ -235,4 +235,4 @@ class testGenerator :
                 if len(answer) > 0 : answer[j].pop()
                 break
 
-my_test_generator = testGenerator(4,1, 5, 2, True, 100, 1000, 100, 125)
+my_test_generator = testGenerator(4,1, 8, 2, True, 100, 5, 100, 125)

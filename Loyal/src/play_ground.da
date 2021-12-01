@@ -34,6 +34,9 @@ class PlayGround (process):
 
         self.test_case = test_case
         self.leader_data = leader_data
+        print("leader_data length", len(leader_data))
+        for i in leader_data.keys():
+            print(i)
     
     def partition_list(validator, round):
         to_list = set()
@@ -59,7 +62,7 @@ class PlayGround (process):
                         replica = replica[:-1]
                         to_list.add(self.twins[int(replica)])
                 value = False
-
+        
         return to_list
     
     def dropping_messages(validator, round, dest, message_type):
@@ -109,7 +112,7 @@ class PlayGround (process):
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
-        if round > max(self.leader_data.keys())+1:
+        if round > max(self.leader_data.keys()):
             # print("============")
             # send(('Proposal', proposal_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
@@ -120,6 +123,8 @@ class PlayGround (process):
             # send(('Done',), to=parent())
             return
         to_list = partition_list(p, round)
+        if(round==5):
+            print("len of list ", len(to_list))
         to_list = dropping_messages(p, round, to_list, 0)
         delay_set = set()
         if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==0 :
@@ -138,7 +143,12 @@ class PlayGround (process):
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
-        if round > max(self.leader_data.keys())+1:
+        if round == max(self.leader_data.keys()):
+            # print("============")
+            # send(('Vote', vote_msg, p), to=next_leader)
+            send(('Done',), to=parent())
+            return 
+        if round > max(self.leader_data.keys()):
             # print("============")
             # send(('Vote', vote_msg, p), to=next_leader)
             send(('Done',), to=parent())
@@ -175,7 +185,7 @@ class PlayGround (process):
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
-        if round > max(self.leader_data.keys())+1:
+        if round > max(self.leader_data.keys()):
             # send(('Timeout', timeout_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
             return

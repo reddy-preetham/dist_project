@@ -63,7 +63,7 @@ class Validator (process):
 
     # For fault injection
     def setattr(attr, value):
-        if attr == 'current_round':
+        if attr == 'current_round': 
             self.pacemaker.current_round = value
         elif attr == 'highest_vote_round':
             self.safety.set_highest_vote_round(value)
@@ -192,7 +192,8 @@ class Validator (process):
         self.high_known_round= max(self.high_known_round,proposal_msg.block.round)
 
         if check_behind(proposal_msg.block.round):
-            if (proposal_msg,p) not in self.pending_proposal_messages:
+
+            if (len(pending_proposal_messages)==0 or (proposal_msg.block.round > self.pending_proposal_messages[-1][0].block.round or proposal_msg.block.round < self.pending_proposal_messages[0][0].block.round)) and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
                 self.pending_proposal_messages.append((proposal_msg,p))
                 self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
             return
@@ -212,8 +213,8 @@ class Validator (process):
 
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
-
-        if (proposal_msg,p) not in self.pending_proposal_messages and (len(self.proposal_messages)==0 or proposal_msg.block.round != self.proposal_messages[-1][0].block.round):
+            
+        if (len(pending_proposal_messages)==0 or (proposal_msg.block.round > self.pending_proposal_messages[-1][0].block.round or proposal_msg.block.round < self.pending_proposal_messages[0][0].block.round)) and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
             # if(self.validator_id==4):
             #     print(proposal_msg,proposal_messages)
             self.pending_proposal_messages.append((proposal_msg,p))
@@ -255,6 +256,16 @@ class Validator (process):
             curr_round = self.proposal_messages[-1][0].block.round
         if len(self.pending_proposal_messages)!=0:
             pending_round = self.pending_proposal_messages[0][0].block.round
+        
+        # while curr_round>=pending_round and pending_round!=-1:
+        #     self.pending_proposal_messages.pop(0)
+        #     pending_round =-1
+        #     if len(self.pending_proposal_messages)!=0:
+        #         pending_round = self.pending_proposal_messages[0][0].block.round
+
+        if self.validator_id==0:
+            print("current_round", curr_round ,"    pending_round", pending_round)
+
         # if(self.validator_id==4):
         #     print(curr_round,pending_round)
         if pending_round==-1:
@@ -265,6 +276,10 @@ class Validator (process):
 
     def process_proposal_msg(proposal_msg, p):
         self.proposal_messages.append((proposal_msg,p))
+        self.proposal_messages = sorted(self.proposal_messages, key= lambda x: x[0].block.round)
+        
+
+        # print(self.validator_id,proposal_msg.block.round,self.pacemaker.current_round,self.proposal_messages[-2][0].block.round)
         # print("======================proposal message  ", proposal_msg ,"from:  ", p, "received at ", self)
         LOGGER.log_action("Verified ProposalMsg signature", True)
 
@@ -288,9 +303,7 @@ class Validator (process):
         leader = self.leader_election.get_leader(round)
         '''if P.block.round 6= round ∨ P.sender 6= leader ∨ P.block.author 6= leader then
                 return'''
-        if proposal_msg.block.round != round or replicas[proposal_msg.sender] != leader or replicas[proposal_msg.block.author] != leader:
-            LOGGER.log("ROUND PROPOSAL EARLY EXIT", proposal_msg.block.round, round, replicas[proposal_msg.sender], leader)
-            return
+        
 
         if p != replicas[validator_id]:
             # Validate (and remove) the transactions in current mempool with the received txns
@@ -304,6 +317,11 @@ class Validator (process):
 
         '''Block-Tree.execute and insert(P) // Adds a new speculative state to the Ledger'''
         self.blocktree.execute_and_insert(proposal_msg.block)
+
+        #moved this for sync up
+        if proposal_msg.block.round != round or replicas[proposal_msg.sender] != leader or replicas[proposal_msg.block.author] != leader:
+            LOGGER.log("ROUND PROPOSAL EARLY EXIT", proposal_msg.block.round, round, replicas[proposal_msg.sender], leader)
+            return
 
         '''vote msg ← Safety.make vote(P.block, P.last round tc)'''
         vote_msg = self.safety.make_vote(
