@@ -96,7 +96,7 @@ class PlayGround (process):
         send(('Sync', proposal_msg, round, p), to=to_list)
 
     def receive(msg=('Sync_data', (proposal_msg, sendie), recei), from_=p):
-        send(('Proposal', proposal_msg, sendie), to=recei)
+        send(('Proposal_Sync', proposal_msg, sendie), to=recei)
 
 
     def receive(msg=('Proposal', proposal_msg), from_=p):

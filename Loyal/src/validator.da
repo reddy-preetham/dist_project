@@ -84,8 +84,10 @@ class Validator (process):
         self.pacemaker.start_timer(1)
         LOGGER.log(replicas[validator_id])
         await(received(('Done',), from_=parent()))
-        self.pacemaker.stop_timer(self.pacemaker.current_round)
         output("Validator", self.validator_id, "is exiting")
+
+        self.pacemaker.stop_timer(self.pacemaker.current_round)
+        # output("Validator", self.validator_id, "is exiting")
 
     '''Procedure process certificate qc(qc)'''
     def process_certificate_qc(qc):
@@ -186,12 +188,33 @@ class Validator (process):
 
 
         if check_behind(proposal_msg):
-            self.pending_proposal_messages.append((proposal_msg,p))
-            self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
+            if (proposal_msg,p) not in self.pending_proposal_messages:
+                self.pending_proposal_messages.append((proposal_msg,p))
+                self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
             return
 
         if signature_verified is not None:
-            process_proposal_msg(proposal_msg, p)
+            # process_proposal_msg(proposal_msg, p)
+            # (proposal_msg,p) = valid_proposal_message()
+            while proposal_msg is not None:
+                process_proposal_msg(proposal_msg, p)
+                (proposal_msg,p) = valid_proposal_message()
+
+    def receive(msg=('Proposal_Sync', proposal_msg, p), from_=playground):
+        LOGGER.log_event("Received", "Proposal", proposal_msg, p)
+
+        signature_verified = Cryptography.get_verified_message(
+            proposal_msg.signature, public_keys_validators[p])
+
+        if signature_verified is None:
+            LOGGER.log_action("Verified ProposalMsg signature", False)
+
+        if (proposal_msg,p) not in self.pending_proposal_messages:
+            self.pending_proposal_messages.append((proposal_msg,p))
+            self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
+         
+
+        if signature_verified is not None:
             (proposal_msg,p) = valid_proposal_message()
             while proposal_msg is not None:
                 process_proposal_msg(proposal_msg, p)
