@@ -99,7 +99,8 @@ class Ledger:
                     LOGGER.log(
                         'Ledger: commit skipping txn as already committed', txn)
                     continue
-                else:
+                elif txn not in self.commited.values():
+
                     LOGGER.log('Ledger: commit committing a txn', txn)
                     fp.write(txn['command']+'\n')
             self.recently_committed_block_ids.append(block_id)

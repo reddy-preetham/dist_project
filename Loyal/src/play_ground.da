@@ -71,21 +71,23 @@ class PlayGround (process):
         return dest
 
     def faluty_nodes(validator, round):
-        replica = list(self.test_case[str(round)]["src_to_dest"].keys())[0]
+        dest = set()
         id =0
         if validator in self.validators:
             id = str(self.validators.index(validator))
         else :
             id = str(self.twins.index(validator)) + 'f'
-        dest = set()
-        if replica[8:]==id:
-            for rep in self.test_case[str(round)]["src_to_dest"][replica]:
-                rep = rep[8:]
-                if rep.isnumeric():
-                    dest.add(self.validators[int(rep)])
-                else:
-                    rep = rep[:-1]
-                    dest.add(self.twins[int(rep)])
+        for replica in list(self.test_case[str(round)]["src_to_dest"].keys()):
+            # replica = list(self.test_case[str(round)]["src_to_dest"].keys())[0]
+            
+            if replica[8:]==id:
+                for dest_rep in self.test_case[str(round)]["src_to_dest"][replica]:
+                    dest_rep = dest_rep[8:]
+                    if dest_rep.isnumeric():
+                        dest.add(self.validators[int(dest_rep)])
+                    else:
+                        dest_rep = dest_rep[:-1]
+                        dest.add(self.twins[int(dest_rep)])
         return dest
 
     def ids(p):
