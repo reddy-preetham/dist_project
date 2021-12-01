@@ -1,0 +1,107 @@
+{
+    "rounds": {
+        "1": {
+            "leader": "replica_0",
+            "partitions": [
+                [
+                    "replica_0",
+                    "replica_1",
+                    "replica_2",
+                    "replica_3",
+                    "replica_0f"
+                ],
+                [
+                    "replica_4"
+                ]
+            ],
+            "messageType": 1,
+            "failType": 2,
+            "src_to_dest": {
+                "replica_3": [
+                    "replica_0"
+                ]
+            }
+        },
+        "2": {
+            "leader": "replica_0",
+            "partitions": [
+                [
+                    "replica_0",
+                    "replica_1",
+                    "replica_0f"
+                ],
+                [
+                    "replica_2",
+                    "replica_3",
+                    "replica_4"
+                ]
+            ],
+            "messageType": 3,
+            "failType": 2,
+            "src_to_dest": {
+                "replica_1": [
+                    "replica_0"
+                ]
+            }
+        },
+        "3": {
+            "leader": "replica_0",
+            "partitions": [
+                [
+                    "replica_0",
+                    "replica_3",
+                    "replica_4"
+                ],
+                [
+                    "replica_1",
+                    "replica_2",
+                    "replica_0f"
+                ]
+            ],
+            "messageType": 3,
+            "failType": 2,
+            "src_to_dest": {
+                "replica_3": [
+                    "replica_4"
+                ],
+                "replica_0": [
+                    "replica_4"
+                ],
+                "replica_4": [
+                    "replica_0"
+                ]
+            }
+        },
+        "4": {
+            "leader": "replica_0",
+            "partitions": [
+                [
+                    "replica_0",
+                    "replica_1",
+                    "replica_4"
+                ],
+                [
+                    "replica_2",
+                    "replica_3",
+                    "replica_0f"
+                ]
+            ],
+            "messageType": 2,
+            "failType": 2,
+            "src_to_dest": {
+                "replica_4": [
+                    "replica_4"
+                ],
+                "replica_0": [
+                    "replica_1"
+                ],
+                "replica_1": [
+                    "replica_1"
+                ]
+            }
+        }
+    },
+    "n_replicas": 5,
+    "n_twins": 1,
+    "n_rounds": 5
+}
