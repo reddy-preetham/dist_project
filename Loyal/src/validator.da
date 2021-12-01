@@ -35,6 +35,8 @@ class Validator (process):
         self.should_start_new_round = True
         self.play_ground = play_ground
         self.validator_id = validator_id
+        self.proposal_messages = list()
+        self.pending_proposal_messages = list()
 
         self.ledger = Ledger(
             config_id, validator_id, self.id_block, self.recently_committed_block_ids, self.request_cache, isTwin, num)
@@ -162,20 +164,14 @@ class Validator (process):
 
         LOGGER.log("Validator: process_new_round_event ends", None)
 
-    # def check_behind():
-        
-    #     if len(self.proposal_messages)!=0 and self.proposal_messages[-1].block.round<self.pacemaker.current_round:
-    #         send(('Sync', self.proposal_messages[len(self.proposal_messages)-1], self.pacemaker.current_round), to=self.play_ground)
-    #         return True
-
-    #     if self.pacemaker.current_round==1:
-    #         return False
-
-    #     if len(self.proposal_messages)==0:
-    #         send(('Sync', None, self.pacemaker.current_round) to=self.play_ground)
-    #         return True
-
-    #     return False
+    def check_behind(proposal_msg):
+        if len(self.proposal_messages)==0 and proposal_msg.block.round>1:
+            send(('Sync', None, self.pacemaker.current_round), to=self.play_ground)
+            return True
+        elif len(self.proposal_messages)!=0 and self.proposal_messages[-1][0].block.round +1 <proposal_msg.block.round:
+            send(('Sync', self.proposal_messages[-1][0], self.pacemaker.current_round), to=self.play_ground)
+            return True
+        return False
 
 
     '''Procedure process proposal msg(P)'''
@@ -188,25 +184,56 @@ class Validator (process):
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
 
-        # if check_behind():
-        #     self.pending_proposal_messages.add((proposal_msg,p))
-        #     return
+
+        if check_behind(proposal_msg):
+            self.pending_proposal_messages.append((proposal_msg,p))
+            self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
+            return
 
         if signature_verified is not None:
             process_proposal_msg(proposal_msg, p)
-            # self.proposal_messages.append(proposal_msg)
-            # (proposal_msg,p) = valid_proposal_message()
-            # while proposal_msg is not None:
-            #     process_proposal_msg(proposal_msg, p)
-            #     self.proposal_messages.append(proposal_msg)
-            #     (proposal_msg,p) = valid_proposal_message()
+            (proposal_msg,p) = valid_proposal_message()
+            while proposal_msg is not None:
+                process_proposal_msg(proposal_msg, p)
+                (proposal_msg,p) = valid_proposal_message()
 
-    # def valid_proposal_message():
-    #     if self.proposal_messages[-1].block.round+1 == next(iter(self.pending_proposal_messages))[0].block.round:
-    #         return self.pending_proposal_messages.pop()
-    #     return (None, None)
+    def get_proposal_data(last_msg_round):
+        data = set()
+        for d in self.proposal_messages:
+            if d[0].block.round>last_msg_round:
+                data.add(d)
+        for d in self.pending_proposal_messages:
+            if d[0].block.round>last_msg_round:
+                data.add(d)
+        return data
+
+
+    def receive(msg=('Sync', proposal_msg, round, p), from_=playground):
+        last_msg_round =0
+        if proposal_msg is not None:
+            last_msg_round = proposal_msg.block.round
+        sync_replica_round = round
+        data = get_proposal_data(last_msg_round)
+
+        for d in data:
+            send(('Sync_data', d, p), to=self.play_ground)
+
+    def valid_proposal_message():
+        curr_round =0
+        pending_round =-1
+        if len(self.proposal_messages)!=0:
+            curr_round = self.proposal_messages[-1][0].block.round
+        if len(self.pending_proposal_messages)!=0:
+            pending_round = self.pending_proposal_messages[0][0].block.round
+        
+        if pending_round==-1:
+            return (None, None)
+        if curr_round+1 == pending_round:
+            return self.pending_proposal_messages.pop(0)
+        return (None, None)
 
     def process_proposal_msg(proposal_msg, p):
+        self.proposal_messages.append((proposal_msg,p))
         # print("======================proposal message  ", proposal_msg ,"from:  ", p, "received at ", self)
         LOGGER.log_action("Verified ProposalMsg signature", True)
 
