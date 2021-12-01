@@ -91,6 +91,14 @@ class PlayGround (process):
         elif p in self.twins:
             return str(self.twins.index(p)) + 'f'
 
+    def receive(msg=('Sync', proposal_msg, round), from_=p):
+        to_list = partition_list(p, round)
+        send(('Sync', proposal_msg, round, p), to=to_list)
+
+    def receive(msg=('Sync_data', (proposal_msg, sendie), recei), from_=p):
+        send(('Proposal', proposal_msg, sendie), to=recei)
+
+
     def receive(msg=('Proposal', proposal_msg), from_=p):
         round  = proposal_msg.block.round
         print("===================Proposal msg", round, ids(p))
