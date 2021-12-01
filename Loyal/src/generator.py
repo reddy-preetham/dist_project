@@ -7,6 +7,7 @@ class testGenerator :
     def __init__(self, n_replicas, n_twins, n_rounds, n_partitions, is_leader_faulty, partition_num_limit, n_test_cases,
                             leader_partitions_num_limit, random_seed) :
         self.partitions_list = []
+        random.seed(random_seed)
         self.partition_generation_algorithm (n_replicas + n_twins, n_partitions)
         for i in range(len(self.partitions_list)) :
             for j in range(n_partitions) :
@@ -15,9 +16,8 @@ class testGenerator :
                         self.partitions_list[i][j][k] = "replica_" + str(self.partitions_list[i][j][k] - 1)
                     else :
                         self.partitions_list[i][j][k] = "replica_" + str(self.partitions_list[i][j][k] - 1 - n_replicas)  + "f"
-        print("results", self.partitions_list)
+        self.adjustPartitions(n_replicas, n_twins, n_partitions)
         self.partitions_list = self.partitions_list[: min(partition_num_limit, len(self.partitions_list))]
-
         self.low_partition_list = []
         pop_list = []
         for i,partition_combination in enumerate(self.partitions_list) :
@@ -72,15 +72,16 @@ class testGenerator :
             for i in range(n_twins) :
                 for j in range(len(self.partitions_list)):
                     low_partition_leader_combination.append(["replica_" + str(i) + "f", self.low_partition_list[j]])
-
         ratio = len(partition_leader_combination) /( len(partition_leader_combination) + len(low_partition_leader_combination))
         partition_leader_combination = partition_leader_combination[:math.ceil(ratio * leader_partitions_num_limit)]
         low_partition_leader_combination = low_partition_leader_combination[:math.ceil((1 - ratio) * leader_partitions_num_limit)]
 
         i = 0
+        live = 0
+        no_live = 0
         while i < n_test_cases :
             test_case_data = {}
-            non_quorum_rounds = random.randint(0,n_rounds)
+            non_quorum_rounds = random.randint(0,n_rounds - 3)
             quorum_rounds =   n_rounds - non_quorum_rounds
             low_current_round_combination = random.choices(low_partition_leader_combination, k = non_quorum_rounds)
             current_round_combination = random.choices(partition_leader_combination, k = quorum_rounds)
@@ -89,7 +90,7 @@ class testGenerator :
                 test_case_data['rounds'][j] = {}
                 test_case_data['rounds'][j]['leader'] = low_current_round_combination[j][0]
                 test_case_data['rounds'][j]['partitions'] = low_current_round_combination[j][1]
-                test_case_data['rounds'][j]['messageType'] = random.randint(0,3)
+                test_case_data['rounds'][j]['messageType'] = random.randint(0,2)
                 test_case_data['rounds'][j]['failType'] = random.randint(0,2)
                 test_case_data['rounds'][j]['src_to_dest'] = self.get_src_dest_combs(low_current_round_combination[j])
 
@@ -97,19 +98,25 @@ class testGenerator :
                 test_case_data['rounds'][j] = {}
                 test_case_data['rounds'][j]['leader'] = current_round_combination[j - non_quorum_rounds][0]
                 test_case_data['rounds'][j]['partitions'] = current_round_combination[j - non_quorum_rounds][1]
-                test_case_data['rounds'][j]['messageType'] = random.randint(0,3)
+                test_case_data['rounds'][j]['messageType'] = random.randint(0,2)
                 test_case_data['rounds'][j]['failType'] = random.randint(0,2)
                 test_case_data['rounds'][j]['src_to_dest'] = self.get_src_dest_combs(current_round_combination[j - non_quorum_rounds])
 
 
             is_valid_test_case = self.is_valid_test(test_case_data, n_replicas,n_twins, n_rounds )
             if is_valid_test_case :
+                print("live")
+                live = live + 1
                 test_case_data['n_replicas'] = n_replicas
                 test_case_data['n_twins'] = n_twins
                 test_case_data['n_rounds'] = n_rounds
                 with open('tests/test_case_' + str(i) + '.json', 'w', encoding='utf-8') as f:
                     json.dump(test_case_data, f, ensure_ascii=False, indent=4)
                 i = i + 1
+            else :
+                print("not live")
+                no_live = no_live + 1
+        print("live", live,no_live)
 
 
     def get_src_dest_combs(self, partition_combination) :
@@ -129,7 +136,7 @@ class testGenerator :
         src_to_dests = defaultdict(lambda: [])
         dests = random.choices(partition, k = 2*len(partition))
         for i in range(len(srcs)) :
-            choice = random.randint(0,3)
+            choice = random.randint(0,2)
             if choice == 0 or choice == 1 :
                 src_to_dests[srcs[i]].append(dests[i])
                 src_to_dests[srcs[i]] = list(set(src_to_dests[srcs[i]]))
@@ -170,11 +177,13 @@ class testGenerator :
                         if (quorum_rounds[replica][i] == quorum_rounds[replica][i + 1]  - 1) and (quorum_rounds[replica][i] == quorum_rounds[replica][i + 2] - 2) :
                              is_quorum[replica] = True
                         i = i + 1
+            live_replicas = 0
             for replica in is_quorum :
                 if is_quorum[replica] == True :
-                    return True
-            return False
+                    live_replicas = live_replicas + 1
 
+            if live_replicas >=  2 * n_twins + 1: return True
+            return False
 
     def partition_generation_algorithm(self, n, k) :
         answer = []
@@ -182,6 +191,33 @@ class testGenerator :
             answer.append([])
         self.solution(1, n, k, 0,  answer)
 
+    def powerset(self, s):
+        x = len(s)
+        subset_list = []
+        for i in range(1 << x):
+            subset_list.append([s[j] for j in range(x) if (i & (1 << j))])
+        return subset_list
+
+    def adjustPartitions(self, n_replicas, n_twins, n_partitions) :
+        replica_list = []
+        for  i in range(n_replicas) :
+            replica_list.append('replica_' + str(i))
+            if i < n_twins :
+                replica_list.append('replica_' + str(i) + 'f')
+        subset_list = self.powerset(replica_list)
+        visited = defaultdict(lambda: False)
+        for i in range(len(self.partitions_list)) :
+            for j in range(len(subset_list)) :
+                new_partition_list =  copy.deepcopy(self.partitions_list[i])
+                new_partition_list[0].extend(subset_list[j])
+                new_partition_list[0] =  copy.deepcopy(list(set(new_partition_list[0])))
+                if len(new_partition_list[0]) > len(self.partitions_list[i][0]) :
+                    key_str = ""
+                    for k in range(len(new_partition_list)) :
+                        key_str = key_str + " ".join(new_partition_list[k]) + " |"
+                    if visited[key_str] == False :
+                        self.partitions_list.append(new_partition_list)
+                        visited[key_str] = True
 
     def solution(self, i, n, k, nums, answer) :
         if i > n :
@@ -199,4 +235,4 @@ class testGenerator :
                 if len(answer) > 0 : answer[j].pop()
                 break
 
-my_test_generator = testGenerator(5,1, 5, 2, True, 100, 5, 100, 125)
+my_test_generator = testGenerator(4,1, 5, 2, True, 100, 1000, 100, 125)
