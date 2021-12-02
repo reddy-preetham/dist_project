@@ -110,7 +110,7 @@ class testGenerator :
 
             is_valid_test_case = self.is_valid_test(test_case_data, n_replicas,n_twins, n_rounds )
             if is_valid_test_case :
-                print("live")
+                # print("live")
                 live = live + 1
                 test_case_data['n_replicas'] = n_replicas
                 test_case_data['n_twins'] = n_twins
@@ -119,9 +119,9 @@ class testGenerator :
                     json.dump(test_case_data, f, ensure_ascii=False, indent=4)
                 i = i + 1
             else :
-                print("not live")
+                # print("not live")
                 no_live = no_live + 1
-        print("live", live,no_live)
+        # print("live", live,no_live)
 
 
     def get_src_dest_combs(self, partition_combination) :

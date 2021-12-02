@@ -1,41 +1,18 @@
 {
     "rounds": {
-        "0": {
-            "leader": "replica_3",
-            "partitions": [
-                [
-                    "replica_0",
-                    "replica_1",
-                    "replica_2",
-                    "replica_3",
-                    "replica_0f"
-                ],
-                [
-                    "replica_4"
-                ]
-            ],
-            "messageType": 2,
-            "failType": 0,
-            "src_to_dest": {
-                "replica_3": [
-                    "replica_0"
-                ],
-                "replica_2": [
-                    "replica_0f"
-                ]
-            }
-        },
         "1": {
-            "leader": "replica_0",
+            "leader": "replica_1",
             "partitions": [
                 [
-                    "replica_0",
                     "replica_1",
+                    "replica_4",
                     "replica_2",
+                    "replica_0",
+                    "replica_0f",
                     "replica_3"
                 ],
                 [
-                    "replica_4",
+                    "replica_2",
                     "replica_0f"
                 ]
             ],
@@ -43,32 +20,71 @@
             "failType": 2,
             "src_to_dest": {
                 "replica_2": [
-                    "replica_3"
-                ],
-                "replica_0": [
-                    "replica_3"
-                ],
-                "replica_3": [
                     "replica_3",
-                    "replica_1"
+                    "replica_0f"
+                ],
+                "replica_4": [
+                    "replica_4"
                 ],
                 "replica_1": [
-                    "replica_1"
+                    "replica_0"
+                ],
+                "replica_0f": [
+                    "replica_2"
                 ]
             }
         },
         "2": {
-            "leader": "replica_0",
+            "leader": "replica_1",
             "partitions": [
                 [
+                    "replica_1",
+                    "replica_4",
                     "replica_0",
-                    "replica_2",
-                    "replica_4"
+                    "replica_0f",
+                    "replica_3"
                 ],
                 [
-                    "replica_1",
-                    "replica_3",
+                    "replica_2",
                     "replica_0f"
+                ]
+            ],
+            "messageType": 1,
+            "failType": 2,
+            "src_to_dest": {
+                "replica_3": [
+                    "replica_0f"
+                ],
+                "replica_1": [
+                    "replica_0f"
+                ],
+                "replica_4": [
+                    "replica_3",
+                    "replica_4"
+                ],
+                "replica_0": [
+                    "replica_0f"
+                ],
+                "replica_0f": [
+                    "replica_0f"
+                ]
+            }
+        },
+        "3": {
+            "leader": "replica_1",
+            "partitions": [
+                [
+                    "replica_1",
+                    "replica_4",
+                    "replica_2",
+                    "replica_0",
+                    "replica_0f",
+                    "replica_3"
+                ],
+                [
+                    "replica_2",
+                    "replica_3",
+                    "replica_4"
                 ]
             ],
             "messageType": 2,
@@ -78,18 +94,29 @@
                     "replica_4"
                 ],
                 "replica_0": [
-                    "replica_4",
+                    "replica_3",
+                    "replica_4"
+                ],
+                "replica_1": [
+                    "replica_4"
+                ],
+                "replica_4": [
+                    "replica_3",
                     "replica_0"
+                ],
+                "replica_3": [
+                    "replica_1"
                 ]
             }
         },
-        "3": {
-            "leader": "replica_0",
+        "4": {
+            "leader": "replica_1",
             "partitions": [
                 [
+                    "replica_2",
                     "replica_0",
                     "replica_1",
-                    "replica_2"
+                    "replica_4"
                 ],
                 [
                     "replica_3",
@@ -98,39 +125,43 @@
                 ]
             ],
             "messageType": 1,
-            "failType": 0,
+            "failType": 1,
             "src_to_dest": {
-                "replica_2": [
-                    "replica_0"
-                ],
-                "replica_0": [
-                    "replica_2"
-                ],
                 "replica_1": [
-                    "replica_2"
+                    "replica_4"
                 ]
             }
         },
-        "4": {
-            "leader": "replica_3",
+        "5": {
+            "leader": "replica_1",
             "partitions": [
                 [
-                    "replica_0",
+                    "replica_1",
+                    "replica_4",
                     "replica_2",
+                    "replica_0",
                     "replica_3"
                 ],
                 [
-                    "replica_1",
+                    "replica_2",
                     "replica_4",
                     "replica_0f"
                 ]
             ],
-            "messageType": 3,
-            "failType": 1,
+            "messageType": 2,
+            "failType": 2,
             "src_to_dest": {
-                "replica_2": [
+                "replica_1": [
                     "replica_3",
+                    "replica_0",
+                    "replica_2",
+                    "replica_4"
+                ],
+                "replica_0": [
                     "replica_2"
+                ],
+                "replica_4": [
+                    "replica_3"
                 ],
                 "replica_3": [
                     "replica_3"

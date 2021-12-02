@@ -54,12 +54,12 @@ class Validator (process):
         Cryptography.replicas = self.replicas
         Cryptography.public_keys_validators = self.public_keys_validators
 
-        if config['failure_config'].seed is None:
-            config['failure_config'].seed = random.randint(10000, 100000)
-            LOGGER.log_action("Generated a seed for failure config",
-                              config['failure_config'].seed)
+        # if config['failure_config'].seed is None:
+        #     config['failure_config'].seed = random.randint(10000, 100000)
+        #     LOGGER.log_action("Generated a seed for failure config",
+        #                       config['failure_config'].seed)
 
-        random.seed(config['failure_config'].seed)
+        # random.seed(config['failure_config'].seed)
 
     # For fault injection
     def setattr(attr, value):
@@ -180,7 +180,7 @@ class Validator (process):
             return True
         return False
 
-
+    
     '''Procedure process proposal msg(P)'''
     def receive(msg=('Proposal', proposal_msg, p), from_=playground):
         LOGGER.log_event("Received", "Proposal", proposal_msg, p)
@@ -190,6 +190,19 @@ class Validator (process):
 
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
+
+        # verify proposal message block hash
+        qc = proposal_msg.block.qc
+        hash_id = ""
+        if qc is None:
+            hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
+                                   proposal_msg.block.payload)
+        else:
+            hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
+                                   proposal_msg.block.payload, qc.vote_info.id, qc.signatures)
+
+        if hash_id != proposal_msg.block.id:
+            LOGGER.log_action("Verified ProposalMsg Block hash", False)
 
         self.high_known_round= max(self.high_known_round,proposal_msg.block.round)
 
@@ -224,6 +237,19 @@ class Validator (process):
 
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
+
+         # verify proposal message block hash
+        qc = proposal_msg.block.qc
+        hash_id = ""
+        if qc is None:
+            hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
+                                   proposal_msg.block.payload)
+        else:
+            hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
+                                   proposal_msg.block.payload, qc.vote_info.id, qc.signatures)
+
+        if hash_id != proposal_msg.block.id:
+            LOGGER.log_action("Verified ProposalMsg Block hash", False)
             
         if  proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
     # if(self.validator_id==4):
@@ -251,6 +277,8 @@ class Validator (process):
 
 
     def receive(msg=('Sync', proposal_msg, round, p), from_=playground):
+        
+        LOGGER.log_action("Received Sync request from", ids(p))
         last_msg_round =0
         if proposal_msg is not None:
             last_msg_round = proposal_msg.block.round
@@ -291,6 +319,7 @@ class Validator (process):
         
         # print("======================proposal message  ", proposal_msg ,"from:  ", p, "received at ", self)
         LOGGER.log_action("Verified ProposalMsg signature", True)
+        LOGGER.log_action("Verified ProposalMsg Block hash", True)
 
         self.should_start_new_round = False
 
@@ -353,8 +382,13 @@ class Validator (process):
         signature_verified = Cryptography.get_verified_message(
             vote_msg.signature, public_keys_validators[p])
 
+        # validate vote info hash in votemsg->ledger commit info
+        hash_vote_info = Cryptography.hash(vote_msg.vote_info)
+        if hash_vote_info != vote_msg.ledger_commit_info.vote_info_hash:
+            LOGGER.log_action("Verified Vote Info hash", False)
         
         if signature_verified is not None:
+            LOGGER.log_action("Verified VoteInfo hash", True)
             LOGGER.log_action("Verified VoteMsg signature", True)
             self.high_known_round= max(self.high_known_round,vote_msg.vote_info.round)
             if check_behind(vote_msg.vote_info.round):

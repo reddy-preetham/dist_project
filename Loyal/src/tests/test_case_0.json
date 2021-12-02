@@ -1,30 +1,40 @@
 {
     "rounds": {
         "1": {
-            "leader": "replica_2",
+            "leader": "replica_1",
             "partitions": [
                 [
                     "replica_1",
+                    "replica_4",
+                    "replica_2",
                     "replica_0",
-                    "replica_2"
+                    "replica_0f",
+                    "replica_3"
                 ],
                 [
-                    "replica_2",
                     "replica_3",
+                    "replica_4",
                     "replica_0f"
                 ]
             ],
             "messageType": 2,
             "failType": 2,
             "src_to_dest": {
-                "replica_1": [
-                    "replica_0"
+                "replica_4": [
+                    "replica_0",
+                    "replica_4"
+                ],
+                "replica_0f": [
+                    "replica_1"
+                ],
+                "replica_3": [
+                    "replica_3"
                 ],
                 "replica_0": [
-                    "replica_2"
+                    "replica_1"
                 ],
                 "replica_2": [
-                    "replica_2"
+                    "replica_0"
                 ]
             }
         },
@@ -33,23 +43,38 @@
             "partitions": [
                 [
                     "replica_1",
-                    "replica_3",
-                    "replica_0"
+                    "replica_4",
+                    "replica_2",
+                    "replica_0",
+                    "replica_0f",
+                    "replica_3"
                 ],
                 [
-                    "replica_1",
                     "replica_2",
+                    "replica_4",
                     "replica_0f"
                 ]
             ],
-            "messageType": 0,
+            "messageType": 1,
             "failType": 2,
             "src_to_dest": {
-                "replica_3": [
+                "replica_0": [
+                    "replica_3",
+                    "replica_0",
+                    "replica_2"
+                ],
+                "replica_2": [
+                    "replica_2",
+                    "replica_4"
+                ],
+                "replica_1": [
                     "replica_3"
                 ],
-                "replica_0": [
-                    "replica_3"
+                "replica_4": [
+                    "replica_4"
+                ],
+                "replica_3": [
+                    "replica_0"
                 ]
             }
         },
@@ -57,31 +82,39 @@
             "leader": "replica_1",
             "partitions": [
                 [
-                    "replica_0f",
-                    "replica_0",
+                    "replica_1",
+                    "replica_4",
                     "replica_2",
+                    "replica_0",
+                    "replica_0f",
                     "replica_3"
                 ],
                 [
-                    "replica_1",
-                    "replica_2",
                     "replica_3",
+                    "replica_4",
                     "replica_0f"
                 ]
             ],
-            "messageType": 2,
+            "messageType": 1,
             "failType": 2,
             "src_to_dest": {
                 "replica_2": [
-                    "replica_0f",
-                    "replica_2",
-                    "replica_3"
-                ],
-                "replica_1": [
-                    "replica_3",
-                    "replica_2"
+                    "replica_0",
+                    "replica_4"
                 ],
                 "replica_3": [
+                    "replica_1"
+                ],
+                "replica_0": [
+                    "replica_3",
+                    "replica_0f"
+                ],
+                "replica_4": [
+                    "replica_2",
+                    "replica_0",
+                    "replica_3"
+                ],
+                "replica_0f": [
                     "replica_3"
                 ]
             }
@@ -90,26 +123,41 @@
             "leader": "replica_1",
             "partitions": [
                 [
-                    "replica_3",
+                    "replica_1",
+                    "replica_4",
+                    "replica_2",
                     "replica_0",
-                    "replica_2"
+                    "replica_0f",
+                    "replica_3"
                 ],
                 [
-                    "replica_1",
-                    "replica_2",
+                    "replica_3",
+                    "replica_4",
                     "replica_0f"
                 ]
             ],
             "messageType": 1,
-            "failType": 2,
+            "failType": 1,
             "src_to_dest": {
-                "replica_2": [
-                    "replica_1",
-                    "replica_2"
+                "replica_3": [
+                    "replica_3",
+                    "replica_0f",
+                    "replica_4"
+                ],
+                "replica_0": [
+                    "replica_1"
                 ],
                 "replica_1": [
+                    "replica_1"
+                ],
+                "replica_4": [
+                    "replica_0",
+                    "replica_4"
+                ],
+                "replica_2": [
+                    "replica_2",
                     "replica_0f",
-                    "replica_2"
+                    "replica_1"
                 ]
             }
         },
@@ -118,60 +166,11 @@
             "partitions": [
                 [
                     "replica_1",
-                    "replica_0",
-                    "replica_2"
-                ],
-                [
-                    "replica_1",
+                    "replica_4",
                     "replica_2",
-                    "replica_3",
-                    "replica_0f"
-                ]
-            ],
-            "messageType": 0,
-            "failType": 0,
-            "src_to_dest": {
-                "replica_1": [
-                    "replica_1",
                     "replica_0",
-                    "replica_0f"
-                ]
-            }
-        },
-        "6": {
-            "leader": "replica_1",
-            "partitions": [
-                [
-                    "replica_1",
-                    "replica_0",
-                    "replica_2"
-                ],
-                [
-                    "replica_1",
-                    "replica_2",
-                    "replica_3",
-                    "replica_0f"
-                ]
-            ],
-            "messageType": 2,
-            "failType": 1,
-            "src_to_dest": {
-                "replica_1": [
-                    "replica_1",
-                    "replica_2"
-                ],
-                "replica_2": [
-                    "replica_0"
-                ]
-            }
-        },
-        "7": {
-            "leader": "replica_1",
-            "partitions": [
-                [
-                    "replica_1",
-                    "replica_0",
-                    "replica_0f"
+                    "replica_0f",
+                    "replica_3"
                 ],
                 [
                     "replica_2",
@@ -180,20 +179,30 @@
                 ]
             ],
             "messageType": 1,
-            "failType": 2,
+            "failType": 1,
             "src_to_dest": {
+                "replica_3": [
+                    "replica_3",
+                    "replica_0",
+                    "replica_0f",
+                    "replica_1"
+                ],
+                "replica_2": [
+                    "replica_0f"
+                ],
                 "replica_0f": [
-                    "replica_1",
-                    "replica_0"
+                    "replica_4"
+                ],
+                "replica_0": [
+                    "replica_3"
                 ],
                 "replica_1": [
-                    "replica_1",
                     "replica_0"
                 ]
             }
         }
     },
-    "n_replicas": 4,
+    "n_replicas": 5,
     "n_twins": 1,
-    "n_rounds": 7
+    "n_rounds": 5
 }

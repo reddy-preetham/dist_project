@@ -11,6 +11,7 @@ from config import configs
 from cryptography import Cryptography
 from validator import Validator
 
+
 class PlayGround (process):
 
     def setup(config, config_id: int, clients: list, validators: list, public_keys_clients, private_keys_validators, public_keys_validators, nTwins: int, test_case, leader_data, num):
@@ -26,6 +27,7 @@ class PlayGround (process):
         self.delay = config['delay']
         
         # print(leader_data)
+        
         for i, v in enumerate(self.twins):
             setup({v}, (config, config_id, i, list(validators), list(clients),
                         private_keys_validators[validators[i]], public_keys_validators, public_keys_clients, self, leader_data, True, num))
@@ -97,14 +99,15 @@ class PlayGround (process):
             return str(self.twins.index(p)) + 'f'
 
     def receive(msg=('Sync', proposal_msg, round, high_round), from_=p):
+
         to_list = set(self.validators + self.twins)
+
         if high_round in self.leader_data.keys():
             to_list = partition_list(p, high_round)
-        # print('Sync',round,'from',ids(p), ids( next(iter(to_list))))
+
         send(('Sync', proposal_msg, round, p), to=to_list)
 
     def receive(msg=('Sync_data', (proposal_msg, sendie), recei), from_=p):
-        # print('Sync_data','from',ids(p), ids(recei))
         send(('Proposal_Sync', proposal_msg, sendie), to=recei)
 
 
@@ -114,19 +117,16 @@ class PlayGround (process):
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
-        if round > max(self.leader_data.keys()):
-            # print("============")
-            # send(('Proposal', proposal_msg, p), to=set(self.validators + self.twins))
+
+        if round > max(self.leader_data.keys())+1:
             send(('Done',), to=parent())
             return
+
         if round not in self.leader_data.keys():
             # print("============")
-            send(('Proposal', proposal_msg, p_twin), to=set(self.validators + self.twins))
-            # send(('Done',), to=parent())
+            # send(('Proposal', proposal_msg, p_twin), to=set(self.validators + self.twins))
             return
         to_list = partition_list(p, round)
-        if(round==5):
-            print("len of list ", len(to_list))
         to_list = dropping_messages(p, round, to_list, 0)
         delay_set = set()
         if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==0 :
@@ -145,19 +145,15 @@ class PlayGround (process):
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
-        if round == max(self.leader_data.keys()):
-            # print("============")
-            # send(('Vote', vote_msg, p), to=next_leader)
-            send(('Done',), to=parent())
-            return 
-        if round > max(self.leader_data.keys()):
+
+        if round > max(self.leader_data.keys())+1:
             # print("============")
             # send(('Vote', vote_msg, p), to=next_leader)
             send(('Done',), to=parent())
             return 
         if round not in self.leader_data.keys():
             # print("============")
-            send(('Vote', vote_msg, p_twin), to=next_leader)
+            # send(('Vote', vote_msg, p_twin), to=next_leader)
             # send(('Done',), to=parent())
             return
         to_list = partition_list(p, round)
@@ -187,13 +183,14 @@ class PlayGround (process):
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
-        if round > max(self.leader_data.keys()):
+            
+        if round > max(self.leader_data.keys())+1:
             # send(('Timeout', timeout_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
             return
         if round not in self.leader_data.keys():
             # print("============")
-            send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
+            # send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
             return
 
         to_list = partition_list(p, round)
@@ -214,10 +211,10 @@ class PlayGround (process):
     
     def receive(msg=('Done',), from_=parent()):
         send(('Done',), to=set(self.twins))
-        print("Play Ground is exiting")
+        
 
     def run():
         start(validators)
         start(twins)
-        # await(received(('Done',), from_=parent())
         await(received(('Done',), from_=parent()))
+        output("Play Ground is exiting")
