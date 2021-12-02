@@ -24,7 +24,7 @@ class Validator (process):
             + LOGGER.process_id
         if isTwin:
             LOGGER.filename += "_twin"
-            
+
         LOGGER.filename += ".log"
 
         LOGGER.log_action("Initial configuration", config)
@@ -37,11 +37,11 @@ class Validator (process):
         self.validator_id = validator_id
         self.proposal_messages = list()
         self.pending_proposal_messages = list()
-        
+
         self.ledger = Ledger(
             config_id, validator_id, self.id_block, self.recently_committed_block_ids, self.request_cache, isTwin, num)
         self.blocktree = BlockTree(
-            validator_id, replicas, self.ledger, config['nTwins'], self.id_block,config['quorum_bug'])
+            validator_id, replicas, self.ledger, config['nTwins'], self.id_block, config['quorum_bug'])
         self.safety = Safety(validator_id, replicas,
                              self.ledger, self.blocktree, config['accept_conflicting_votes'])
         self.pacemaker = Pacemaker(
@@ -49,7 +49,7 @@ class Validator (process):
         self.mempool = MemPool(validator_id)
         self.leader_election = LeaderElection(
             validator_id, replicas, self.ledger, self.pacemaker, config['window_size'], config['exclude_size'], leader_data)
-        self.high_known_round=1
+        self.high_known_round = 1
         Cryptography.private_key = self.private_key
         Cryptography.replicas = self.replicas
         Cryptography.public_keys_validators = self.public_keys_validators
@@ -63,7 +63,7 @@ class Validator (process):
 
     # For fault injection
     def setattr(attr, value):
-        if attr == 'current_round': 
+        if attr == 'current_round':
             self.pacemaker.current_round = value
         elif attr == 'highest_vote_round':
             self.safety.set_highest_vote_round(value)
@@ -72,7 +72,7 @@ class Validator (process):
 
     # Broadcast the timeout message
     def send_timeout_msg(timeout_msg):
-        
+
         LOGGER.log('Validator: send_timeout_message', timeout_msg)
         send(('Timeout', timeout_msg), to=self.play_ground)
         LOGGER.log_event('Sent', 'Timeout', timeout_msg, self.replicas)
@@ -115,7 +115,8 @@ class Validator (process):
 
         '''Pacemaker.advance round(qc.vote info.round)'''
         self.pacemaker.advance_round_qc(qc)
-        self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
+        self.high_known_round = max(
+            self.high_known_round, self.pacemaker.current_round)
 
         LOGGER.log('Validator: process_certificate_qc ended', qc)
 
@@ -161,24 +162,26 @@ class Validator (process):
 
             send(('Proposal', proposal_msg), to=self.play_ground)
             if(not isTwin):
-                self.pending_proposal_messages.append(((proposal_msg,self)))
+                self.pending_proposal_messages.append(((proposal_msg, self)))
             LOGGER.log_event("Sent", "Proposal",
                              proposal_msg, self.replicas)
 
         LOGGER.log("Validator: process_new_round_event ends", None)
 
     def check_behind(round):
-        if len(self.proposal_messages)==0 and round>1:
+        if len(self.proposal_messages) == 0 and round > 1:
             # print(('Sync', self.pacemaker.current_round,self.validator_id))
-            send(('Sync', None, self.pacemaker.current_round, self.high_known_round), to=self.play_ground)
+            send(('Sync', None, self.pacemaker.current_round,
+                 self.high_known_round), to=self.play_ground)
             return True
-        elif len(self.proposal_messages)!=0 and self.proposal_messages[-1][0].block.round +1 <round:#proposal_msg.block.round:
+        # proposal_msg.block.round:
+        elif len(self.proposal_messages) != 0 and self.proposal_messages[-1][0].block.round + 1 < round:
             # print(('Sync', self.pacemaker.current_round,self.validator_id))
-            send(('Sync', self.proposal_messages[-1][0], self.pacemaker.current_round, self.high_known_round), to=self.play_ground)
+            send(('Sync', self.proposal_messages[-1][0], self.pacemaker.current_round,
+                 self.high_known_round), to=self.play_ground)
             return True
         return False
 
-    
     '''Procedure process proposal msg(P)'''
     def receive(msg=('Proposal', proposal_msg, p), from_=playground):
         LOGGER.log_event("Received", "Proposal", proposal_msg, p)
@@ -194,23 +197,25 @@ class Validator (process):
         hash_id = ""
         if qc is None:
             hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
-                                   proposal_msg.block.payload)
+                                        proposal_msg.block.payload)
         else:
             hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
-                                   proposal_msg.block.payload, qc.vote_info.id, qc.signatures)
+                                        proposal_msg.block.payload, qc.vote_info.id, qc.signatures)
 
         if hash_id != proposal_msg.block.id:
             LOGGER.log_action("Verified ProposalMsg Block hash", False)
 
-        self.high_known_round= max(self.high_known_round,proposal_msg.block.round)
+        self.high_known_round = max(
+            self.high_known_round, proposal_msg.block.round)
 
         if check_behind(proposal_msg.block.round):
 
             # if (len(pending_proposal_messages)==0 or (proposal_msg.block.round > self.pending_proposal_messages[-1][0].block.round or proposal_msg.block.round < self.pending_proposal_messages[0][0].block.round)) and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
-            if  proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
- 
-                self.pending_proposal_messages.append((proposal_msg,p))
-                self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
+            if proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages) == 0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
+
+                self.pending_proposal_messages.append((proposal_msg, p))
+                self.pending_proposal_messages = sorted(
+                    self.pending_proposal_messages, key=lambda x: x[0].block.round)
             return
 
         if signature_verified is not None:
@@ -218,14 +223,13 @@ class Validator (process):
             # (proposal_msg,p) = valid_proposal_message()
             while proposal_msg is not None:
                 process_proposal_msg(proposal_msg, p)
-                (proposal_msg,p) = valid_proposal_message()
-    
+                (proposal_msg, p) = valid_proposal_message()
+
     def get_pending_rounds():
         rounds_list = []
         for msg in self.pending_proposal_messages:
             rounds_list.append(msg[0].block.round)
         return rounds_list
-
 
     def receive(msg=('Proposal_Sync', proposal_msg, p), from_=playground):
         LOGGER.log_event("Received", "Proposal_Sync", proposal_msg, p)
@@ -241,43 +245,43 @@ class Validator (process):
         hash_id = ""
         if qc is None:
             hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
-                                   proposal_msg.block.payload)
+                                        proposal_msg.block.payload)
         else:
             hash_id = Cryptography.hash(proposal_msg.block.author, proposal_msg.block.round,
-                                   proposal_msg.block.payload, qc.vote_info.id, qc.signatures)
+                                        proposal_msg.block.payload, qc.vote_info.id, qc.signatures)
 
         if hash_id != proposal_msg.block.id:
             LOGGER.log_action("Verified ProposalMsg Block hash", False)
-            
-        if  proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
 
-            self.pending_proposal_messages.append((proposal_msg,p))
-            self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
-         
+        if proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages) == 0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
+
+            self.pending_proposal_messages.append((proposal_msg, p))
+            self.pending_proposal_messages = sorted(
+                self.pending_proposal_messages, key=lambda x: x[0].block.round)
 
         if signature_verified is not None:
-            (proposal_msg,p) = valid_proposal_message()
+            (proposal_msg, p) = valid_proposal_message()
             while proposal_msg is not None:
                 process_proposal_msg(proposal_msg, p)
-                (proposal_msg,p) = valid_proposal_message()
+                (proposal_msg, p) = valid_proposal_message()
 
     def get_proposal_data(last_msg_round):
         data = set()
 
         for d in self.proposal_messages:
-            if d[0].block.round>last_msg_round:
+            if d[0].block.round > last_msg_round:
                 data.add(d)
         for d in self.pending_proposal_messages:
-            if d[0].block.round>last_msg_round:
+            if d[0].block.round > last_msg_round:
                 data.add(d)
         return data
-
 
     def receive(msg=('Sync', proposal_msg, round, p), from_=playground):
 
         if p in self.replicas:
-            LOGGER.log_action("Received Sync request from", self.replicas.index(p))
-        last_msg_round =0
+            LOGGER.log_action("Received Sync request from",
+                              self.replicas.index(p))
+        last_msg_round = 0
         if proposal_msg is not None:
             last_msg_round = proposal_msg.block.round
         sync_replica_round = round
@@ -287,29 +291,30 @@ class Validator (process):
             send(('Sync_data', d, p), to=self.play_ground)
 
     def valid_proposal_message():
-        curr_round =0
-        pending_round =-1
-        if len(self.proposal_messages)!=0:
+        curr_round = 0
+        pending_round = -1
+        if len(self.proposal_messages) != 0:
             curr_round = self.proposal_messages[-1][0].block.round
-        if len(self.pending_proposal_messages)!=0:
+        if len(self.pending_proposal_messages) != 0:
             pending_round = self.pending_proposal_messages[0][0].block.round
-        
+
         # while curr_round>=pending_round and pending_round!=-1:
         #     self.pending_proposal_messages.pop(0)
         #     pending_round =-1
         #     if len(self.pending_proposal_messages)!=0:
         #         pending_round = self.pending_proposal_messages[0][0].block.round
 
-        if pending_round==-1:
+        if pending_round == -1:
             return (None, None)
         if curr_round+1 == pending_round:
             return self.pending_proposal_messages.pop(0)
         return (None, None)
 
     def process_proposal_msg(proposal_msg, p):
-        self.proposal_messages.append((proposal_msg,p))
-        self.proposal_messages = sorted(self.proposal_messages, key= lambda x: x[0].block.round)
-        
+        self.proposal_messages.append((proposal_msg, p))
+        self.proposal_messages = sorted(
+            self.proposal_messages, key=lambda x: x[0].block.round)
+
         LOGGER.log_action("Verified ProposalMsg signature", True)
         LOGGER.log_action("Verified ProposalMsg Block hash", True)
 
@@ -325,7 +330,8 @@ class Validator (process):
 
         '''Pacemaker.advance round tc(P.last round tc)'''
         self.pacemaker.advance_round_tc(proposal_msg.last_round_tc)
-        self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
+        self.high_known_round = max(
+            self.high_known_round, self.pacemaker.current_round)
 
         '''round ← Pacemaker.current round'''
         round = self.pacemaker.current_round
@@ -333,7 +339,6 @@ class Validator (process):
         leader = self.leader_election.get_leader(round)
         '''if P.block.round 6= round ∨ P.sender 6= leader ∨ P.block.author 6= leader then
                 return'''
-        
 
         if p != replicas[validator_id]:
             # Validate (and remove) the transactions in current mempool with the received txns
@@ -348,9 +353,10 @@ class Validator (process):
         '''Block-Tree.execute and insert(P) // Adds a new speculative state to the Ledger'''
         self.blocktree.execute_and_insert(proposal_msg.block)
 
-        #moved this for sync up
+        # moved this for sync up
         if proposal_msg.block.round != round or replicas[proposal_msg.sender] != leader or replicas[proposal_msg.block.author] != leader:
-            LOGGER.log("ROUND PROPOSAL EARLY EXIT", proposal_msg.block.round, round, replicas[proposal_msg.sender], leader)
+            LOGGER.log("ROUND PROPOSAL EARLY EXIT", proposal_msg.block.round,
+                       round, replicas[proposal_msg.sender], leader)
             return
 
         '''vote msg ← Safety.make vote(P.block, P.last round tc)'''
@@ -362,10 +368,8 @@ class Validator (process):
         if vote_msg is not None:
             next_leader = self.leader_election.get_leader(round + 1)
             send(('Vote', vote_msg, next_leader),
-                    to=self.play_ground)
+                 to=self.play_ground)
             LOGGER.log_event("Sent", "Vote", vote_msg, next_leader)
-
-        
 
     '''Procedure process vote msg(M)'''
     def receive(msg=('Vote', vote_msg, p), from_=playground):
@@ -378,11 +382,12 @@ class Validator (process):
         hash_vote_info = Cryptography.hash(vote_msg.vote_info)
         if hash_vote_info != vote_msg.ledger_commit_info.vote_info_hash:
             LOGGER.log_action("Verified Vote Info hash", False)
-        
+
         if signature_verified is not None:
             LOGGER.log_action("Verified VoteInfo hash", True)
             LOGGER.log_action("Verified VoteMsg signature", True)
-            self.high_known_round= max(self.high_known_round,vote_msg.vote_info.round)
+            self.high_known_round = max(
+                self.high_known_round, vote_msg.vote_info.round)
             if check_behind(vote_msg.vote_info.round):
                 return
             '''qc ← Block-Tree.process vote(M)'''
@@ -408,7 +413,8 @@ class Validator (process):
 
         if signature_verified is not None:
             LOGGER.log_action("Verified TimeoutMsg signature", True)
-            self.high_known_round= max(self.high_known_round,timeout_msg.tmo_info.round)
+            self.high_known_round = max(
+                self.high_known_round, timeout_msg.tmo_info.round)
             check_behind(timeout_msg.tmo_info.round)
 
             '''process certificate qc(M.tmo info.high qc)
@@ -418,7 +424,8 @@ class Validator (process):
 
             '''Pacemaker.advance round tc(M.last round tc)'''
             self.pacemaker.advance_round_tc(timeout_msg.last_round_tc)
-            self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
+            self.high_known_round = max(
+                self.high_known_round, self.pacemaker.current_round)
 
             '''tc ← Pacemaker.process remote timeout(M)'''
             tc = self.pacemaker.process_remote_timeout(timeout_msg)
@@ -428,7 +435,8 @@ class Validator (process):
                 '''process certificate qc(qc)
                 process new round event(⊥)'''
                 self.pacemaker.advance_round_tc(tc)
-                self.high_known_round = max(self.high_known_round ,self.pacemaker.current_round)
+                self.high_known_round = max(
+                    self.high_known_round, self.pacemaker.current_round)
                 process_new_round_event(tc)
         else:
             LOGGER.log_action("Verified TimeoutMsg signature", False)

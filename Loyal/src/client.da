@@ -22,11 +22,11 @@ class Client(process):
         self.nops = config['nclientops']
         self.f = config['nTwins']
         self.play_ground = play_ground
-        self.timers=[]
+        self.timers = []
 
         Cryptography.private_key = self.private_key
 
-    def send_request(request,retransmit=True):
+    def send_request(request, retransmit=True):
         signed_req = Cryptography.sign_message(request)
 
         send(('Request', signed_req), to=self.play_ground)
@@ -40,7 +40,7 @@ class Client(process):
             self.timers.append(timer)
 
     def run():
-        
+
         for i in range(nops):
             request_id = str(client_id) + "_" + str(i)
             pending_success_results[request_id] = list()
@@ -53,7 +53,7 @@ class Client(process):
 
         # Wait until we have received valid (f+1) responses for all its requests
         await(len(received_sufficient_responses) == nops or received(('Done',), from_=parent()))
-        
+
         send(('Done',), to=parent())
         for timer in self.timers:
             timer.cancel()
@@ -80,4 +80,4 @@ class Client(process):
             # Retransmit request if did not receive f+1 responses
             LOGGER.log_action("Retransmitting Request", req)
             # pending_success_results[req['req_id']].clear()
-            send_request(req,retransmit=False)
+            send_request(req, retransmit=False)

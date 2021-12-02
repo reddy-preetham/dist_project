@@ -1,3 +1,11 @@
+from logger_util import LOGGER
+import time
+from collections import defaultdict
+import json
+from validator import Validator
+from cryptography import Cryptography
+from config import configs
+from client import Client
 import os
 import shutil
 from play_ground import PlayGround
@@ -5,24 +13,13 @@ import sys
 
 sys.path.append('../config')
 
-from client import Client
-from config import configs
-from cryptography import Cryptography
-from validator import Validator
-import json
-from collections import defaultdict
-import time
-from logger_util import LOGGER
-
-
-
 
 class RunDiemBFT(process):
 
     def setup(config, config_id, num):
-        file_name  = 'tests/test_case_'+str(num)+'.json'
+        file_name = 'tests/test_case_'+str(num)+'.json'
         f = open(file_name)
-        self.test_case= json.load(f)
+        self.test_case = json.load(f)
         config['nvalidators'] = self.test_case["n_replicas"]
         config['nTwins'] = self.test_case["n_twins"]
         self.nvalidators = config['nvalidators']
@@ -37,18 +34,19 @@ class RunDiemBFT(process):
         private_keys_clients = {}
         public_keys_clients = {}
 
-        os.makedirs('../logs/config' + str(config_id) + '/test_case_' + str(num))
-        os.makedirs('../ledgers/config' + str(config_id) + '/test_case_' + str(num))
+        os.makedirs('../logs/config' + str(config_id) +
+                    '/test_case_' + str(num))
+        os.makedirs('../ledgers/config' + str(config_id) +
+                    '/test_case_' + str(num))
 
         validators = new(Validator, num=nvalidators)
         clients = new(Client, num=nclients)
-        play_ground = new(PlayGround, num =1)
+        play_ground = new(PlayGround, num=1)
 
         test_case = test_case["rounds"]
         leader_data = {}
         for key in test_case:
             leader_data[int(key)] = int(self.test_case[key]["leader"][8:])
-        
 
         # private_key_play_ground, public_key_play_ground = Cryptography.generate_key()
 
@@ -73,27 +71,24 @@ class RunDiemBFT(process):
                         private_keys_clients[c], public_keys_validators, play_ground, num))
 
         # start(validators)
-        setup(play_ground, (config, config_id, list(clients), list(validators), public_keys_clients, private_keys_validators, public_keys_validators, nTwins, test_case, leader_data, num))
+        setup(play_ground, (config, config_id, list(clients), list(validators), public_keys_clients,
+              private_keys_validators, public_keys_validators, nTwins, test_case, leader_data, num))
 
         start(clients)
         start(play_ground)
-        self.validators=validators
-        self.play_ground=play_ground
+        self.validators = validators
+        self.play_ground = play_ground
         self.clients = clients
-        if await(each(c in clients, has=received(('Done',), from_=c))) :
-            
+        if await(each(c in clients, has=received(('Done',), from_=c))):
+
             await(timeout(1))
             # print("val_list",validators)
-            
+
         elif timeout(int(config['liveness_bound'])):
             pass
         output("All clients done, informing all validators.", config_id)
         send(('Done',), to=validators)
         send(('Done',), to=play_ground)
-        
-            
-           
-
 
     def receive(msg=('Done', )):
         # if p==self.play_ground:
@@ -113,69 +108,79 @@ def is_config_valid(config):
     #     return False
     # return True
 
-def is_safe(directory_path, n_twins, n_replicas) :
-    transaction_dictionary = defaultdict(lambda : 0)
-    for i in range(0,n_twins) :
+
+def is_safe(directory_path, n_twins, n_replicas):
+    transaction_dictionary = defaultdict(lambda: 0)
+    for i in range(0, n_twins):
         filename = "validator_" + str(i) + ".ledger"
         fp = open(directory_path + "/" + filename, 'r')
         lines = fp.readlines()
-        for line in lines :
-            transaction_dictionary[line.strip()] = transaction_dictionary[line.strip()] + 1
+        for line in lines:
+            transaction_dictionary[line.strip(
+            )] = transaction_dictionary[line.strip()] + 1
         fp.close()
         filename = "validator_" + str(i) + "_twin.ledger"
         fp = open(directory_path + "/" + filename, 'r')
         lines = fp.readlines()
-        for line in lines :
-            transaction_dictionary[line.strip()] = transaction_dictionary[line.strip()] +  1
+        for line in lines:
+            transaction_dictionary[line.strip(
+            )] = transaction_dictionary[line.strip()] + 1
         fp.close()
-    for i in range(n_twins, n_replicas) :
+    for i in range(n_twins, n_replicas):
         filename = "validator_" + str(i) + ".ledger"
         fp = open(directory_path + "/" + filename, 'r')
         lines = fp.readlines()
-        for line in lines :
-            transaction_dictionary[line.strip()] = transaction_dictionary[line.strip()] +  1
+        for line in lines:
+            transaction_dictionary[line.strip(
+            )] = transaction_dictionary[line.strip()] + 1
         fp.close()
     # print(transaction_dictionary)
-    for transaction in transaction_dictionary :
-        if transaction_dictionary[transaction] < 2 * n_twins  + 1 :
+    for transaction in transaction_dictionary:
+        if transaction_dictionary[transaction] < 2 * n_twins + 1:
             return False
-    
+
     return True
 
-def is_live(directory_path, n_twins, n_replicas) :
-    validator_dict = defaultdict(lambda : 0)
-    for i in range(0,n_twins) :
+
+def is_live(directory_path, n_twins, n_replicas):
+    validator_dict = defaultdict(lambda: 0)
+    for i in range(0, n_twins):
         filename = "validator_" + str(i) + ".ledger"
         fp = open(directory_path + "/" + filename, 'r')
         lines = fp.readlines()
         line_count = 0
-        for line in lines :
-            if '-' in line : line_count = line_count + 1
+        for line in lines:
+            if '-' in line:
+                line_count = line_count + 1
         fp.close()
         validator_dict[filename] = line_count
         filename = "validator_" + str(i) + "_twin.ledger"
         fp = open(directory_path + "/" + filename, 'r')
         lines = fp.readlines()
         line_count = 0
-        for line in lines :
-            if '-' in line : line_count = line_count + 1
+        for line in lines:
+            if '-' in line:
+                line_count = line_count + 1
         fp.close()
         validator_dict[filename] = line_count
-    for i in range(n_twins, n_replicas) :
+    for i in range(n_twins, n_replicas):
         filename = "validator_" + str(i) + ".ledger"
         fp = open(directory_path + "/" + filename, 'r')
         lines = fp.readlines()
         line_count = 0
-        for line in lines :
-            if '-' in line : line_count = line_count + 1
+        for line in lines:
+            if '-' in line:
+                line_count = line_count + 1
         fp.close()
         validator_dict[filename] = line_count
     validator_cnt = 0
-    for validator in validator_dict :
-        if validator_dict[validator] == 0  :
+    for validator in validator_dict:
+        if validator_dict[validator] == 0:
             validator_cnt = validator_cnt + 1
-    if n_twins  + n_replicas - validator_cnt  > 2 * n_twins + 1 : return True
+    if n_twins + n_replicas - validator_cnt > 2 * n_twins + 1:
+        return True
     return False
+
 
 def main():
 
@@ -191,28 +196,28 @@ def main():
             output("The provided config", config,
                    "is not valid. Skipping this config.")
             continue
-        #test cases
+        # test cases
         start_time = time.time()
         for i in range(config['n_test_cases']):
 
             test_case_time = time.time()
 
-    
             p = new(RunDiemBFT)
             setup(p, (config, config_id, i))
             start(p)
 
-
-            file_name  = 'tests/test_case_'+str(i)+'.json'
+            file_name = 'tests/test_case_'+str(i)+'.json'
             f = open(file_name)
-            test_case= json.load(f)
+            test_case = json.load(f)
             f.close()
 
             await(timeout(int(config['liveness_bound'])+2))
-            
-            safe = is_safe('../ledgers/config' + str(config_id) + '/test_case_' + str(i),test_case["n_twins"],test_case["n_replicas"])
-            live = is_live('../ledgers/config' + str(config_id) + '/test_case_' + str(i),test_case["n_twins"],test_case["n_replicas"])
-            
+
+            safe = is_safe('../ledgers/config' + str(config_id) + '/test_case_' +
+                           str(i), test_case["n_twins"], test_case["n_replicas"])
+            live = is_live('../ledgers/config' + str(config_id) + '/test_case_' +
+                           str(i), test_case["n_twins"], test_case["n_replicas"])
+
             LOGGER.process_id = "twins_executor"
             LOGGER.filename = '../logs/config' + str(config_id) + '/test_case_' + str(i) + '/' \
                 + LOGGER.process_id
@@ -222,13 +227,13 @@ def main():
 
             LOGGER.log_action("Safety validation: ", safe)
             LOGGER.log_action("Liveness validation", live)
-            LOGGER.log_action("exiting test case {}".format(i),"Executor")
+            LOGGER.log_action("exiting test case {}".format(i), "Executor")
             # output("exiting test case {}".format(i))
             # output("--- test case: {} time taken: {} seconds ---".format(i,time.time() - test_case_time))
-            LOGGER.log_action("--- test case: {} time taken: {} seconds ---".format(i,time.time() - test_case_time),"Executor")
-                    
-        output("--- total execution time taken: {} seconds ---".format(time.time() - start_time),"Executor")
+            LOGGER.log_action("--- test case: {} time taken: {} seconds ---".format(
+                i, time.time() - test_case_time), "Executor")
+
+        output("--- total execution time taken: {} seconds ---".format(
+            time.time() - start_time), "Executor")
 
         config_id += 1
-
-
