@@ -72,6 +72,13 @@ class PlayGround (process):
             dest = dest - faluty_nodes(validator, round)
         return dest
 
+    def drop_dealy_messages(validator, round, message_type):
+        dest =set()
+        if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==message_type:
+            dest = faluty_nodes(validator, round)
+        return dest
+
+
     def faluty_nodes(validator, round):
         dest = set()
         id =0
@@ -128,9 +135,8 @@ class PlayGround (process):
             return
         to_list = partition_list(p, round)
         to_list = dropping_messages(p, round, to_list, 0)
-        delay_set = set()
-        if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==0 :
-            delay_set = faluty_nodes(p, round)
+        dealy_set = set()
+        delay_set = drop_dealy_messages(p, round, 0)
 
         if p in self.twins:
             p = self.validators[self.twins.index(p)]
@@ -164,9 +170,9 @@ class PlayGround (process):
             dest.add(self.validators_to_twins[next_leader])
 
         dest = dropping_messages(p, round, dest, 1)
-        delay_set = set()
-        if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==1 :
-            delay_set = faluty_nodes(p, round)
+        dealy_set = set()
+        delay_set = drop_dealy_messages(p, round, 1)
+
         if p in self.twins:
             p = self.validators[self.twins.index(p)]
         send(('Vote', vote_msg, p),
@@ -193,11 +199,14 @@ class PlayGround (process):
             # send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
             return
 
+        # send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
+        # return
+
         to_list = partition_list(p, round)
         to_list = dropping_messages(p, round, to_list, 2)
-        delay_set = set()
-        if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==2 :
-            delay_set = faluty_nodes(p, round)
+        dealy_set = set()
+        delay_set = drop_dealy_messages(p, round, 2)
+
         if p in self.twins:
             p = self.validators[self.twins.index(p)]
         
