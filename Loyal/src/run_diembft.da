@@ -195,12 +195,7 @@ def main():
 
             test_case_time = time.time()
 
-            LOGGER.process_id = "twins_executor"
-            LOGGER.filename = '../logs/config' + str(config_id) + '/test_case_' + str(i) + '/' \
-                + LOGGER.process_id
-            LOGGER.filename += ".log"
-            LOGGER.log_action("Initial configuration", config)
-
+    
             p = new(RunDiemBFT)
             setup(p, (config, config_id, i))
             start(p)
@@ -214,6 +209,12 @@ def main():
             
             safe = is_safe('../ledgers/config' + str(config_id) + '/test_case_' + str(i),test_case["n_twins"],test_case["n_replicas"])
             live = is_live('../ledgers/config' + str(config_id) + '/test_case_' + str(i),test_case["n_twins"],test_case["n_replicas"])
+
+            LOGGER.process_id = "twins_executor"
+            LOGGER.filename = '../logs/config' + str(config_id) + '/test_case_' + str(i) + '/' \
+                + LOGGER.process_id
+            LOGGER.filename += ".log"
+            LOGGER.log_action("Initial configuration", config)
 
             LOGGER.log_action("Safety validation: ", safe)
             LOGGER.log_action("Liveness validation", live)
