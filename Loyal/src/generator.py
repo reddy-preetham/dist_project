@@ -13,7 +13,9 @@ class testGenerator :
                             leader_partitions_num_limit, random_seed, is_deterministic =  True) :
         self.partitions_list = []
         random.seed(random_seed)
+        # Generate all possible partition combinations
         self.partition_generation_algorithm (n_replicas + n_twins, n_partitions)
+
         for i in range(len(self.partitions_list)) :
             for j in range(n_partitions) :
                 for k in range(len(self.partitions_list[i][j])) :
@@ -21,13 +23,16 @@ class testGenerator :
                         self.partitions_list[i][j][k] = "replica_" + str(self.partitions_list[i][j][k] - 1)
                     else :
                         self.partitions_list[i][j][k] = "replica_" + str(self.partitions_list[i][j][k] - 1 - n_replicas)  + "f"
+        # add cases where 1 replica is present in more than one partition
         self.adjustPartitions(n_replicas, n_twins, n_partitions)
+        # crop the list if it is deterministic, else perform random sampling
         if is_deterministic == True :
             self.partitions_list = self.partitions_list[: min(partition_num_limit, len(self.partitions_list))]
         else :
             self.partitions_list = random.choices(self.partitions_list, k = min(partition_num_limit, len(self.partitions_list)))
         self.low_partition_list = []
         pop_list = []
+        # remove cases where no quorum can be formed, and put it in a separate list
         for i,partition_combination in enumerate(self.partitions_list) :
             is_quorum = False
             for j in range(n_partitions) :
@@ -38,6 +43,7 @@ class testGenerator :
                 self.low_partition_list.append(partition_combination)
                 pop_list.append(partition_combination)
 
+        # remove cases where quorum can be formed npt more than few times and add it to the other list
         if len(pop_list) == 0 :
             for i,partition_combination in enumerate(self.partitions_list) :
                 c_quorum = 0
@@ -51,7 +57,7 @@ class testGenerator :
         for i in range(len(pop_list)) :
             self.partitions_list.remove(pop_list[i])
 
-
+        # generate partition leader combinations
         partition_leader_combination = []
         for i in range(n_twins,n_replicas) :
             for j in range(len(self.partitions_list)):
@@ -62,7 +68,7 @@ class testGenerator :
             for j in range(len(self.low_partition_list)):
                 low_partition_leader_combination.append(["replica_" + str(i), self.low_partition_list[j]])
 
-
+        # if leader is faulty, generate partition leader combinations  where leader has a twin
         if is_leader_faulty == True:
             for i in range(n_twins) :
                 for j in range(len(self.partitions_list)):
@@ -73,17 +79,38 @@ class testGenerator :
                 for j in range(len(self.low_partition_list)):
                     low_partition_leader_combination.append(["replica_" + str(i), self.low_partition_list[j]])
 
+        # generate weights for the 2 lists such that the leader is faulty in half of the cases.
+        # generate weights for such a case
+        faulty_leader_combinations = n_twins * len(self.partitions_list)
+        weight_val_faulty = 55.0/faulty_leader_combinations
+        weight_val_non_faulty = 45.0/(len(partition_leader_combination) - faulty_leader_combinations)
+        weight_list = []
+        for i in range(len(partition_leader_combination) - faulty_leader_combinations ) :
+            weight_list.append(weight_val_non_faulty)
+        for i in range(faulty_leader_combinations ) :
+            weight_list.append(weight_val_faulty)
+
+        low_faulty_leader_combinations = n_twins * len(self.low_partition_list)
+        low_weight_val_faulty =  55.0/low_faulty_leader_combinations
+        low_weight_val_non_faulty = 45.0/(len(low_partition_leader_combination) - low_faulty_leader_combinations)
+        low_weight_list = []
+        for i in range(len(low_partition_leader_combination) - low_faulty_leader_combinations ) :
+            low_weight_list.append(low_weight_val_non_faulty)
+        for i in range(low_faulty_leader_combinations) :
+            low_weight_list.append(low_weight_val_faulty)
+
         ratio = len(partition_leader_combination) /( len(partition_leader_combination) + len(low_partition_leader_combination))
         if is_deterministic == True :
             partition_leader_combination = partition_leader_combination[:math.ceil(ratio * leader_partitions_num_limit)]
             low_partition_leader_combination = low_partition_leader_combination[:math.ceil((1 - ratio) * leader_partitions_num_limit)]
         else :
-            partition_leader_combination = random.choices(partition_leader_combination, k = math.ceil(ratio * leader_partitions_num_limit))
-            low_partition_leader_combination = random.choices(low_partition_leader_combination, k = math.ceil((1 - ratio) * leader_partitions_num_limit))
+            partition_leader_combination = random.choices(partition_leader_combination, k = math.ceil(ratio * leader_partitions_num_limit), weights = weight_list )
+            low_partition_leader_combination = random.choices(low_partition_leader_combination, k = math.ceil((1 - ratio) * leader_partitions_num_limit), weights =  low_weight_list  )
 
         i = 0
         live = 0
         no_live = 0
+        # generate tests
         while i < n_test_cases :
             test_case_data = {}
             non_quorum_rounds = random.randint(0,n_rounds - 3)
@@ -111,6 +138,7 @@ class testGenerator :
             is_valid_test_case = self.is_valid_test(test_case_data, n_replicas,n_twins, n_rounds )
             if is_valid_test_case :
                 live = live + 1
+                print("live")
                 test_case_data['n_replicas'] = n_replicas
                 test_case_data['n_twins'] = n_twins
                 test_case_data['n_rounds'] = n_rounds
@@ -121,7 +149,7 @@ class testGenerator :
                 no_live = no_live + 1
         print("live", live,no_live)
 
-
+    # generate source to dests combinations for dropping or delaying messages
     def get_src_dest_combs(self, partition_combination) :
         leader = partition_combination[0]
         partition = []
@@ -145,6 +173,7 @@ class testGenerator :
                 src_to_dests[srcs[i]] = list(set(src_to_dests[srcs[i]]))
         return src_to_dests
 
+    # validate a test case. every replica should get a quorum in any 3 consecutove rounds
     def  is_valid_test(self, test_data, n_replicas,n_twins, n_rounds ) :
             is_quorum = {}
             for  i in range(n_replicas) :
