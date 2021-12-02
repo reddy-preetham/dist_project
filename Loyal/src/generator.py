@@ -68,18 +68,11 @@ class testGenerator :
                 for j in range(len(self.partitions_list)):
                     partition_leader_combination.append(["replica_" + str(i), self.partitions_list[j]])
 
-            for i in range(n_twins) :
-                for j in range(len(self.partitions_list)):
-                    partition_leader_combination.append(["replica_" + str(i) + "f", self.partitions_list[j]])
-
 
             for i in range(n_twins) :
                 for j in range(len(self.low_partition_list)):
                     low_partition_leader_combination.append(["replica_" + str(i), self.low_partition_list[j]])
 
-            for i in range(n_twins) :
-                for j in range(len(self.low_partition_list)):
-                    low_partition_leader_combination.append(["replica_" + str(i) + "f", self.low_partition_list[j]])
         ratio = len(partition_leader_combination) /( len(partition_leader_combination) + len(low_partition_leader_combination))
         if is_deterministic == True :
             partition_leader_combination = partition_leader_combination[:math.ceil(ratio * leader_partitions_num_limit)]
@@ -188,7 +181,7 @@ class testGenerator :
                     if(partition_len  >= 2*n_twins + 1) :
                         for replica in partition :
                             quorum_rounds[replica].append(round)
-            if whole_count > 2  :
+            if whole_count > 1  :
                return False
 
 
@@ -228,15 +221,16 @@ class testGenerator :
         for i in range(len(self.partitions_list)) :
             for j in range(len(subset_list)) :
                 new_partition_list =  copy.deepcopy(self.partitions_list[i])
-                new_partition_list[0].extend(subset_list[j])
-                new_partition_list[0] =  copy.deepcopy(list(set(new_partition_list[0])))
-                if len(new_partition_list[0]) > len(self.partitions_list[i][0]) :
-                    key_str = ""
-                    for k in range(len(new_partition_list)) :
-                        key_str = key_str + " ".join(new_partition_list[k]) + " |"
-                    if visited[key_str] == False :
-                        self.partitions_list.append(new_partition_list)
-                        visited[key_str] = True
+                if len(subset_list[j]) <= 1 :
+                    new_partition_list[0].extend(subset_list[j])
+                    new_partition_list[0] =  copy.deepcopy(list(set(new_partition_list[0])))
+                    if len(new_partition_list[0]) > len(self.partitions_list[i][0]) :
+                        key_str = ""
+                        for k in range(len(new_partition_list)) :
+                            key_str = key_str + " ".join(new_partition_list[k]) + " |"
+                        if visited[key_str] == False :
+                            self.partitions_list.append(new_partition_list)
+                            visited[key_str] = True
 
     def solution(self, i, n, k, nums, answer) :
         if i > n :
