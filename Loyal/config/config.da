@@ -14,7 +14,8 @@ configs = [
         'delay': 1,
         'quorum_bug': False, #quorum = 2f
         'accept_conflicting_votes':False,
-        'liveness_bound' : 10
+        'liveness_bound' : 10,
+        'n_test_cases' : 5
         
     }
 #     {

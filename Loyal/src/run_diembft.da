@@ -135,9 +135,11 @@ def is_safe(directory_path, n_twins, n_replicas) :
         for line in lines :
             transaction_dictionary[line.strip()] = transaction_dictionary[line.strip()] +  1
         fp.close()
+    # print(transaction_dictionary)
     for transaction in transaction_dictionary :
         if transaction_dictionary[transaction] < 2 * n_twins  + 1 :
             return False
+    
     return True
 
 def is_live(directory_path, n_twins, n_replicas) :
@@ -191,7 +193,8 @@ def main():
             continue
         #test cases
         start_time = time.time()
-        for i in range(5):
+        
+        for i in range(config['n_test_cases']):
 
             test_case_time = time.time()
 
