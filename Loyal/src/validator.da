@@ -74,8 +74,6 @@ class Validator (process):
     def send_timeout_msg(timeout_msg):
         
         LOGGER.log('Validator: send_timeout_message', timeout_msg)
-        # print("======send tm ",('Timeout', timeout_msg),self.play_ground)
-        # print(timeout_msg.tmo_info.round,self.pacemaker.current_round)
         send(('Timeout', timeout_msg), to=self.play_ground)
         LOGGER.log_event('Sent', 'Timeout', timeout_msg, self.replicas)
 
@@ -170,7 +168,7 @@ class Validator (process):
         LOGGER.log("Validator: process_new_round_event ends", None)
 
     def check_behind(round):
-        if len(self.proposal_messages)==0 and round>1:#proposal_msg.block.round>1:
+        if len(self.proposal_messages)==0 and round>1:
             # print(('Sync', self.pacemaker.current_round,self.validator_id))
             send(('Sync', None, self.pacemaker.current_round, self.high_known_round), to=self.play_ground)
             return True
@@ -252,8 +250,7 @@ class Validator (process):
             LOGGER.log_action("Verified ProposalMsg Block hash", False)
             
         if  proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
-    # if(self.validator_id==4):
-            #     print(proposal_msg,proposal_messages)
+
             self.pending_proposal_messages.append((proposal_msg,p))
             self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
          
@@ -303,11 +300,6 @@ class Validator (process):
         #     if len(self.pending_proposal_messages)!=0:
         #         pending_round = self.pending_proposal_messages[0][0].block.round
 
-        if self.validator_id==0:
-            print("current_round", curr_round ,"    pending_round", pending_round)
-
-        # if(self.validator_id==4):
-        #     print(curr_round,pending_round)
         if pending_round==-1:
             return (None, None)
         if curr_round+1 == pending_round:
@@ -318,7 +310,6 @@ class Validator (process):
         self.proposal_messages.append((proposal_msg,p))
         self.proposal_messages = sorted(self.proposal_messages, key= lambda x: x[0].block.round)
         
-        # print("======================proposal message  ", proposal_msg ,"from:  ", p, "received at ", self)
         LOGGER.log_action("Verified ProposalMsg signature", True)
         LOGGER.log_action("Verified ProposalMsg Block hash", True)
 
@@ -411,7 +402,7 @@ class Validator (process):
     '''Procedure process timeout msg(M)'''
     def receive(msg=('Timeout', timeout_msg, p), from_=playground):
         LOGGER.log_event("Received", "Timeout", timeout_msg, p)
-        # print("===========receive tm")
+
         signature_verified = Cryptography.get_verified_message(
             timeout_msg.tmo_info.author_signature, public_keys_validators[p])
 

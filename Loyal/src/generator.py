@@ -138,7 +138,6 @@ class testGenerator :
             is_valid_test_case = self.is_valid_test(test_case_data, n_replicas,n_twins, n_rounds )
             if is_valid_test_case :
                 live = live + 1
-                print("live")
                 test_case_data['n_replicas'] = n_replicas
                 test_case_data['n_twins'] = n_twins
                 test_case_data['n_rounds'] = n_rounds
@@ -147,7 +146,6 @@ class testGenerator :
                 i = i + 1
             else :
                 no_live = no_live + 1
-        print("live", live,no_live)
 
     # generate source to dests combinations for dropping or delaying messages
     def get_src_dest_combs(self, partition_combination) :

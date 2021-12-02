@@ -58,7 +58,6 @@ class Client(process):
         for timer in self.timers:
             timer.cancel()
         LOGGER.log_event("Sent", "Done", None, parent())
-        print("++++++++++ALL CLIENTS DONE")
 
     def receive(msg=('Response', resp), from_=validator):
         LOGGER.log_event("Received", "Response", resp, validator)
