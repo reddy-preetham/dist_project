@@ -193,7 +193,7 @@ def main():
             continue
         #test cases
         start_time = time.time()
-        for i in range(5):
+        for i in range(config['n_test_cases']):
 
             test_case_time = time.time()
 

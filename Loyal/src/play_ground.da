@@ -74,14 +74,14 @@ class PlayGround (process):
         
         if self.test_case[str(round)]["failType"]==0 and self.test_case[str(round)]["messageType"]==message_type :
             dest = dest - faluty_nodes(validator, round)
-            LOGGER.log_action("Dropping messages, message type = {}, src ={}, dest = {}".format(message_type, ids(validator), faluty_nodes(validator, round)), "Play Ground")
+            LOGGER.log_action("Dropping messages, message type = {}, src ={}, dest = {}".format(message_type, ids(validator), set_ids(faluty_nodes(validator, round))), "Play Ground")
         return dest
 
     def drop_dealy_messages(validator, round, message_type):
         dest =set()
         if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==message_type:
             dest = faluty_nodes(validator, round)
-            LOGGER.log_action("Delaying messages, message type = {}, src ={}, dest = {}".format(message_type, ids(validator), faluty_nodes(validator, round)), "Play Ground")
+            LOGGER.log_action("Delaying messages, message type = {}, src ={}, dest = {}".format(message_type, ids(validator), set_ids(faluty_nodes(validator, round))), "Play Ground")
         return dest
 
 
@@ -110,6 +110,15 @@ class PlayGround (process):
             return str(self.validators.index(p))
         elif p in self.twins:
             return str(self.twins.index(p)) + 'f'
+    
+    def set_ids(mylist):
+        d = set()
+        for p in mylist:
+            if p in self.validators:
+                d.add(str(self.validators.index(p)))
+            elif p in self.twins:
+                d.add(str(self.twins.index(p)) + 'f')
+        return d
 
     def receive(msg=('Sync', proposal_msg, round, high_round), from_=p):
 
@@ -141,7 +150,7 @@ class PlayGround (process):
             return
         to_list = partition_list(p, round)
         
-        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(ids(p), round, to_list, "Proposal"),"Play Ground")
+        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(ids(p), round, set_ids(to_list), "Proposal"),"Play Ground")
 
         to_list = dropping_messages(p, round, to_list, 0)
         dealy_set = set()
@@ -213,7 +222,7 @@ class PlayGround (process):
         # return
 
         to_list = partition_list(p, round)
-        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(ids(p), round, to_list, "Timeout"),"Play Ground")
+        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(ids(p), round, set_ids(to_list), "Timeout"),"Play Ground")
         to_list = dropping_messages(p, round, to_list, 2)
         dealy_set = set()
         delay_set = drop_dealy_messages(p, round, 2)
