@@ -278,7 +278,8 @@ class Validator (process):
 
     def receive(msg=('Sync', proposal_msg, round, p), from_=playground):
 
-        LOGGER.log_action("Received Sync request from", self.replicas.index(p))
+        if p in self.replicas:
+            LOGGER.log_action("Received Sync request from", self.replicas.index(p))
         last_msg_round =0
         if proposal_msg is not None:
             last_msg_round = proposal_msg.block.round

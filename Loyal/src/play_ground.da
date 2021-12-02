@@ -10,6 +10,8 @@ from client import Client
 from config import configs
 from cryptography import Cryptography
 from validator import Validator
+from logger_util import LOGGER
+
 
 
 class PlayGround (process):
@@ -36,10 +38,11 @@ class PlayGround (process):
 
         self.test_case = test_case
         self.leader_data = leader_data
-        print("leader_data length", len(leader_data))
-        for i in leader_data.keys():
-            print(i)
-    
+        LOGGER.process_id = "twins_executor"
+        LOGGER.filename = '../logs/config' + str(config_id) + '/test_case_' + str(num) + '/' \
+            + LOGGER.process_id
+        LOGGER.filename += ".log"
+
     def partition_list(validator, round):
         to_list = set()
         partitions = self.test_case[str(round)]["partitions"]
@@ -68,14 +71,17 @@ class PlayGround (process):
         return to_list
     
     def dropping_messages(validator, round, dest, message_type):
+        
         if self.test_case[str(round)]["failType"]==0 and self.test_case[str(round)]["messageType"]==message_type :
             dest = dest - faluty_nodes(validator, round)
+            LOGGER.log_action("Dropping messages, message type = {}, src ={}, dest = {}".format(message_type, ids(validator), faluty_nodes(validator, round)), "Play Ground")
         return dest
 
     def drop_dealy_messages(validator, round, message_type):
         dest =set()
         if self.test_case[str(round)]["failType"]==1 and self.test_case[str(round)]["messageType"]==message_type:
             dest = faluty_nodes(validator, round)
+            LOGGER.log_action("Delaying messages, message type = {}, src ={}, dest = {}".format(message_type, ids(validator), faluty_nodes(validator, round)), "Play Ground")
         return dest
 
 
@@ -125,7 +131,7 @@ class PlayGround (process):
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
 
-        if round > max(self.leader_data.keys()):
+        if round > max(self.leader_data.keys())+1:
             send(('Done',), to=parent())
             return
 
@@ -134,6 +140,9 @@ class PlayGround (process):
             # send(('Proposal', proposal_msg, p_twin), to=set(self.validators + self.twins))
             return
         to_list = partition_list(p, round)
+        
+        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(ids(p), round, to_list, "Proposal"),"Play Ground")
+
         to_list = dropping_messages(p, round, to_list, 0)
         dealy_set = set()
         delay_set = drop_dealy_messages(p, round, 0)
@@ -152,7 +161,7 @@ class PlayGround (process):
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
 
-        if round == max(self.leader_data.keys()):
+        if round == max(self.leader_data.keys())+1:
             # print("============")
             # send(('Vote', vote_msg, p), to=next_leader)
             send(('Done',), to=parent())
@@ -163,6 +172,7 @@ class PlayGround (process):
             # send(('Done',), to=parent())
             return
         to_list = partition_list(p, round)
+        
         dest = set()
         if next_leader in to_list:
             dest.add(next_leader)
@@ -190,19 +200,20 @@ class PlayGround (process):
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
             
-        if round > max(self.leader_data.keys()):
+        if round > max(self.leader_data.keys())+1:
             # send(('Timeout', timeout_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
             return
         if round not in self.leader_data.keys():
             # print("============")
-            # send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
+            send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
             return
 
         # send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
         # return
 
         to_list = partition_list(p, round)
+        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(ids(p), round, to_list, "Timeout"),"Play Ground")
         to_list = dropping_messages(p, round, to_list, 2)
         dealy_set = set()
         delay_set = drop_dealy_messages(p, round, 2)
@@ -226,4 +237,5 @@ class PlayGround (process):
         start(validators)
         start(twins)
         await(received(('Done',), from_=parent()))
+        LOGGER.log_action("Play Ground is exiting","Play Ground")
         output("Play Ground is exiting")
