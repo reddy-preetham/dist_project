@@ -10,7 +10,7 @@ from config_test import config
 
 class testGenerator :
     def __init__(self, n_replicas, n_twins, n_rounds, n_partitions, is_leader_faulty, partition_num_limit, n_test_cases,
-                            leader_partitions_num_limit, random_seed) :
+                            leader_partitions_num_limit, random_seed, is_deterministic =  True) :
         self.partitions_list = []
         random.seed(random_seed)
         self.partition_generation_algorithm (n_replicas + n_twins, n_partitions)
@@ -22,7 +22,10 @@ class testGenerator :
                     else :
                         self.partitions_list[i][j][k] = "replica_" + str(self.partitions_list[i][j][k] - 1 - n_replicas)  + "f"
         self.adjustPartitions(n_replicas, n_twins, n_partitions)
-        self.partitions_list = self.partitions_list[: min(partition_num_limit, len(self.partitions_list))]
+        if is_deterministic == True :
+            self.partitions_list = self.partitions_list[: min(partition_num_limit, len(self.partitions_list))]
+        else :
+            self.partitions_list = random.choices(self.partitions_list, k = min(partition_num_limit, len(self.partitions_list)))
         self.low_partition_list = []
         pop_list = []
         for i,partition_combination in enumerate(self.partitions_list) :
@@ -78,8 +81,12 @@ class testGenerator :
                 for j in range(len(self.low_partition_list)):
                     low_partition_leader_combination.append(["replica_" + str(i) + "f", self.low_partition_list[j]])
         ratio = len(partition_leader_combination) /( len(partition_leader_combination) + len(low_partition_leader_combination))
-        partition_leader_combination = partition_leader_combination[:math.ceil(ratio * leader_partitions_num_limit)]
-        low_partition_leader_combination = low_partition_leader_combination[:math.ceil((1 - ratio) * leader_partitions_num_limit)]
+        if is_deterministic == True :
+            partition_leader_combination = partition_leader_combination[:math.ceil(ratio * leader_partitions_num_limit)]
+            low_partition_leader_combination = low_partition_leader_combination[:math.ceil((1 - ratio) * leader_partitions_num_limit)]
+        else :
+            partition_leader_combination = random.choices(partition_leader_combination, k = math.ceil(ratio * leader_partitions_num_limit))
+            low_partition_leader_combination = random.choices(low_partition_leader_combination, k = math.ceil((1 - ratio) * leader_partitions_num_limit))
 
         i = 0
         live = 0
@@ -110,7 +117,6 @@ class testGenerator :
 
             is_valid_test_case = self.is_valid_test(test_case_data, n_replicas,n_twins, n_rounds )
             if is_valid_test_case :
-                # print("live")
                 live = live + 1
                 test_case_data['n_replicas'] = n_replicas
                 test_case_data['n_twins'] = n_twins
@@ -119,9 +125,8 @@ class testGenerator :
                     json.dump(test_case_data, f, ensure_ascii=False, indent=4)
                 i = i + 1
             else :
-                # print("not live")
                 no_live = no_live + 1
-        # print("live", live,no_live)
+        print("live", live,no_live)
 
 
     def get_src_dest_combs(self, partition_combination) :
@@ -158,7 +163,7 @@ class testGenerator :
                 quorum_rounds['replica_' + str(i)] = []
                 if i < n_twins :
                     quorum_rounds['replica_' + str(i) + 'f'] = []
-
+            whole_count = 0
             for round in test_data['rounds'] :
                 leader = test_data['rounds'][round]['leader']
                 partitions = []
@@ -169,10 +174,12 @@ class testGenerator :
                             partitions.append(test_data['rounds'][round]['partitions'][i])
                             found = True
                             break
-                failType = test_data['rounds'][round]['failType'] = random.randint(0,2)
+                failType = test_data['rounds'][round]['failType']
                 src_to_dest  = test_data['rounds'][round]['src_to_dest']
                 for partition in partitions :
                     partition_len = len(partition)
+                    if partition_len == n_twins + n_replicas :
+                        whole_count = whole_count + 1
                     if failType == 0 or failType == 1 :
                         for src in src_to_dest.keys() :
                             for dest in src_to_dest[src] :
@@ -181,6 +188,9 @@ class testGenerator :
                     if(partition_len  >= 2*n_twins + 1) :
                         for replica in partition :
                             quorum_rounds[replica].append(round)
+            if whole_count > 2  :
+               return False
+
 
             for replica in quorum_rounds :
                 if len(quorum_rounds[replica]) >= 2*n_twins + 1 :
@@ -253,5 +263,6 @@ partition_num_limit = config['partition_num_limit']
 n_test_cases = config['n_test_cases']
 leader_partitions_num_limit  = config['leader_partitions_num_limit']
 random_seed = config['random_seed']
+is_deterministic = config['is_deterministic']
 my_test_generator = testGenerator(n_replicas, n_twins, n_rounds, n_partitions, is_leader_faulty, partition_num_limit, n_test_cases,
-                        leader_partitions_num_limit, random_seed)
+                        leader_partitions_num_limit, random_seed, is_deterministic)

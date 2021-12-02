@@ -193,8 +193,7 @@ def main():
             continue
         #test cases
         start_time = time.time()
-        
-        for i in range(config['n_test_cases']):
+        for i in range(5):
 
             test_case_time = time.time()
 
@@ -202,6 +201,7 @@ def main():
             p = new(RunDiemBFT)
             setup(p, (config, config_id, i))
             start(p)
+
 
             file_name  = 'tests/test_case_'+str(i)+'.json'
             f = open(file_name)
@@ -212,19 +212,22 @@ def main():
             
             safe = is_safe('../ledgers/config' + str(config_id) + '/test_case_' + str(i),test_case["n_twins"],test_case["n_replicas"])
             live = is_live('../ledgers/config' + str(config_id) + '/test_case_' + str(i),test_case["n_twins"],test_case["n_replicas"])
-
+            
             LOGGER.process_id = "twins_executor"
             LOGGER.filename = '../logs/config' + str(config_id) + '/test_case_' + str(i) + '/' \
                 + LOGGER.process_id
             LOGGER.filename += ".log"
             LOGGER.log_action("Initial configuration", config)
+            LOGGER.log_action("Test case {} running".format(i), "Executor")
 
             LOGGER.log_action("Safety validation: ", safe)
             LOGGER.log_action("Liveness validation", live)
-            output("exiting test case {}".format(i))
-            output("--- test case: {} time taken: {} seconds ---".format(i,time.time() - test_case_time))
+            LOGGER.log_action("exiting test case {}".format(i),"Executor")
+            # output("exiting test case {}".format(i))
+            # output("--- test case: {} time taken: {} seconds ---".format(i,time.time() - test_case_time))
+            LOGGER.log_action("--- test case: {} time taken: {} seconds ---".format(i,time.time() - test_case_time),"Executor")
                     
-        output("--- total execution time taken: {} seconds ---".format(time.time() - start_time))
+        output("--- total execution time taken: {} seconds ---".format(time.time() - start_time),"Executor")
 
         config_id += 1
 

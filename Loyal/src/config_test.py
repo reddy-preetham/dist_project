@@ -8,4 +8,5 @@ config = {
         'n_test_cases' : 5,
         'leader_partitions_num_limit' : 100,
         'random_seed' : 1234567,
+        'is_deterministic' : True
 }
