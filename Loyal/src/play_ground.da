@@ -211,10 +211,13 @@ class PlayGround (process):
 
     def receive(msg=('Request', signed_req), from_=client):
         send(('Request', signed_req, client), to=set(self.validators + self.twins))
+    
+    def receive(msg=('Done',), from_=parent()):
+        send(('Done',), to=set(self.twins))
+        print("Play Ground is exiting")
 
     def run():
         start(validators)
         start(twins)
+        # await(received(('Done',), from_=parent())
         await(received(('Done',), from_=parent()))
-        send(('Done',), to=set(self.twins))
-        print("Play Ground is exiting")

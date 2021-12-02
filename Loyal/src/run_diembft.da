@@ -12,6 +12,7 @@ from validator import Validator
 import json
 
 
+
 class RunDiemBFT(process):
 
     def setup(config, config_id, num):
@@ -74,12 +75,20 @@ class RunDiemBFT(process):
         self.validators=validators
         self.play_ground=play_ground
         self.clients = clients
-        if await(each(c in clients, has=received(('Done',), from_=c))):
-            output("All clients done, informing all validators.", config_id)
+        if await(each(c in clients, has=received(('Done',), from_=c))) :
+            
             await(timeout(1))
             # print("val_list",validators)
-            send(('Done',), to=validators)
-            send(('Done',), to=play_ground)
+            
+        elif timeout(int(config['liveness_bound'])):
+            pass
+        output("All clients done, informing all validators.", config_id)
+        send(('Done',), to=validators)
+        send(('Done',), to=play_ground)
+        
+            
+           
+
 
     def receive(msg=('Done', )):
         # if p==self.play_ground:
@@ -114,8 +123,17 @@ def main():
             output("The provided config", config,
                    "is not valid. Skipping this config.")
             continue
+        #test cases
         for i in range(1):
             p = new(RunDiemBFT)
             setup(p, (config, config_id, i))
             start(p)
+            
+            # await(test_case_done==True)
+            await(timeout(int(config['liveness_bound'])+2))
+            print("exiting run bft")
+
+
         config_id += 1
+
+

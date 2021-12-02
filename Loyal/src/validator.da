@@ -37,15 +37,15 @@ class Validator (process):
         self.validator_id = validator_id
         self.proposal_messages = list()
         self.pending_proposal_messages = list()
-
+        
         self.ledger = Ledger(
             config_id, validator_id, self.id_block, self.recently_committed_block_ids, self.request_cache, isTwin, num)
         self.blocktree = BlockTree(
-            validator_id, replicas, self.ledger, config['nTwins'], self.id_block)
+            validator_id, replicas, self.ledger, config['nTwins'], self.id_block,config['quorum_bug'])
         self.safety = Safety(validator_id, replicas,
-                             self.ledger, self.blocktree)
+                             self.ledger, self.blocktree, config['accept_conflicting_votes'])
         self.pacemaker = Pacemaker(
-            validator_id, replicas, self.blocktree, self.safety, config['nTwins'], config['delta'], send_timeout_msg)
+            validator_id, replicas, self.blocktree, self.safety, config['nTwins'], config['delta'], send_timeout_msg, config['quorum_bug'])
         self.mempool = MemPool(validator_id)
         self.leader_election = LeaderElection(
             validator_id, replicas, self.ledger, self.pacemaker, config['window_size'], config['exclude_size'], leader_data)
@@ -162,6 +162,8 @@ class Validator (process):
             )
 
             send(('Proposal', proposal_msg), to=self.play_ground)
+            if(not isTwin):
+                self.pending_proposal_messages.append(((proposal_msg,self)))
             LOGGER.log_event("Sent", "Proposal",
                              proposal_msg, self.replicas)
 
@@ -193,7 +195,9 @@ class Validator (process):
 
         if check_behind(proposal_msg.block.round):
 
-            if (len(pending_proposal_messages)==0 or (proposal_msg.block.round > self.pending_proposal_messages[-1][0].block.round or proposal_msg.block.round < self.pending_proposal_messages[0][0].block.round)) and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
+            # if (len(pending_proposal_messages)==0 or (proposal_msg.block.round > self.pending_proposal_messages[-1][0].block.round or proposal_msg.block.round < self.pending_proposal_messages[0][0].block.round)) and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
+            if  proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
+ 
                 self.pending_proposal_messages.append((proposal_msg,p))
                 self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
             return
@@ -204,6 +208,13 @@ class Validator (process):
             while proposal_msg is not None:
                 process_proposal_msg(proposal_msg, p)
                 (proposal_msg,p) = valid_proposal_message()
+    
+    def get_pending_rounds():
+        rounds_list = []
+        for msg in self.pending_proposal_messages:
+            rounds_list.append(msg[0].block.round)
+        return rounds_list
+
 
     def receive(msg=('Proposal_Sync', proposal_msg, p), from_=playground):
         LOGGER.log_event("Received", "Proposal_Sync", proposal_msg, p)
@@ -214,8 +225,8 @@ class Validator (process):
         if signature_verified is None:
             LOGGER.log_action("Verified ProposalMsg signature", False)
             
-        if (len(pending_proposal_messages)==0 or (proposal_msg.block.round > self.pending_proposal_messages[-1][0].block.round or proposal_msg.block.round < self.pending_proposal_messages[0][0].block.round)) and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
-            # if(self.validator_id==4):
+        if  proposal_msg.block.round not in get_pending_rounds() and (len(self.proposal_messages)==0 or proposal_msg.block.round > self.proposal_messages[-1][0].block.round):
+    # if(self.validator_id==4):
             #     print(proposal_msg,proposal_messages)
             self.pending_proposal_messages.append((proposal_msg,p))
             self.pending_proposal_messages = sorted(self.pending_proposal_messages, key= lambda x: x[0].block.round)
@@ -278,8 +289,6 @@ class Validator (process):
         self.proposal_messages.append((proposal_msg,p))
         self.proposal_messages = sorted(self.proposal_messages, key= lambda x: x[0].block.round)
         
-
-        # print(self.validator_id,proposal_msg.block.round,self.pacemaker.current_round,self.proposal_messages[-2][0].block.round)
         # print("======================proposal message  ", proposal_msg ,"from:  ", p, "received at ", self)
         LOGGER.log_action("Verified ProposalMsg signature", True)
 
