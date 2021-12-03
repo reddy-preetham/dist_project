@@ -161,10 +161,10 @@ class Validator (process):
             )
 
             send(('Proposal', proposal_msg), to=self.play_ground)
-            if(not isTwin):
-                self.pending_proposal_messages.append(((proposal_msg, self)))
-            LOGGER.log_event("Sent", "Proposal",
-                             proposal_msg, self.replicas)
+            # if(not isTwin):
+            #     self.pending_proposal_messages.append(((proposal_msg, self)))
+            # LOGGER.log_event("Sent", "Proposal",
+            #                  proposal_msg, self.replicas)
 
         LOGGER.log("Validator: process_new_round_event ends", None)
 

@@ -129,11 +129,12 @@ class PlayGround (process):
 
     def receive(msg=('Proposal', proposal_msg), from_=p):
         round = proposal_msg.block.round
+        print("Proposal", "round", round, "id", ids(p))
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
 
-        if round > max(self.leader_data.keys())+1:
+        if round > max(self.leader_data.keys()):
             send(('Done',), to=parent())
             return
 
@@ -141,6 +142,7 @@ class PlayGround (process):
             # send(('Proposal', proposal_msg, p_twin), to=set(self.validators + self.twins))
             return
         to_list = partition_list(p, round)
+        
 
         LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(
             ids(p), round, set_ids(to_list), "Proposal"), "Play Ground")
@@ -149,6 +151,7 @@ class PlayGround (process):
         dealy_set = set()
         delay_set = drop_dealy_messages(p, round, 0)
 
+        
         if p in self.twins:
             p = self.validators[self.twins.index(p)]
         send(('Proposal', proposal_msg, p), to=(to_list-delay_set))
@@ -157,11 +160,12 @@ class PlayGround (process):
 
     def receive(msg=('Vote', vote_msg, next_leader), from_=p):
         round = vote_msg.vote_info.round
+        print("Vote", "round", round, "id", ids(p))
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
 
-        if round == max(self.leader_data.keys())+1:
+        if round == max(self.leader_data.keys()):
             # send(('Vote', vote_msg, p), to=next_leader)
             send(('Done',), to=parent())
             return
@@ -192,33 +196,47 @@ class PlayGround (process):
 
     def receive(msg=('Timeout', timeout_msg), from_=p):
         round = timeout_msg.tmo_info.round
+        print("Timeout", "round", round, "id", ids(p))
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
 
-        if round > max(self.leader_data.keys())+1:
+        if round > max(self.leader_data.keys()):
             # send(('Timeout', timeout_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
             return
-        if round not in self.leader_data.keys():
+        
+        to_list = partition_list(p, round)
+        # print("TImeout list", set_ids(to_list))
+        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(
+            ids(p), round, set_ids(to_list), "Timeout"), "Play Ground")
+
+        if round in self.leader_data.keys():
             send(('Timeout', timeout_msg, p_twin),
                  to=set(self.validators + self.twins))
             return
 
-        # send(('Timeout', timeout_msg, p_twin), to=set(self.validators + self.twins))
-        # return
-
-        to_list = partition_list(p, round)
-        LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(
-            ids(p), round, set_ids(to_list), "Timeout"), "Play Ground")
         to_list = dropping_messages(p, round, to_list, 2)
         dealy_set = set()
         delay_set = drop_dealy_messages(p, round, 2)
+        print("TImeout list", set_ids(to_list-delay_set))
 
         if p in self.twins:
             p = self.validators[self.twins.index(p)]
 
-        send(('Timeout', timeout_msg, p), to=(to_list-delay_set))
+        final_list = to_list-delay_set
+        # if len(final_list) < 2*len(self.twins)+1:
+        #     for p in self.validators:
+        #         if p not in final_list and len(final_list)<2*len(self.twins)+1:
+        #             final_list.add(p)
+        #     for p in self.twins:
+        #         if p not in final_list and len(final_list)<2*len(self.twins)+1:
+        #             final_list.add(p)
+
+        #     send(('Timeout', timeout_msg, p_twin),
+        #          to=set(self.twins + self.validators))
+        #     return
+        send(('Timeout', timeout_msg, p), to=(final_list))
         await(timeout(self.delay))
         send(('Timeout', timeout_msg, p), to=(delay_set))
 
