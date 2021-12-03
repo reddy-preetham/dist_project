@@ -7,10 +7,10 @@
                     "replica_0",
                     "replica_1",
                     "replica_2",
-                    "replica_3",
-                    "replica_4"
+                    "replica_3"
+                    
                 ],
-                [
+                [   "replica_4",
                     "replica_0f"
                 ]
             ],
@@ -31,11 +31,10 @@
                 [
                     "replica_1",
                     "replica_0",
-                    "replica_3",
-                    "replica_4",
-                    "replica_0f"
+                    "replica_3"
                 ],
-                [
+                [   
+                    "replica_4",
                     "replica_2",
                     "replica_0f"
                 ]

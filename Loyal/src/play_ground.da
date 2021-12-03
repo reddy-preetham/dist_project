@@ -167,7 +167,7 @@ class PlayGround (process):
 
         if round == max(self.leader_data.keys()):
             # send(('Vote', vote_msg, p), to=next_leader)
-            send(('Done',), to=parent())
+            # send(('Done',), to=parent())
             return
         if round not in self.leader_data.keys():
             # send(('Vote', vote_msg, p_twin), to=next_leader)
@@ -205,7 +205,12 @@ class PlayGround (process):
             # send(('Timeout', timeout_msg, p), to=set(self.validators + self.twins))
             send(('Done',), to=parent())
             return
-        
+
+        if round not in self.leader_data.keys():
+            send(('Timeout', timeout_msg, p_twin),
+                 to=set(self.validators + self.twins))
+            return
+
         to_list = partition_list(p, round)
         # print("TImeout list", set_ids(to_list))
         LOGGER.log_action("Invoking Partition for replica = {}, round ={}, partition = {}, message = {}".format(
