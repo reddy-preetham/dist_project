@@ -129,7 +129,7 @@ class PlayGround (process):
 
     def receive(msg=('Proposal', proposal_msg), from_=p):
         round = proposal_msg.block.round
-        print("Proposal", "round", round, "id", ids(p))
+        # print("Proposal", "round", round, "id", ids(p))
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
@@ -160,7 +160,7 @@ class PlayGround (process):
 
     def receive(msg=('Vote', vote_msg, next_leader), from_=p):
         round = vote_msg.vote_info.round
-        print("Vote", "round", round, "id", ids(p))
+        # print("Vote", "round", round, "id", ids(p))
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
@@ -196,7 +196,7 @@ class PlayGround (process):
 
     def receive(msg=('Timeout', timeout_msg), from_=p):
         round = timeout_msg.tmo_info.round
-        print("Timeout", "round", round, "id", ids(p))
+        # print("Timeout", "round", round, "id", ids(p))
         p_twin = p
         if p in self.twins:
             p_twin = self.validators[self.twins.index(p)]
@@ -224,7 +224,7 @@ class PlayGround (process):
         to_list = dropping_messages(p, round, to_list, 2)
         dealy_set = set()
         delay_set = drop_dealy_messages(p, round, 2)
-        print("TImeout list", set_ids(to_list-delay_set))
+        # print("TImeout list", set_ids(to_list-delay_set))
 
         if p in self.twins:
             p = self.validators[self.twins.index(p)]

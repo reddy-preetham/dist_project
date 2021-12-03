@@ -361,7 +361,7 @@ class Validator (process):
 
         while len(self.pending_proposal_messages)>0 and self.pending_proposal_messages[0][0].block.round == proposal_msg.block.round:
             self.pending_proposal_messages.pop(0)
-            
+
         # moved this for sync up
         if proposal_msg.block.round != round or replicas[proposal_msg.sender] != leader or replicas[proposal_msg.block.author] != leader:
             LOGGER.log("ROUND PROPOSAL EARLY EXIT", proposal_msg.block.round,
@@ -377,7 +377,7 @@ class Validator (process):
         '''if vote msg != ⊥ then
                 send vote msg to LeaderElection.get leader(current round + 1)'''
         if vote_msg is not None:
-            print(proposal_msg.block.payload,self.validator_id,self.isTwin, "=============== Vote")
+            # print(proposal_msg.block.payload,self.validator_id,self.isTwin, "=============== Vote")
             next_leader = self.leader_election.get_leader(round + 1)
             send(('Vote', vote_msg, next_leader),
                  to=self.play_ground)
