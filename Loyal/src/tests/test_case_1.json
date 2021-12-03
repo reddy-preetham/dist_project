@@ -96,14 +96,20 @@
                     "replica_4"
                 ]
             ],
-            "messageType": 2,
-            "failType": 2,
+            "messageType": 0,
+            "failType": 0,
             "src_to_dest": {
                 "replica_0f": [
                     "replica_1"
                 ],
                 "replica_1": [
-                    "replica_3"
+                    "replica_0f",
+                    "replica_1",
+                    "replica_0",
+                    "replica_3",
+                    "replica_2",
+                    "replica_4"
+
                 ],
                 "replica_0": [
                     "replica_3"
