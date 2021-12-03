@@ -43,10 +43,10 @@ class MemPool:
         for txn in txns:
             if txn['req_id'] in self.pending_txns:
                 to_remove.append(txn['req_id'])
-            else:
-                LOGGER.log(
-                    'MemPool: validate_and_remove_transactions: returns', False)
-                return False
+            # else:
+            #     LOGGER.log(
+            #         'MemPool: validate_and_remove_transactions: returns', False)
+            #     return False
 
         for req_id in to_remove:
             del self.pending_txns[req_id]

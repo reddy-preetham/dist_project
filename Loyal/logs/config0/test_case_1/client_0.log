@@ -1,11 +1,11 @@
-Timestamp: 2021-12-02 05:53:36.632278 | ProcessId: client_0 | Action: Initial configuration | Object: {'nvalidators': 5, 'nTwins': 1, 'nclients': 3, 'nclientops': 2, 'sleeptime': 1, 'clienttimeout': 4, 'delta': 0.25, 'window_size': 5, 'exclude_size': 0, 'delay': 1, 'quorum_bug': True, 'accept_conflicting_votes': False, 'liveness_bound': 10, 'n_test_cases': 5} |
-Timestamp: 2021-12-02 05:53:36.678038 | ProcessId: client_0 | Event: Sent | MsgType: Request | To: ALL validators | Msg: {'req_id': '0_0', 'command': '0-0'}
-Timestamp: 2021-12-02 05:53:36.682793 | ProcessId: client_0 | Event: Sent | MsgType: Request | To: ALL validators | Msg: {'req_id': '0_1', 'command': '0-1'}
-Timestamp: 2021-12-02 05:53:37.062353 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_1 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
-Timestamp: 2021-12-02 05:53:37.117194 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_4 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
-Timestamp: 2021-12-02 05:53:37.124034 | ProcessId: client_0 | Action: Received f + 1 valid responses | Object: 0_0 |
-Timestamp: 2021-12-02 05:53:37.130171 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_3 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
-Timestamp: 2021-12-02 05:53:37.137083 | ProcessId: client_0 | Event: Received | MsgType: Response | From: parent_process | Msg: {'req_id': '0_0', 'resp_status': 'success'}
-Timestamp: 2021-12-02 05:53:37.142716 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_0 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
-Timestamp: 2021-12-02 05:53:38.163336 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_2 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
-Timestamp: 2021-12-02 05:53:38.399221 | ProcessId: client_0 | Event: Sent | MsgType: Done | To: parent_process | Msg: None
+Timestamp: 2021-12-03 03:58:47.462568 | ProcessId: client_0 | Action: Initial configuration | Object: {'nvalidators': 5, 'nTwins': 1, 'nclients': 3, 'nclientops': 2, 'sleeptime': 1, 'clienttimeout': 4, 'delta': 0.25, 'window_size': 5, 'exclude_size': 0, 'delay': 1, 'quorum_bug': False, 'accept_conflicting_votes': False, 'liveness_bound': 10, 'n_test_cases': 5} |
+Timestamp: 2021-12-03 03:58:47.505509 | ProcessId: client_0 | Event: Sent | MsgType: Request | To: ALL validators | Msg: {'req_id': '0_0', 'command': '0-0'}
+Timestamp: 2021-12-03 03:58:47.509571 | ProcessId: client_0 | Event: Sent | MsgType: Request | To: ALL validators | Msg: {'req_id': '0_1', 'command': '0-1'}
+Timestamp: 2021-12-03 03:58:47.707693 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_3 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
+Timestamp: 2021-12-03 03:58:47.754881 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_0 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
+Timestamp: 2021-12-03 03:58:47.759959 | ProcessId: client_0 | Action: Received f + 1 valid responses | Object: 0_0 |
+Timestamp: 2021-12-03 03:58:47.766205 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_1 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
+Timestamp: 2021-12-03 03:58:47.874827 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_2 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
+Timestamp: 2021-12-03 03:58:47.879932 | ProcessId: client_0 | Event: Received | MsgType: Response | From: parent_process | Msg: {'req_id': '0_0', 'resp_status': 'success'}
+Timestamp: 2021-12-03 03:58:47.886096 | ProcessId: client_0 | Event: Received | MsgType: Response | From: validator_4 | Msg: {'req_id': '0_0', 'resp_status': 'success'}
+Timestamp: 2021-12-03 03:58:49.212038 | ProcessId: client_0 | Event: Sent | MsgType: Done | To: parent_process | Msg: None

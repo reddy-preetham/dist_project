@@ -1,0 +1,4 @@
+Timestamp: 2021-12-03 03:55:44.798547 | ProcessId: client_2 | Action: Initial configuration | Object: {'nvalidators': 5, 'nTwins': 1, 'nclients': 3, 'nclientops': 2, 'sleeptime': 1, 'clienttimeout': 4, 'delta': 0.25, 'window_size': 5, 'exclude_size': 0, 'delay': 1, 'quorum_bug': False, 'accept_conflicting_votes': True, 'liveness_bound': 10, 'n_test_cases': 5} |
+Timestamp: 2021-12-03 03:55:44.831282 | ProcessId: client_2 | Event: Sent | MsgType: Request | To: ALL validators | Msg: {'req_id': '2_0', 'command': '2-0'}
+Timestamp: 2021-12-03 03:55:44.835270 | ProcessId: client_2 | Event: Sent | MsgType: Request | To: ALL validators | Msg: {'req_id': '2_1', 'command': '2-1'}
+Timestamp: 2021-12-03 03:55:46.046793 | ProcessId: client_2 | Event: Sent | MsgType: Done | To: parent_process | Msg: None

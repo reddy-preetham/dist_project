@@ -1,30 +1,40 @@
-Timestamp: 2021-12-02 06:01:43.465673 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =1, partition = {'2', '4', '0', '0f', '1', '3'}, message = Proposal | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.538976 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =2, partition = {'4', '0', '0f', '1', '3'}, message = Proposal | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.691912 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =3, partition = {'2', '4', '0', '0f', '1', '3'}, message = Proposal | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.828342 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =4, partition = {'4', '2', '0', '1'}, message = Proposal | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.866511 | ProcessId: twins_executor | Action: Delaying messages, message type = 1, src =0, dest = set() | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.875307 | ProcessId: twins_executor | Action: Delaying messages, message type = 1, src =4, dest = set() | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.895635 | ProcessId: twins_executor | Action: Delaying messages, message type = 1, src =1, dest = {'4'} | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.900770 | ProcessId: twins_executor | Action: Delaying messages, message type = 1, src =2, dest = set() | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:43.975496 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0', '1', '3'}, message = Proposal | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:44.115477 | ProcessId: twins_executor | Action: Delaying messages, message type = 1, src =3, dest = set() | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:44.741071 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =3, partition = {'2', '4', '0', '0f', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:44.975196 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.013439 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =5, partition = {'2', '4', '0', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.021674 | ProcessId: twins_executor | Action: Invoking Partition for replica = 2, round =5, partition = {'2', '4', '0', '0f', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.029796 | ProcessId: twins_executor | Action: Invoking Partition for replica = 4, round =5, partition = {'2', '4', '0', '0f', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.047535 | ProcessId: twins_executor | Action: Invoking Partition for replica = 2, round =5, partition = {'2', '4', '0', '0f', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.053973 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =5, partition = {'2', '4', '0', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.060694 | ProcessId: twins_executor | Action: Invoking Partition for replica = 4, round =5, partition = {'2', '4', '0', '0f', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.067723 | ProcessId: twins_executor | Action: Invoking Partition for replica = 3, round =5, partition = {'2', '4', '0', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.075106 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0', '1', '3'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.109656 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =5, partition = {'0f', '2', '4'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.139789 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =5, partition = {'0f', '2', '4'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:45.166628 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =5, partition = {'0f', '2', '4'}, message = Timeout | Object: Play Ground |
-Timestamp: 2021-12-02 06:01:55.249762 | ProcessId: twins_executor | Action: Initial configuration | Object: {'nvalidators': 5, 'nTwins': 1, 'nclients': 3, 'nclientops': 2, 'sleeptime': 1, 'clienttimeout': 4, 'delta': 0.25, 'window_size': 5, 'exclude_size': 0, 'delay': 1, 'quorum_bug': False, 'accept_conflicting_votes': True, 'liveness_bound': 10, 'n_test_cases': 5} |
-Timestamp: 2021-12-02 06:01:55.252952 | ProcessId: twins_executor | Action: Test case 2 running | Object: Executor |
-Timestamp: 2021-12-02 06:01:55.256225 | ProcessId: twins_executor | Action: Safety validation:  | Object: True |
-Timestamp: 2021-12-02 06:01:55.259361 | ProcessId: twins_executor | Action: Liveness validation | Object: True |
-Timestamp: 2021-12-02 06:01:55.263298 | ProcessId: twins_executor | Action: exiting test case 2 | Object: Executor |
-Timestamp: 2021-12-02 06:01:55.266122 | ProcessId: twins_executor | Action: --- test case: 2 time taken: 12.085712432861328 seconds --- | Object: Executor |
-Timestamp: 2021-12-02 06:02:30.497053 | ProcessId: twins_executor | Action: Play Ground is exiting | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.537691 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =1, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.547020 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =1, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.706385 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =2, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.714503 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =2, partition = {'4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.744766 | ProcessId: twins_executor | Action: Dropping messages, message type = 1, src =2, dest = set() | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.751966 | ProcessId: twins_executor | Action: Dropping messages, message type = 1, src =3, dest = set() | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.758039 | ProcessId: twins_executor | Action: Dropping messages, message type = 1, src =1, dest = {'4', '1'} | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.763905 | ProcessId: twins_executor | Action: Dropping messages, message type = 1, src =4, dest = set() | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.778185 | ProcessId: twins_executor | Action: Dropping messages, message type = 1, src =0f, dest = {'0'} | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.786577 | ProcessId: twins_executor | Action: Dropping messages, message type = 1, src =0, dest = set() | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.844286 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =3, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:58:59.864281 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =3, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:00.013605 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =4, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:00.024668 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =4, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:00.186608 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Proposal | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.188215 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.239441 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.249201 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.269702 | ProcessId: twins_executor | Action: Invoking Partition for replica = 2, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.283875 | ProcessId: twins_executor | Action: Invoking Partition for replica = 3, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.304068 | ProcessId: twins_executor | Action: Invoking Partition for replica = 4, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.312696 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.321993 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.330248 | ProcessId: twins_executor | Action: Invoking Partition for replica = 3, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.340254 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.348489 | ProcessId: twins_executor | Action: Invoking Partition for replica = 2, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.355312 | ProcessId: twins_executor | Action: Invoking Partition for replica = 4, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.363677 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0f, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.372153 | ProcessId: twins_executor | Action: Invoking Partition for replica = 1, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.379915 | ProcessId: twins_executor | Action: Invoking Partition for replica = 0, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.387376 | ProcessId: twins_executor | Action: Invoking Partition for replica = 3, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.395947 | ProcessId: twins_executor | Action: Invoking Partition for replica = 2, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:01.403714 | ProcessId: twins_executor | Action: Invoking Partition for replica = 4, round =5, partition = {'2', '4', '0f', '1', '3', '0'}, message = Timeout | Object: Play Ground |
+Timestamp: 2021-12-03 03:59:11.256911 | ProcessId: twins_executor | Action: Initial configuration | Object: {'nvalidators': 7, 'nTwins': 2, 'nclients': 3, 'nclientops': 2, 'sleeptime': 1, 'clienttimeout': 4, 'delta': 0.25, 'window_size': 5, 'exclude_size': 0, 'delay': 1, 'quorum_bug': False, 'accept_conflicting_votes': False, 'liveness_bound': 10, 'n_test_cases': 5} |
+Timestamp: 2021-12-03 03:59:11.260441 | ProcessId: twins_executor | Action: Test case 2 running | Object: Executor |
+Timestamp: 2021-12-03 03:59:11.263719 | ProcessId: twins_executor | Action: Safety validation:  | Object: True |
+Timestamp: 2021-12-03 03:59:11.266933 | ProcessId: twins_executor | Action: Liveness validation | Object: True |
+Timestamp: 2021-12-03 03:59:11.270073 | ProcessId: twins_executor | Action: exiting test case 2 | Object: Executor |
+Timestamp: 2021-12-03 03:59:11.273285 | ProcessId: twins_executor | Action: --- test case: 2 time taken: 11.988853693008423 seconds --- | Object: Executor |
+Timestamp: 2021-12-03 03:59:32.570580 | ProcessId: twins_executor | Action: Play Ground is exiting | Object: Play Ground |

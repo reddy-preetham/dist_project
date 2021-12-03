@@ -63,6 +63,8 @@ class Client(process):
         LOGGER.log_event("Received", "Response", resp, validator)
 
         req_id = resp['req_id']
+        if req_id.find('_f')>=0:
+            req_id = resp['req_id'][:-2]
         resp_status = resp['resp_status']
         if resp_status == "success":
             pending_success_results[req_id].append(resp)

@@ -1,18 +1,19 @@
 {
     "rounds": {
         "1": {
-            "leader": "replica_1",
+            "leader": "replica_0",
             "partitions": [
                 [
                     "replica_1",
-                    "replica_4",
                     "replica_2",
                     "replica_0",
-                    "replica_0f"
+                    "replica_3"
+                    
                 ],
                 [
-                    "replica_3",
-                    "replica_4"
+                    
+                    "replica_4",
+                    "replica_0f"
                 ]
             ],
             "messageType": 1,
