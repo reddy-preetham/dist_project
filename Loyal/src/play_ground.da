@@ -121,6 +121,9 @@ class PlayGround (process):
 
         if high_round in self.leader_data.keys():
             to_list = partition_list(p, high_round)
+        # else :
+        #     to_list = partition_list(p, high_round-1)
+
 
         send(('Sync', proposal_msg, round, p), to=to_list)
 
