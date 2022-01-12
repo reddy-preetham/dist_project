@@ -21,9 +21,6 @@ Timeouts:
 	Set using attribute 'client_timeout' in test case config file. Check user manual.
 	Implemented in client.da
 
-Bugs and Limitations:
-	Syncing of replicas which are behind is not implemented in the code.
-	Any test case which simulates syncing of replicas might result in bugs.
 
 Main files:
 	Driver code : main.da
